@@ -12,3 +12,203 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  USER 
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum BusinessStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+enum BoardStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum PymentStatus {
+  CREATED
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum BidStatus {
+  PENDING
+  ACTIVE
+  REVERSED
+}
+
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  role     UserRole  @default(USER)
+  status   UserStatus  @default(ACTIVE)
+
+  businesses  Business[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status])
+}
+
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       
+  slug        String       @unique
+  description String?
+
+  businesses  Business[]
+  boards      Board[]
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+
+model Business {
+  id             String    @id @default(uuid())
+  ownerId        String
+  categoryId     String
+
+  name           String
+  slug           String    @unique
+  description    String?
+
+  website        String
+  logoUrl        String
+
+  country        String
+  state          String
+  city           String 
+  
+  status        BusinessStatus   @default(PENDING)
+
+  owner         User       @relation(fields:[ownerId],references:[id])
+  Category       Category    @relation(fields:[categoryId],references:[id])
+
+  memberships      BoardMembership[]
+  payments         Payment[]
+  clicks           Click[]
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([ownerId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([city,state,country])
+}
+
+model Board {
+  id         String  @id @default(uuid())
+  categoryId String
+
+  name       String
+  country    String?
+  state      String?
+  city       String?
+
+  status     BoardStatus      @default(ACTIVE)
+
+  category   Category      @relation(fields:[categoryId],references:[id])
+
+  memberships     BoardMembership[]
+  clicks          Click[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([categoryId])
+  @@index([country,state,city])
+}
+
+model BoardMembership {
+  id            String   @id @default(uuid())
+
+  businessId    String
+  boardId       String
+
+  business      Business   @relation(fields:[businessId],references:[id])
+  board      Board     @relation(fields:[boardId],references:[id])
+
+  bids      Bid[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+
+  @@unique([businessId,boardId])
+  @@unique([boardId])
+  @@index([businessId])
+}
+
+model Payment {
+  id                String       @id @default(uuid())
+
+  businessId        String
+  provider          String
+  providerPaymentId  String?
+
+  amountPaise       BigInt
+  currency          String      @default("INR")
+
+  stauts            PaymentStatus  @default(CREATED)
+
+  business          Business       @relation(fields:[businessId],references:[id])
+
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@unique([provider, providerPaymentId])
+  @@index([businessId])
+  @@index([status])
+}
+
+model Bid {
+  id           String      @id @default(uuid())
+
+  membershipId String
+  paymentId    String
+
+  amountPaise  BigInt
+  status       BidStatus   @default(PENDING)
+
+  membership   BoardMembership @relation(fields: [membershipId], references: [id])
+  payment      Payment         @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([paymentId])
+  @@index([membershipId, status])
+}
+
+model Click {
+  id         String   @id @default(uuid())
+
+  businessId String
+  boardId    String
+
+  business   Business @relation(fields: [businessId], references: [id])
+  board      Board    @relation(fields: [boardId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([businessId, createdAt])
+  @@index([boardId, createdAt])
+}
