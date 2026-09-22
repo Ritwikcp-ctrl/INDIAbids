@@ -10,11 +10,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
 }
 
 enum UserRole {
-  USER 
+  USER
   ADMIN
 }
 
@@ -36,7 +35,7 @@ enum BoardStatus {
   ARCHIVED
 }
 
-enum PymentStatus {
+enum PaymentStatus {
   CREATED
   PENDING
   SUCCEEDED
@@ -50,130 +49,128 @@ enum BidStatus {
   REVERSED
 }
 
-
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
+  id       String     @id @default(uuid())
+  email    String     @unique
   password String
-  role     UserRole  @default(USER)
-  status   UserStatus  @default(ACTIVE)
+  role     UserRole   @default(USER)
+  status   UserStatus @default(ACTIVE)
 
-  businesses  Business[]
+  businesses Business[]
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
 }
 
-
 model Category {
-  id          String       @id @default(uuid())
-  name        String       
-  slug        String       @unique
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
   description String?
 
-  businesses  Business[]
-  boards      Board[]
+  businesses Business[]
+  boards     Board[]
 
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-
 model Business {
-  id             String    @id @default(uuid())
-  ownerId        String
-  categoryId     String
+  id         String @id @default(uuid())
+  ownerId    String
+  categoryId String
 
-  name           String
-  slug           String    @unique
-  description    String?
+  name        String
+  slug        String  @unique
+  description String?
 
-  website        String
-  logoUrl        String
+  website String
+  logoUrl String
 
-  country        String
-  state          String
-  city           String 
-  
-  status        BusinessStatus   @default(PENDING)
+  country String
+  state   String
+  city    String
 
-  owner         User       @relation(fields:[ownerId],references:[id])
-  Category       Category    @relation(fields:[categoryId],references:[id])
+  status BusinessStatus @default(PENDING)
 
-  memberships      BoardMembership[]
-  payments         Payment[]
-  clicks           Click[]
+  owner    User     @relation(fields: [ownerId], references: [id])
+  Category Category @relation(fields: [categoryId], references: [id])
 
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  memberships BoardMembership[]
+  payments    Payment[]
+  clicks      Click[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([ownerId])
   @@index([categoryId])
   @@index([status])
-  @@index([city,state,country])
+  @@index([city, state, country])
 }
 
 model Board {
-  id         String  @id @default(uuid())
+  id         String @id @default(uuid())
   categoryId String
 
-  name       String
-  country    String?
-  state      String?
-  city       String?
+  name    String
+  country String?
+  state   String?
+  city    String?
 
-  status     BoardStatus      @default(ACTIVE)
+  status BoardStatus @default(ACTIVE)
 
-  category   Category      @relation(fields:[categoryId],references:[id])
+  category Category @relation(fields: [categoryId], references: [id])
 
-  memberships     BoardMembership[]
-  clicks          Click[]
+  memberships BoardMembership[]
+  clicks      Click[]
 
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
-  @@index([country,state,city])
+  @@index([country, state, city])
 }
 
 model BoardMembership {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  businessId    String
-  boardId       String
+  businessId String
+  boardId    String
 
-  business      Business   @relation(fields:[businessId],references:[id])
-  board      Board     @relation(fields:[boardId],references:[id])
+  business Business @relation(fields: [businessId], references: [id])
+  board    Board    @relation(fields: [boardId], references: [id])
 
-  bids      Bid[]
+  bids Bid[]
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-
-  @@unique([businessId,boardId])
+  @@unique([businessId, boardId])
   @@unique([boardId])
   @@index([businessId])
 }
 
 model Payment {
-  id                String       @id @default(uuid())
+  id         String @id @default(uuid())
+  businessId String
 
-  businessId        String
   provider          String
-  providerPaymentId  String?
+  providerPaymentId String?
 
-  amountPaise       BigInt
-  currency          String      @default("INR")
+  amountPaise BigInt
+  currency    String @default("INR")
 
-  stauts            PaymentStatus  @default(CREATED)
+  status PaymentStatus @default(CREATED)
 
-  business          Business       @relation(fields:[businessId],references:[id])
+  business Business @relation(fields: [businessId], references: [id])
 
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  bid Bid?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerPaymentId])
   @@index([businessId])
@@ -181,31 +178,30 @@ model Payment {
 }
 
 model Bid {
-  id           String      @id @default(uuid())
+  id String @id @default(uuid())
 
   membershipId String
-  paymentId    String
+  paymentId    String @unique
 
-  amountPaise  BigInt
-  status       BidStatus   @default(PENDING)
+  amountPaise BigInt
+  status      BidStatus @default(PENDING)
 
-  membership   BoardMembership @relation(fields: [membershipId], references: [id])
-  payment      Payment         @relation(fields: [paymentId], references: [id])
+  membership BoardMembership @relation(fields: [membershipId], references: [id])
+  payment    Payment         @relation(fields: [paymentId], references: [id])
 
   createdAt DateTime @default(now())
 
-  @@unique([paymentId])
   @@index([membershipId, status])
 }
 
 model Click {
-  id         String   @id @default(uuid())
+  id String @id @default(uuid())
 
   businessId String
   boardId    String
 
-  business   Business @relation(fields: [businessId], references: [id])
-  board      Board    @relation(fields: [boardId], references: [id])
+  business Business @relation(fields: [businessId], references: [id])
+  board    Board    @relation(fields: [boardId], references: [id])
 
   createdAt DateTime @default(now())
 
