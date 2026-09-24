@@ -57,3 +57,8 @@ export type Bid = Prisma.BidModel
  * 
  */
 export type Click = Prisma.ClickModel
+/**
+ * Model AuthSession
+ * 
+ */
+export type AuthSession = Prisma.AuthSessionModel

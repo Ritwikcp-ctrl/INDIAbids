@@ -58,7 +58,8 @@ export const ModelName = {
   BoardMembership: 'BoardMembership',
   Payment: 'Payment',
   Bid: 'Bid',
-  Click: 'Click'
+  Click: 'Click',
+  AuthSession: 'AuthSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -80,7 +81,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  password: 'password',
+  passwordHash: 'passwordHash',
   role: 'role',
   status: 'status',
   createdAt: 'createdAt',
@@ -183,6 +184,20 @@ export const ClickScalarFieldEnum = {
 } as const
 
 export type ClickScalarFieldEnum = (typeof ClickScalarFieldEnum)[keyof typeof ClickScalarFieldEnum]
+
+
+export const AuthSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  familyId: 'familyId',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AuthSessionScalarFieldEnum = (typeof AuthSessionScalarFieldEnum)[keyof typeof AuthSessionScalarFieldEnum]
 
 
 export const SortOrder = {
