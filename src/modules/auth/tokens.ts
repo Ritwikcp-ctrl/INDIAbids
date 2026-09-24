@@ -19,9 +19,9 @@ export function hashRefreshToken(token: string): string {
   return createHash("sha256").update(token, "utf8").digest("hex");
 }
 
-export async function createAcessToken(
+export async function createAccessToken(
   userId: string,
-  role: "USER" | "ADMIM",
+  role: "USER" | "ADMIN",
   sessionId: string
 ): Promise<string> {
   return new SignJWT({

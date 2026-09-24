@@ -18,7 +18,7 @@ const envSchema = z.object({
   ACCESS_TOKEN_AUDIENCE: z.string().min(1),
   ACCESS_TOKEN_TTL_MINUTES: z.coerce.number().int().max(5).max(60).default(15),
 
-  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(30),
+  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).positive().default(30),
 
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
 });
