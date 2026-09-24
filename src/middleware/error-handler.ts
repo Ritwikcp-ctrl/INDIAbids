@@ -7,6 +7,7 @@ import type {
 
 import { ZodError } from "zod";
 import { logger } from "../lib/logger";
+import { AppError } from "../lib/app-error";
 
 export const errorHandler: ErrorRequestHandler = (
   error: unknown,
@@ -28,6 +29,19 @@ export const errorHandler: ErrorRequestHandler = (
     });
 
     return;
+  }
+
+  if(error instanceof AppError) {
+    res.status(error.statusCode).json({
+      success:false,
+      error:{
+        code:error.code,
+        message:error.message,
+        ...(error.details ? 
+          {details:error.details} : {}
+        ),
+      },
+    });
   }
 
   logger.error(
