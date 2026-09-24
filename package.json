@@ -4,9 +4,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prisma:generate":"prisma generate",
+    "db:migrate" : "primsma migrate dev",
+    "db:studio" : "prisma studio"
   },
   "keywords": [],
   "author": "",
