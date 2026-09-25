@@ -13,8 +13,13 @@ import healthRoutes from "./routes/health.routes";
 import { notFoundHandler } from "./middleware/not-found";
 import { errorHandler } from "./middleware/error-handler";
 import { success } from "zod";
+import cookieParser from "cookie-parser";
+
+import authRoutes from "./modules/auth/auth.routes";
 
 const app = express();
+
+app.set("trust proxy", env.TRUST_PROXY);
 
 app.disable("x-powered-by");
 
@@ -73,7 +78,10 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+
 app.use("/api/v1", healthRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.use(notFoundHandler);
 
