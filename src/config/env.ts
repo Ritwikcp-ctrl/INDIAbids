@@ -7,7 +7,7 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().int().min(1).max(65_535).default(4000),
 
-  DATEBASE_URL: z.string().min(1),
+  DATABASE_URL: z.string().min(1),
   CORS_ORIGIN: z.string().url(),
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
@@ -16,7 +16,7 @@ const envSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string().min(43),
   ACCESS_TOKEN_ISSUER: z.string().min(1),
   ACCESS_TOKEN_AUDIENCE: z.string().min(1),
-  ACCESS_TOKEN_TTL_MINUTES: z.coerce.number().int().max(5).max(60).default(15),
+  ACCESS_TOKEN_TTL_MINUTES: z.coerce.number().int().min(5).max(60).default(15),
 
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).positive().default(30),
 
