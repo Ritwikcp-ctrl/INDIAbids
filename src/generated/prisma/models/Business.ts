@@ -208,11 +208,11 @@ export type BusinessGroupByOutputType = {
   name: string
   slug: string
   description: string | null
-  website: string
-  logoUrl: string
+  website: string | null
+  logoUrl: string | null
   country: string
-  state: string
-  city: string
+  state: string | null
+  city: string | null
   status: $Enums.BusinessStatus
   createdAt: Date
   updatedAt: Date
@@ -246,11 +246,11 @@ export type BusinessWhereInput = {
   name?: Prisma.StringFilter<"Business"> | string
   slug?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
-  website?: Prisma.StringFilter<"Business"> | string
-  logoUrl?: Prisma.StringFilter<"Business"> | string
+  website?: Prisma.StringNullableFilter<"Business"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
-  state?: Prisma.StringFilter<"Business"> | string
-  city?: Prisma.StringFilter<"Business"> | string
+  state?: Prisma.StringNullableFilter<"Business"> | string | null
+  city?: Prisma.StringNullableFilter<"Business"> | string | null
   status?: Prisma.EnumBusinessStatusFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
@@ -268,11 +268,11 @@ export type BusinessOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  website?: Prisma.SortOrder
-  logoUrl?: Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  city?: Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -293,11 +293,11 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   categoryId?: Prisma.StringFilter<"Business"> | string
   name?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
-  website?: Prisma.StringFilter<"Business"> | string
-  logoUrl?: Prisma.StringFilter<"Business"> | string
+  website?: Prisma.StringNullableFilter<"Business"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
-  state?: Prisma.StringFilter<"Business"> | string
-  city?: Prisma.StringFilter<"Business"> | string
+  state?: Prisma.StringNullableFilter<"Business"> | string | null
+  city?: Prisma.StringNullableFilter<"Business"> | string | null
   status?: Prisma.EnumBusinessStatusFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
@@ -315,11 +315,11 @@ export type BusinessOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  website?: Prisma.SortOrder
-  logoUrl?: Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  city?: Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -338,11 +338,11 @@ export type BusinessScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Business"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Business"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
-  website?: Prisma.StringWithAggregatesFilter<"Business"> | string
-  logoUrl?: Prisma.StringWithAggregatesFilter<"Business"> | string
+  website?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
+  logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   country?: Prisma.StringWithAggregatesFilter<"Business"> | string
-  state?: Prisma.StringWithAggregatesFilter<"Business"> | string
-  city?: Prisma.StringWithAggregatesFilter<"Business"> | string
+  state?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
+  city?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   status?: Prisma.EnumBusinessStatusWithAggregatesFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Business"> | Date | string
@@ -353,11 +353,11 @@ export type BusinessCreateInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -375,11 +375,11 @@ export type BusinessUncheckedCreateInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -393,11 +393,11 @@ export type BusinessUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -415,11 +415,11 @@ export type BusinessUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,11 +435,11 @@ export type BusinessCreateManyInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -450,11 +450,11 @@ export type BusinessUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -467,11 +467,11 @@ export type BusinessUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -678,11 +678,11 @@ export type BusinessCreateWithoutOwnerInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -698,11 +698,11 @@ export type BusinessUncheckedCreateWithoutOwnerInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -747,11 +747,11 @@ export type BusinessScalarWhereInput = {
   name?: Prisma.StringFilter<"Business"> | string
   slug?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
-  website?: Prisma.StringFilter<"Business"> | string
-  logoUrl?: Prisma.StringFilter<"Business"> | string
+  website?: Prisma.StringNullableFilter<"Business"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
-  state?: Prisma.StringFilter<"Business"> | string
-  city?: Prisma.StringFilter<"Business"> | string
+  state?: Prisma.StringNullableFilter<"Business"> | string | null
+  city?: Prisma.StringNullableFilter<"Business"> | string | null
   status?: Prisma.EnumBusinessStatusFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
@@ -762,11 +762,11 @@ export type BusinessCreateWithoutCategoryInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -782,11 +782,11 @@ export type BusinessUncheckedCreateWithoutCategoryInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -826,11 +826,11 @@ export type BusinessCreateWithoutMembershipsInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -847,11 +847,11 @@ export type BusinessUncheckedCreateWithoutMembershipsInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -880,11 +880,11 @@ export type BusinessUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -901,11 +901,11 @@ export type BusinessUncheckedUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -918,11 +918,11 @@ export type BusinessCreateWithoutPaymentsInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -939,11 +939,11 @@ export type BusinessUncheckedCreateWithoutPaymentsInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -972,11 +972,11 @@ export type BusinessUpdateWithoutPaymentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -993,11 +993,11 @@ export type BusinessUncheckedUpdateWithoutPaymentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1010,11 +1010,11 @@ export type BusinessCreateWithoutClicksInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1031,11 +1031,11 @@ export type BusinessUncheckedCreateWithoutClicksInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1064,11 +1064,11 @@ export type BusinessUpdateWithoutClicksInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1085,11 +1085,11 @@ export type BusinessUncheckedUpdateWithoutClicksInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1103,11 +1103,11 @@ export type BusinessCreateManyOwnerInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1118,11 +1118,11 @@ export type BusinessUpdateWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1138,11 +1138,11 @@ export type BusinessUncheckedUpdateWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1157,11 +1157,11 @@ export type BusinessUncheckedUpdateManyWithoutOwnerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1173,11 +1173,11 @@ export type BusinessCreateManyCategoryInput = {
   name: string
   slug: string
   description?: string | null
-  website: string
-  logoUrl: string
+  website?: string | null
+  logoUrl?: string | null
   country: string
-  state: string
-  city: string
+  state?: string | null
+  city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1188,11 +1188,11 @@ export type BusinessUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1208,11 +1208,11 @@ export type BusinessUncheckedUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1227,11 +1227,11 @@ export type BusinessUncheckedUpdateManyWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
-  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1398,11 +1398,11 @@ export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     name: string
     slug: string
     description: string | null
-    website: string
-    logoUrl: string
+    website: string | null
+    logoUrl: string | null
     country: string
-    state: string
-    city: string
+    state: string | null
+    city: string | null
     status: $Enums.BusinessStatus
     createdAt: Date
     updatedAt: Date

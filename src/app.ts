@@ -16,6 +16,8 @@ import { success } from "zod";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./modules/auth/auth.routes";
+import categoryRoutes from "./modules/categories/category.routes";
+import businessRoutes from "./modules/businesses/business.routes";
 
 const app = express();
 
@@ -83,8 +85,10 @@ app.use(cookieParser());
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
 
-app.use(notFoundHandler);
+app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/businesses", businessRoutes);
 
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 export default app;
