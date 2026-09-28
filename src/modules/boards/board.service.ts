@@ -26,7 +26,7 @@ const boardSelect = {
   },
 
   createdAt: true,
-  updatedA: true,
+  updatedAt: true,
 } as const;
 
 export async function createfBoard(input: CreateBoardInput) {

@@ -65,6 +65,7 @@ CREATE TABLE "Business" (
 CREATE TABLE "Board" (
     "id" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "country" TEXT,
     "state" TEXT,
