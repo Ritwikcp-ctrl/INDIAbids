@@ -18,6 +18,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes";
 import categoryRoutes from "./modules/categories/category.routes";
 import businessRoutes from "./modules/businesses/business.routes";
+import boardRoutes from "./modules/boards/board.routes.js";
 
 const app = express();
 
@@ -87,6 +88,8 @@ app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
+
+app.use("/api/v1/boards", boardRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
