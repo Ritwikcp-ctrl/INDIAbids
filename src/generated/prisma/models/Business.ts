@@ -255,7 +255,7 @@ export type BusinessWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  Category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
+  category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   memberships?: Prisma.BoardMembershipListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   clicks?: Prisma.ClickListRelationFilter
@@ -277,7 +277,7 @@ export type BusinessOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
-  Category?: Prisma.CategoryOrderByWithRelationInput
+  category?: Prisma.CategoryOrderByWithRelationInput
   memberships?: Prisma.BoardMembershipOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   clicks?: Prisma.ClickOrderByRelationAggregateInput
@@ -302,7 +302,7 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  Category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
+  category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   memberships?: Prisma.BoardMembershipListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   clicks?: Prisma.ClickListRelationFilter
@@ -362,7 +362,7 @@ export type BusinessCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
-  Category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
+  category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
@@ -402,7 +402,7 @@ export type BusinessUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
-  Category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
@@ -686,7 +686,7 @@ export type BusinessCreateWithoutOwnerInput = {
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  Category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
+  category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
@@ -835,7 +835,7 @@ export type BusinessCreateWithoutMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
-  Category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
+  category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
 }
@@ -889,7 +889,7 @@ export type BusinessUpdateWithoutMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
-  Category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
 }
@@ -927,7 +927,7 @@ export type BusinessCreateWithoutPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
-  Category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
+  category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
 }
@@ -981,7 +981,7 @@ export type BusinessUpdateWithoutPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
-  Category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
 }
@@ -1019,7 +1019,7 @@ export type BusinessCreateWithoutClicksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
-  Category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
+  category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
 }
@@ -1073,7 +1073,7 @@ export type BusinessUpdateWithoutClicksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
-  Category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
 }
@@ -1126,7 +1126,7 @@ export type BusinessUpdateWithoutOwnerInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
@@ -1302,7 +1302,7 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
   payments?: boolean | Prisma.Business$paymentsArgs<ExtArgs>
   clicks?: boolean | Prisma.Business$clicksArgs<ExtArgs>
@@ -1325,7 +1325,7 @@ export type BusinessSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
 export type BusinessSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1344,7 +1344,7 @@ export type BusinessSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
 export type BusinessSelectScalar = {
@@ -1367,7 +1367,7 @@ export type BusinessSelectScalar = {
 export type BusinessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "categoryId" | "name" | "slug" | "description" | "website" | "logoUrl" | "country" | "state" | "city" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["business"]>
 export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
   payments?: boolean | Prisma.Business$paymentsArgs<ExtArgs>
   clicks?: boolean | Prisma.Business$clicksArgs<ExtArgs>
@@ -1375,18 +1375,18 @@ export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 export type BusinessIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }
 export type BusinessIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  Category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }
 
 export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Business"
   objects: {
     owner: Prisma.$UserPayload<ExtArgs>
-    Category: Prisma.$CategoryPayload<ExtArgs>
+    category: Prisma.$CategoryPayload<ExtArgs>
     memberships: Prisma.$BoardMembershipPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     clicks: Prisma.$ClickPayload<ExtArgs>[]
@@ -1801,7 +1801,7 @@ readonly fields: BusinessFieldRefs;
 export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  Category<T extends Prisma.CategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  category<T extends Prisma.CategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   memberships<T extends Prisma.Business$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.Business$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   clicks<T extends Prisma.Business$clicksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$clicksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>

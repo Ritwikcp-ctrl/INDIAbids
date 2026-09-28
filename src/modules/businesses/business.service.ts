@@ -38,7 +38,7 @@ const businessSelect = {
   },
 
   createdAt: true,
-  updateAt: true,
+  updatedAt: true,
 } as const;
 
 // type CreateBusinessInput = {

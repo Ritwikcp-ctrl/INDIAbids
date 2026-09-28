@@ -126,6 +126,7 @@ export type BusinessScalarFieldEnum = (typeof BusinessScalarFieldEnum)[keyof typ
 export const BoardScalarFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
+  key: 'key',
   name: 'name',
   country: 'country',
   state: 'state',

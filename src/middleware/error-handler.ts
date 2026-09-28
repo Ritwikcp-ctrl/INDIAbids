@@ -6,6 +6,8 @@ import type {
 } from "express";
 
 import { ZodError } from "zod";
+
+import { env } from "../config/env";
 import { logger } from "../lib/logger";
 import { AppError } from "../lib/app-error";
 
@@ -13,11 +15,12 @@ export const errorHandler: ErrorRequestHandler = (
   error: unknown,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction,
 ): void => {
   if (res.headersSent) {
     return;
   }
+
   if (error instanceof ZodError) {
     res.status(400).json({
       success: false,
@@ -31,17 +34,19 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  if(error instanceof AppError) {
+  if (error instanceof AppError) {
     res.status(error.statusCode).json({
-      success:false,
-      error:{
-        code:error.code,
-        message:error.message,
-        ...(error.details ? 
-          {details:error.details} : {}
-        ),
+      success: false,
+      error: {
+        code: error.code,
+        message: error.message,
+        ...(error.details !== undefined
+          ? { details: error.details }
+          : {}),
       },
     });
+
+    return;
   }
 
   logger.error(
@@ -51,14 +56,34 @@ export const errorHandler: ErrorRequestHandler = (
       path: req.originalUrl,
       requestId: res.locals.requestId,
     },
-    "Unhandled request error"
+    "Unhandled request error",
   );
+
+  const developmentError =
+    env.NODE_ENV !== "production" &&
+    error instanceof Error
+      ? {
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        }
+      : undefined;
 
   res.status(500).json({
     success: false,
     error: {
       code: "INTERNAL_SERVER_ERROR",
-      message: "An unexpected error occured",
+      message:
+        env.NODE_ENV !== "production"
+          ? developmentError?.message ??
+            "An unexpected error occurred."
+          : "An unexpected error occurred.",
+      ...(env.NODE_ENV !== "production" &&
+      developmentError
+        ? {
+            details: developmentError,
+          }
+        : {}),
     },
   });
 };

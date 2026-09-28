@@ -87,17 +87,17 @@ model Business {
   slug        String  @unique
   description String?
 
-  website String
-  logoUrl String
+  website String?
+  logoUrl String?
 
   country String
-  state   String
-  city    String
+  state   String?
+  city    String?
 
   status BusinessStatus @default(PENDING)
 
   owner    User     @relation(fields: [ownerId], references: [id])
-  Category Category @relation(fields: [categoryId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
 
   memberships BoardMembership[]
   payments    Payment[]
@@ -115,8 +115,9 @@ model Business {
 model Board {
   id         String @id @default(uuid())
   categoryId String
+  key        String @unique
+  name       String
 
-  name    String
   country String?
   state   String?
   city    String?
@@ -133,6 +134,7 @@ model Board {
 
   @@index([categoryId])
   @@index([country, state, city])
+  @@index([status])
 }
 
 model BoardMembership {
