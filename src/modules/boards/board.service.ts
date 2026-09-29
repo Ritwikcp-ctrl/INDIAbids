@@ -56,12 +56,6 @@ export async function createfBoard(input: CreateBoardInput) {
     state: input.state,
     city: input.city,
   });
-  // const nameparts = [
-  //    category.name,
-  //    input.city,
-  //    input.state,
-  //    input.country === "IN"? "India":input.country,
-  // ].filter(Boolean);
 
   const name = input.city
     ? `${category.name}-${input.city}`
@@ -163,4 +157,13 @@ export async function getBoardByKey(key: string) {
   }
 
   return board;
+}
+
+export function hasPrismaErrorCode(error: unknown): error is { code: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+  );
 }
