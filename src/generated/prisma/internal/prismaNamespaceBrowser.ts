@@ -131,6 +131,8 @@ export const BoardScalarFieldEnum = {
   country: 'country',
   state: 'state',
   city: 'city',
+  minBidPaise: 'minBidPaise',
+  bidIncrementPaise: 'bidIncrementPaise',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -143,6 +145,8 @@ export const BoardMembershipScalarFieldEnum = {
   id: 'id',
   businessId: 'businessId',
   boardId: 'boardId',
+  totalSpendPaise: 'totalSpendPaise',
+  lastBidAt: 'lastBidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

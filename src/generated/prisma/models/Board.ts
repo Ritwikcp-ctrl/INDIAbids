@@ -20,8 +20,20 @@ export type BoardModel = runtime.Types.Result.DefaultSelection<Prisma.$BoardPayl
 
 export type AggregateBoard = {
   _count: BoardCountAggregateOutputType | null
+  _avg: BoardAvgAggregateOutputType | null
+  _sum: BoardSumAggregateOutputType | null
   _min: BoardMinAggregateOutputType | null
   _max: BoardMaxAggregateOutputType | null
+}
+
+export type BoardAvgAggregateOutputType = {
+  minBidPaise: number | null
+  bidIncrementPaise: number | null
+}
+
+export type BoardSumAggregateOutputType = {
+  minBidPaise: bigint | null
+  bidIncrementPaise: bigint | null
 }
 
 export type BoardMinAggregateOutputType = {
@@ -32,6 +44,8 @@ export type BoardMinAggregateOutputType = {
   country: string | null
   state: string | null
   city: string | null
+  minBidPaise: bigint | null
+  bidIncrementPaise: bigint | null
   status: $Enums.BoardStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -45,6 +59,8 @@ export type BoardMaxAggregateOutputType = {
   country: string | null
   state: string | null
   city: string | null
+  minBidPaise: bigint | null
+  bidIncrementPaise: bigint | null
   status: $Enums.BoardStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -58,12 +74,24 @@ export type BoardCountAggregateOutputType = {
   country: number
   state: number
   city: number
+  minBidPaise: number
+  bidIncrementPaise: number
   status: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type BoardAvgAggregateInputType = {
+  minBidPaise?: true
+  bidIncrementPaise?: true
+}
+
+export type BoardSumAggregateInputType = {
+  minBidPaise?: true
+  bidIncrementPaise?: true
+}
 
 export type BoardMinAggregateInputType = {
   id?: true
@@ -73,6 +101,8 @@ export type BoardMinAggregateInputType = {
   country?: true
   state?: true
   city?: true
+  minBidPaise?: true
+  bidIncrementPaise?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -86,6 +116,8 @@ export type BoardMaxAggregateInputType = {
   country?: true
   state?: true
   city?: true
+  minBidPaise?: true
+  bidIncrementPaise?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +131,8 @@ export type BoardCountAggregateInputType = {
   country?: true
   state?: true
   city?: true
+  minBidPaise?: true
+  bidIncrementPaise?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -143,6 +177,18 @@ export type BoardAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BoardAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BoardSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BoardMinAggregateInputType
@@ -173,6 +219,8 @@ export type BoardGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: BoardCountAggregateInputType | true
+  _avg?: BoardAvgAggregateInputType
+  _sum?: BoardSumAggregateInputType
   _min?: BoardMinAggregateInputType
   _max?: BoardMaxAggregateInputType
 }
@@ -185,10 +233,14 @@ export type BoardGroupByOutputType = {
   country: string | null
   state: string | null
   city: string | null
+  minBidPaise: bigint
+  bidIncrementPaise: bigint
   status: $Enums.BoardStatus
   createdAt: Date
   updatedAt: Date
   _count: BoardCountAggregateOutputType | null
+  _avg: BoardAvgAggregateOutputType | null
+  _sum: BoardSumAggregateOutputType | null
   _min: BoardMinAggregateOutputType | null
   _max: BoardMaxAggregateOutputType | null
 }
@@ -219,6 +271,8 @@ export type BoardWhereInput = {
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
+  minBidPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
   status?: Prisma.EnumBoardStatusFilter<"Board"> | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -235,6 +289,8 @@ export type BoardOrderByWithRelationInput = {
   country?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -254,6 +310,8 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
+  minBidPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
   status?: Prisma.EnumBoardStatusFilter<"Board"> | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -270,12 +328,16 @@ export type BoardOrderByWithAggregationInput = {
   country?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BoardCountOrderByAggregateInput
+  _avg?: Prisma.BoardAvgOrderByAggregateInput
   _max?: Prisma.BoardMaxOrderByAggregateInput
   _min?: Prisma.BoardMinOrderByAggregateInput
+  _sum?: Prisma.BoardSumOrderByAggregateInput
 }
 
 export type BoardScalarWhereWithAggregatesInput = {
@@ -289,6 +351,8 @@ export type BoardScalarWhereWithAggregatesInput = {
   country?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   state?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   city?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
+  minBidPaise?: Prisma.BigIntWithAggregatesFilter<"Board"> | bigint | number
+  bidIncrementPaise?: Prisma.BigIntWithAggregatesFilter<"Board"> | bigint | number
   status?: Prisma.EnumBoardStatusWithAggregatesFilter<"Board"> | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
@@ -301,6 +365,8 @@ export type BoardCreateInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -317,6 +383,8 @@ export type BoardUncheckedCreateInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -331,6 +399,8 @@ export type BoardUpdateInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +417,8 @@ export type BoardUncheckedUpdateInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -362,6 +434,8 @@ export type BoardCreateManyInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -374,6 +448,8 @@ export type BoardUpdateManyMutationInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,6 +463,8 @@ export type BoardUncheckedUpdateManyInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -410,9 +488,16 @@ export type BoardCountOrderByAggregateInput = {
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoardAvgOrderByAggregateInput = {
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
 }
 
 export type BoardMaxOrderByAggregateInput = {
@@ -423,6 +508,8 @@ export type BoardMaxOrderByAggregateInput = {
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -436,9 +523,16 @@ export type BoardMinOrderByAggregateInput = {
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoardSumOrderByAggregateInput = {
+  minBidPaise?: Prisma.SortOrder
+  bidIncrementPaise?: Prisma.SortOrder
 }
 
 export type BoardScalarRelationFilter = {
@@ -488,6 +582,14 @@ export type BoardUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.BoardScalarWhereInput | Prisma.BoardScalarWhereInput[]
 }
 
+export type BigIntFieldUpdateOperationsInput = {
+  set?: bigint | number
+  increment?: bigint | number
+  decrement?: bigint | number
+  multiply?: bigint | number
+  divide?: bigint | number
+}
+
 export type EnumBoardStatusFieldUpdateOperationsInput = {
   set?: $Enums.BoardStatus
 }
@@ -527,6 +629,8 @@ export type BoardCreateWithoutCategoryInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -541,6 +645,8 @@ export type BoardUncheckedCreateWithoutCategoryInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -585,6 +691,8 @@ export type BoardScalarWhereInput = {
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
+  minBidPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFilter<"Board"> | bigint | number
   status?: Prisma.EnumBoardStatusFilter<"Board"> | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -597,6 +705,8 @@ export type BoardCreateWithoutMembershipsInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -612,6 +722,8 @@ export type BoardUncheckedCreateWithoutMembershipsInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -641,6 +753,8 @@ export type BoardUpdateWithoutMembershipsInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -656,6 +770,8 @@ export type BoardUncheckedUpdateWithoutMembershipsInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -669,6 +785,8 @@ export type BoardCreateWithoutClicksInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -684,6 +802,8 @@ export type BoardUncheckedCreateWithoutClicksInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -713,6 +833,8 @@ export type BoardUpdateWithoutClicksInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -728,6 +850,8 @@ export type BoardUncheckedUpdateWithoutClicksInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -741,6 +865,8 @@ export type BoardCreateManyCategoryInput = {
   country?: string | null
   state?: string | null
   city?: string | null
+  minBidPaise?: bigint | number
+  bidIncrementPaise?: bigint | number
   status?: $Enums.BoardStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -753,6 +879,8 @@ export type BoardUpdateWithoutCategoryInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -767,6 +895,8 @@ export type BoardUncheckedUpdateWithoutCategoryInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -781,6 +911,8 @@ export type BoardUncheckedUpdateManyWithoutCategoryInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minBidPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  bidIncrementPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.EnumBoardStatusFieldUpdateOperationsInput | $Enums.BoardStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -834,6 +966,8 @@ export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   country?: boolean
   state?: boolean
   city?: boolean
+  minBidPaise?: boolean
+  bidIncrementPaise?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -851,6 +985,8 @@ export type BoardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   country?: boolean
   state?: boolean
   city?: boolean
+  minBidPaise?: boolean
+  bidIncrementPaise?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -865,6 +1001,8 @@ export type BoardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   country?: boolean
   state?: boolean
   city?: boolean
+  minBidPaise?: boolean
+  bidIncrementPaise?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -879,12 +1017,14 @@ export type BoardSelectScalar = {
   country?: boolean
   state?: boolean
   city?: boolean
+  minBidPaise?: boolean
+  bidIncrementPaise?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "key" | "name" | "country" | "state" | "city" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
+export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "key" | "name" | "country" | "state" | "city" | "minBidPaise" | "bidIncrementPaise" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
 export type BoardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Board$membershipsArgs<ExtArgs>
@@ -913,6 +1053,8 @@ export type $BoardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     country: string | null
     state: string | null
     city: string | null
+    minBidPaise: bigint
+    bidIncrementPaise: bigint
     status: $Enums.BoardStatus
     createdAt: Date
     updatedAt: Date
@@ -1349,6 +1491,8 @@ export interface BoardFieldRefs {
   readonly country: Prisma.FieldRef<"Board", 'String'>
   readonly state: Prisma.FieldRef<"Board", 'String'>
   readonly city: Prisma.FieldRef<"Board", 'String'>
+  readonly minBidPaise: Prisma.FieldRef<"Board", 'BigInt'>
+  readonly bidIncrementPaise: Prisma.FieldRef<"Board", 'BigInt'>
   readonly status: Prisma.FieldRef<"Board", 'BoardStatus'>
   readonly createdAt: Prisma.FieldRef<"Board", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Board", 'DateTime'>

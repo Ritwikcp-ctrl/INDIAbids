@@ -15,6 +15,9 @@ const boardSelect = {
   state: true,
   city: true,
 
+  minBidPaise: true,
+  bidIncrementPaise: true,
+
   status: true,
 
   category: {

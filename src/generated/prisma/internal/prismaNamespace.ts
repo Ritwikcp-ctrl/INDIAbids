@@ -1183,6 +1183,8 @@ export const BoardScalarFieldEnum = {
   country: 'country',
   state: 'state',
   city: 'city',
+  minBidPaise: 'minBidPaise',
+  bidIncrementPaise: 'bidIncrementPaise',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1195,6 +1197,8 @@ export const BoardMembershipScalarFieldEnum = {
   id: 'id',
   businessId: 'businessId',
   boardId: 'boardId',
+  totalSpendPaise: 'totalSpendPaise',
+  lastBidAt: 'lastBidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1354,20 +1358,6 @@ export type ListEnumBusinessStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
- * Reference to a field of type 'BoardStatus'
- */
-export type EnumBoardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardStatus'>
-    
-
-
-/**
- * Reference to a field of type 'BoardStatus[]'
- */
-export type ListEnumBoardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'BigInt'
  */
 export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
@@ -1378,6 +1368,20 @@ export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'BigInt[]'
  */
 export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BoardStatus'
+ */
+export type EnumBoardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BoardStatus[]'
+ */
+export type ListEnumBoardStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardStatus[]'>
     
 
 

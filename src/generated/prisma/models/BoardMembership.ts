@@ -20,14 +20,26 @@ export type BoardMembershipModel = runtime.Types.Result.DefaultSelection<Prisma.
 
 export type AggregateBoardMembership = {
   _count: BoardMembershipCountAggregateOutputType | null
+  _avg: BoardMembershipAvgAggregateOutputType | null
+  _sum: BoardMembershipSumAggregateOutputType | null
   _min: BoardMembershipMinAggregateOutputType | null
   _max: BoardMembershipMaxAggregateOutputType | null
+}
+
+export type BoardMembershipAvgAggregateOutputType = {
+  totalSpendPaise: number | null
+}
+
+export type BoardMembershipSumAggregateOutputType = {
+  totalSpendPaise: bigint | null
 }
 
 export type BoardMembershipMinAggregateOutputType = {
   id: string | null
   businessId: string | null
   boardId: string | null
+  totalSpendPaise: bigint | null
+  lastBidAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +48,8 @@ export type BoardMembershipMaxAggregateOutputType = {
   id: string | null
   businessId: string | null
   boardId: string | null
+  totalSpendPaise: bigint | null
+  lastBidAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,16 +58,28 @@ export type BoardMembershipCountAggregateOutputType = {
   id: number
   businessId: number
   boardId: number
+  totalSpendPaise: number
+  lastBidAt: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type BoardMembershipAvgAggregateInputType = {
+  totalSpendPaise?: true
+}
+
+export type BoardMembershipSumAggregateInputType = {
+  totalSpendPaise?: true
+}
+
 export type BoardMembershipMinAggregateInputType = {
   id?: true
   businessId?: true
   boardId?: true
+  totalSpendPaise?: true
+  lastBidAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +88,8 @@ export type BoardMembershipMaxAggregateInputType = {
   id?: true
   businessId?: true
   boardId?: true
+  totalSpendPaise?: true
+  lastBidAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +98,8 @@ export type BoardMembershipCountAggregateInputType = {
   id?: true
   businessId?: true
   boardId?: true
+  totalSpendPaise?: true
+  lastBidAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -113,6 +143,18 @@ export type BoardMembershipAggregateArgs<ExtArgs extends runtime.Types.Extension
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BoardMembershipAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BoardMembershipSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BoardMembershipMinAggregateInputType
@@ -143,6 +185,8 @@ export type BoardMembershipGroupByArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   _count?: BoardMembershipCountAggregateInputType | true
+  _avg?: BoardMembershipAvgAggregateInputType
+  _sum?: BoardMembershipSumAggregateInputType
   _min?: BoardMembershipMinAggregateInputType
   _max?: BoardMembershipMaxAggregateInputType
 }
@@ -151,9 +195,13 @@ export type BoardMembershipGroupByOutputType = {
   id: string
   businessId: string
   boardId: string
+  totalSpendPaise: bigint
+  lastBidAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: BoardMembershipCountAggregateOutputType | null
+  _avg: BoardMembershipAvgAggregateOutputType | null
+  _sum: BoardMembershipSumAggregateOutputType | null
   _min: BoardMembershipMinAggregateOutputType | null
   _max: BoardMembershipMaxAggregateOutputType | null
 }
@@ -180,6 +228,8 @@ export type BoardMembershipWhereInput = {
   id?: Prisma.StringFilter<"BoardMembership"> | string
   businessId?: Prisma.StringFilter<"BoardMembership"> | string
   boardId?: Prisma.StringFilter<"BoardMembership"> | string
+  totalSpendPaise?: Prisma.BigIntFilter<"BoardMembership"> | bigint | number
+  lastBidAt?: Prisma.DateTimeNullableFilter<"BoardMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
@@ -191,6 +241,8 @@ export type BoardMembershipOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  totalSpendPaise?: Prisma.SortOrder
+  lastBidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   business?: Prisma.BusinessOrderByWithRelationInput
@@ -206,6 +258,8 @@ export type BoardMembershipWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.BoardMembershipWhereInput[]
   NOT?: Prisma.BoardMembershipWhereInput | Prisma.BoardMembershipWhereInput[]
   businessId?: Prisma.StringFilter<"BoardMembership"> | string
+  totalSpendPaise?: Prisma.BigIntFilter<"BoardMembership"> | bigint | number
+  lastBidAt?: Prisma.DateTimeNullableFilter<"BoardMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
@@ -217,11 +271,15 @@ export type BoardMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  totalSpendPaise?: Prisma.SortOrder
+  lastBidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BoardMembershipCountOrderByAggregateInput
+  _avg?: Prisma.BoardMembershipAvgOrderByAggregateInput
   _max?: Prisma.BoardMembershipMaxOrderByAggregateInput
   _min?: Prisma.BoardMembershipMinOrderByAggregateInput
+  _sum?: Prisma.BoardMembershipSumOrderByAggregateInput
 }
 
 export type BoardMembershipScalarWhereWithAggregatesInput = {
@@ -231,12 +289,16 @@ export type BoardMembershipScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"BoardMembership"> | string
   businessId?: Prisma.StringWithAggregatesFilter<"BoardMembership"> | string
   boardId?: Prisma.StringWithAggregatesFilter<"BoardMembership"> | string
+  totalSpendPaise?: Prisma.BigIntWithAggregatesFilter<"BoardMembership"> | bigint | number
+  lastBidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BoardMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BoardMembership"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BoardMembership"> | Date | string
 }
 
 export type BoardMembershipCreateInput = {
   id?: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
@@ -248,6 +310,8 @@ export type BoardMembershipUncheckedCreateInput = {
   id?: string
   businessId: string
   boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
@@ -255,6 +319,8 @@ export type BoardMembershipUncheckedCreateInput = {
 
 export type BoardMembershipUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
@@ -266,6 +332,8 @@ export type BoardMembershipUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
@@ -275,12 +343,16 @@ export type BoardMembershipCreateManyInput = {
   id?: string
   businessId: string
   boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BoardMembershipUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -289,6 +361,8 @@ export type BoardMembershipUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -312,14 +386,22 @@ export type BoardMembershipCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  totalSpendPaise?: Prisma.SortOrder
+  lastBidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoardMembershipAvgOrderByAggregateInput = {
+  totalSpendPaise?: Prisma.SortOrder
 }
 
 export type BoardMembershipMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  totalSpendPaise?: Prisma.SortOrder
+  lastBidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -328,8 +410,14 @@ export type BoardMembershipMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   businessId?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  totalSpendPaise?: Prisma.SortOrder
+  lastBidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoardMembershipSumOrderByAggregateInput = {
+  totalSpendPaise?: Prisma.SortOrder
 }
 
 export type BoardMembershipScalarRelationFilter = {
@@ -421,6 +509,10 @@ export type BoardMembershipUncheckedUpdateManyWithoutBoardNestedInput = {
   deleteMany?: Prisma.BoardMembershipScalarWhereInput | Prisma.BoardMembershipScalarWhereInput[]
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type BoardMembershipCreateNestedOneWithoutBidsInput = {
   create?: Prisma.XOR<Prisma.BoardMembershipCreateWithoutBidsInput, Prisma.BoardMembershipUncheckedCreateWithoutBidsInput>
   connectOrCreate?: Prisma.BoardMembershipCreateOrConnectWithoutBidsInput
@@ -437,6 +529,8 @@ export type BoardMembershipUpdateOneRequiredWithoutBidsNestedInput = {
 
 export type BoardMembershipCreateWithoutBusinessInput = {
   id?: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutMembershipsInput
@@ -446,6 +540,8 @@ export type BoardMembershipCreateWithoutBusinessInput = {
 export type BoardMembershipUncheckedCreateWithoutBusinessInput = {
   id?: string
   boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
@@ -484,12 +580,16 @@ export type BoardMembershipScalarWhereInput = {
   id?: Prisma.StringFilter<"BoardMembership"> | string
   businessId?: Prisma.StringFilter<"BoardMembership"> | string
   boardId?: Prisma.StringFilter<"BoardMembership"> | string
+  totalSpendPaise?: Prisma.BigIntFilter<"BoardMembership"> | bigint | number
+  lastBidAt?: Prisma.DateTimeNullableFilter<"BoardMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
 }
 
 export type BoardMembershipCreateWithoutBoardInput = {
   id?: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
@@ -499,6 +599,8 @@ export type BoardMembershipCreateWithoutBoardInput = {
 export type BoardMembershipUncheckedCreateWithoutBoardInput = {
   id?: string
   businessId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
@@ -532,6 +634,8 @@ export type BoardMembershipUpdateManyWithWhereWithoutBoardInput = {
 
 export type BoardMembershipCreateWithoutBidsInput = {
   id?: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
@@ -542,6 +646,8 @@ export type BoardMembershipUncheckedCreateWithoutBidsInput = {
   id?: string
   businessId: string
   boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -564,6 +670,8 @@ export type BoardMembershipUpdateToOneWithWhereWithoutBidsInput = {
 
 export type BoardMembershipUpdateWithoutBidsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
@@ -574,6 +682,8 @@ export type BoardMembershipUncheckedUpdateWithoutBidsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -581,12 +691,16 @@ export type BoardMembershipUncheckedUpdateWithoutBidsInput = {
 export type BoardMembershipCreateManyBusinessInput = {
   id?: string
   boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BoardMembershipUpdateWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutMembershipsNestedInput
@@ -596,6 +710,8 @@ export type BoardMembershipUpdateWithoutBusinessInput = {
 export type BoardMembershipUncheckedUpdateWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
@@ -604,6 +720,8 @@ export type BoardMembershipUncheckedUpdateWithoutBusinessInput = {
 export type BoardMembershipUncheckedUpdateManyWithoutBusinessInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -611,12 +729,16 @@ export type BoardMembershipUncheckedUpdateManyWithoutBusinessInput = {
 export type BoardMembershipCreateManyBoardInput = {
   id?: string
   businessId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BoardMembershipUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
@@ -626,6 +748,8 @@ export type BoardMembershipUpdateWithoutBoardInput = {
 export type BoardMembershipUncheckedUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
@@ -634,6 +758,8 @@ export type BoardMembershipUncheckedUpdateWithoutBoardInput = {
 export type BoardMembershipUncheckedUpdateManyWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   businessId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -673,6 +799,8 @@ export type BoardMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   businessId?: boolean
   boardId?: boolean
+  totalSpendPaise?: boolean
+  lastBidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -685,6 +813,8 @@ export type BoardMembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   businessId?: boolean
   boardId?: boolean
+  totalSpendPaise?: boolean
+  lastBidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -695,6 +825,8 @@ export type BoardMembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   businessId?: boolean
   boardId?: boolean
+  totalSpendPaise?: boolean
+  lastBidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
@@ -705,11 +837,13 @@ export type BoardMembershipSelectScalar = {
   id?: boolean
   businessId?: boolean
   boardId?: boolean
+  totalSpendPaise?: boolean
+  lastBidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BoardMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "boardId" | "createdAt" | "updatedAt", ExtArgs["result"]["boardMembership"]>
+export type BoardMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "businessId" | "boardId" | "totalSpendPaise" | "lastBidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["boardMembership"]>
 export type BoardMembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
@@ -736,6 +870,8 @@ export type $BoardMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
     id: string
     businessId: string
     boardId: string
+    totalSpendPaise: bigint
+    lastBidAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["boardMembership"]>
@@ -1167,6 +1303,8 @@ export interface BoardMembershipFieldRefs {
   readonly id: Prisma.FieldRef<"BoardMembership", 'String'>
   readonly businessId: Prisma.FieldRef<"BoardMembership", 'String'>
   readonly boardId: Prisma.FieldRef<"BoardMembership", 'String'>
+  readonly totalSpendPaise: Prisma.FieldRef<"BoardMembership", 'BigInt'>
+  readonly lastBidAt: Prisma.FieldRef<"BoardMembership", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BoardMembership", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BoardMembership", 'DateTime'>
 }

@@ -122,6 +122,9 @@ model Board {
   state   String?
   city    String?
 
+  minBidPaise       BigInt @default(10000)
+  bidIncrementPaise BigInt @default(100)
+
   status BoardStatus @default(ACTIVE)
 
   category Category @relation(fields: [categoryId], references: [id])
@@ -142,6 +145,9 @@ model BoardMembership {
 
   businessId String
   boardId    String
+
+  totalSpendPaise BigInt    @default(0)
+  lastBidAt       DateTime?
 
   business Business @relation(fields: [businessId], references: [id])
   board    Board    @relation(fields: [boardId], references: [id])
