@@ -6,6 +6,13 @@ import { createBoard, listBoards, getBoardByKey } from "./board.controller";
 import { requireAuth } from "../../middleware/require-auth";
 import { requireRole } from "../../middleware/require-role";
 
+
+import {
+  joinBoard,
+} from "./membership.controller";
+
+
+
 const router = Router();
 
 const createBoardLimiter = rateLimit({
@@ -23,6 +30,32 @@ const createBoardLimiter = rateLimit({
     },
   },
 });
+
+const membershipLimiter =
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+
+    standardHeaders: true,
+    legacyHeaders: false,
+
+    message: {
+      success: false,
+      error: {
+        code: "RATE_LIMITED",
+        message:
+          "Too many board membership requests.",
+      },
+    },
+  });
+
+
+  router.post(
+  "/:boardId/memberships",
+  requireAuth,
+  membershipLimiter,
+  joinBoard,
+);
 
 /*
  * Admin-only mutation.
