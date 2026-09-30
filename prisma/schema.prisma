@@ -40,6 +40,7 @@ enum PaymentStatus {
   PENDING
   SUCCEEDED
   FAILED
+  REFUND_PENDING
   REFUNDED
 }
 
@@ -47,6 +48,11 @@ enum BidStatus {
   PENDING
   ACTIVE
   REVERSED
+}
+
+enum WebhookEventStatus {
+  PROCESSED
+  IGNORED
 }
 
 model User {
@@ -58,6 +64,7 @@ model User {
 
   businesses Business[]
   sessions   AuthSession[]
+  payments   Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -152,7 +159,8 @@ model BoardMembership {
   business Business @relation(fields: [businessId], references: [id])
   board    Board    @relation(fields: [boardId], references: [id])
 
-  bids Bid[]
+  bids     Bid[]
+  payments Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -163,27 +171,49 @@ model BoardMembership {
 }
 
 model Payment {
-  id         String @id @default(uuid())
-  businessId String
+  id String @id @default(uuid())
+
+  businessId    String
+  membershipId  String
+  initiatedById String
 
   provider          String
+  providerOrderId   String?
   providerPaymentId String?
+
+  idempotencyKey String @unique
 
   amountPaise BigInt
   currency    String @default("INR")
 
   status PaymentStatus @default(CREATED)
 
+  failureReason String?
+
+  providerRefundId String?
+  refundReason     String?
+  refundedAt       DateTime?
+
+  expiresAt DateTime?
+
   business Business @relation(fields: [businessId], references: [id])
+
+  membership BoardMembership @relation(fields: [membershipId], references: [id])
+
+  initiatedBy User @relation(fields: [initiatedById], references: [id])
 
   bid Bid?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([provider, providerOrderId])
   @@unique([provider, providerPaymentId])
   @@index([businessId])
+  @@index([membershipId])
+  @@index([initiatedById])
   @@index([status])
+  @@index([expiresAt])
 }
 
 model Bid {
@@ -196,7 +226,8 @@ model Bid {
   status      BidStatus @default(PENDING)
 
   membership BoardMembership @relation(fields: [membershipId], references: [id])
-  payment    Payment         @relation(fields: [paymentId], references: [id])
+
+  payment Payment @relation(fields: [paymentId], references: [id])
 
   createdAt DateTime @default(now())
 
@@ -235,4 +266,24 @@ model AuthSession {
   @@index([userId])
   @@index([familyId])
   @@index([expiresAt])
+}
+
+model PaymentWebhookEvent {
+  id String @id @default(uuid())
+
+  provider  String
+  eventId   String
+  eventType String
+
+  providerOrderId   String?
+  providerPaymentId String?
+
+  status WebhookEventStatus
+
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([provider, eventId])
+  @@index([providerOrderId])
+  @@index([providerPaymentId])
 }

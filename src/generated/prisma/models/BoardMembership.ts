@@ -235,6 +235,7 @@ export type BoardMembershipWhereInput = {
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
   bids?: Prisma.BidListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
 }
 
 export type BoardMembershipOrderByWithRelationInput = {
@@ -248,6 +249,7 @@ export type BoardMembershipOrderByWithRelationInput = {
   business?: Prisma.BusinessOrderByWithRelationInput
   board?: Prisma.BoardOrderByWithRelationInput
   bids?: Prisma.BidOrderByRelationAggregateInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
 }
 
 export type BoardMembershipWhereUniqueInput = Prisma.AtLeast<{
@@ -265,6 +267,7 @@ export type BoardMembershipWhereUniqueInput = Prisma.AtLeast<{
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.BusinessWhereInput>
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
   bids?: Prisma.BidListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
 }, "id" | "businessId_boardId" | "boardId">
 
 export type BoardMembershipOrderByWithAggregationInput = {
@@ -304,6 +307,7 @@ export type BoardMembershipCreateInput = {
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
   board: Prisma.BoardCreateNestedOneWithoutMembershipsInput
   bids?: Prisma.BidCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipUncheckedCreateInput = {
@@ -315,6 +319,7 @@ export type BoardMembershipUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipUpdateInput = {
@@ -326,6 +331,7 @@ export type BoardMembershipUpdateInput = {
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
   board?: Prisma.BoardUpdateOneRequiredWithoutMembershipsNestedInput
   bids?: Prisma.BidUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateInput = {
@@ -337,6 +343,7 @@ export type BoardMembershipUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipCreateManyInput = {
@@ -513,6 +520,20 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type BoardMembershipCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.BoardMembershipCreateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.BoardMembershipCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.BoardMembershipWhereUniqueInput
+}
+
+export type BoardMembershipUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BoardMembershipCreateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.BoardMembershipCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.BoardMembershipUpsertWithoutPaymentsInput
+  connect?: Prisma.BoardMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BoardMembershipUpdateToOneWithWhereWithoutPaymentsInput, Prisma.BoardMembershipUpdateWithoutPaymentsInput>, Prisma.BoardMembershipUncheckedUpdateWithoutPaymentsInput>
+}
+
 export type BoardMembershipCreateNestedOneWithoutBidsInput = {
   create?: Prisma.XOR<Prisma.BoardMembershipCreateWithoutBidsInput, Prisma.BoardMembershipUncheckedCreateWithoutBidsInput>
   connectOrCreate?: Prisma.BoardMembershipCreateOrConnectWithoutBidsInput
@@ -535,6 +556,7 @@ export type BoardMembershipCreateWithoutBusinessInput = {
   updatedAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutMembershipsInput
   bids?: Prisma.BidCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipUncheckedCreateWithoutBusinessInput = {
@@ -545,6 +567,7 @@ export type BoardMembershipUncheckedCreateWithoutBusinessInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipCreateOrConnectWithoutBusinessInput = {
@@ -594,6 +617,7 @@ export type BoardMembershipCreateWithoutBoardInput = {
   updatedAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
   bids?: Prisma.BidCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipUncheckedCreateWithoutBoardInput = {
@@ -604,6 +628,7 @@ export type BoardMembershipUncheckedCreateWithoutBoardInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipCreateOrConnectWithoutBoardInput = {
@@ -632,6 +657,66 @@ export type BoardMembershipUpdateManyWithWhereWithoutBoardInput = {
   data: Prisma.XOR<Prisma.BoardMembershipUpdateManyMutationInput, Prisma.BoardMembershipUncheckedUpdateManyWithoutBoardInput>
 }
 
+export type BoardMembershipCreateWithoutPaymentsInput = {
+  id?: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
+  board: Prisma.BoardCreateNestedOneWithoutMembershipsInput
+  bids?: Prisma.BidCreateNestedManyWithoutMembershipInput
+}
+
+export type BoardMembershipUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  businessId: string
+  boardId: string
+  totalSpendPaise?: bigint | number
+  lastBidAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bids?: Prisma.BidUncheckedCreateNestedManyWithoutMembershipInput
+}
+
+export type BoardMembershipCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.BoardMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.BoardMembershipCreateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedCreateWithoutPaymentsInput>
+}
+
+export type BoardMembershipUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.BoardMembershipUpdateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.BoardMembershipCreateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.BoardMembershipWhereInput
+}
+
+export type BoardMembershipUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.BoardMembershipWhereInput
+  data: Prisma.XOR<Prisma.BoardMembershipUpdateWithoutPaymentsInput, Prisma.BoardMembershipUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type BoardMembershipUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
+  board?: Prisma.BoardUpdateOneRequiredWithoutMembershipsNestedInput
+  bids?: Prisma.BidUpdateManyWithoutMembershipNestedInput
+}
+
+export type BoardMembershipUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  businessId?: Prisma.StringFieldUpdateOperationsInput | string
+  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpendPaise?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
+}
+
 export type BoardMembershipCreateWithoutBidsInput = {
   id?: string
   totalSpendPaise?: bigint | number
@@ -640,6 +725,7 @@ export type BoardMembershipCreateWithoutBidsInput = {
   updatedAt?: Date | string
   business: Prisma.BusinessCreateNestedOneWithoutMembershipsInput
   board: Prisma.BoardCreateNestedOneWithoutMembershipsInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipUncheckedCreateWithoutBidsInput = {
@@ -650,6 +736,7 @@ export type BoardMembershipUncheckedCreateWithoutBidsInput = {
   lastBidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type BoardMembershipCreateOrConnectWithoutBidsInput = {
@@ -676,6 +763,7 @@ export type BoardMembershipUpdateWithoutBidsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
   board?: Prisma.BoardUpdateOneRequiredWithoutMembershipsNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateWithoutBidsInput = {
@@ -686,6 +774,7 @@ export type BoardMembershipUncheckedUpdateWithoutBidsInput = {
   lastBidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipCreateManyBusinessInput = {
@@ -705,6 +794,7 @@ export type BoardMembershipUpdateWithoutBusinessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutMembershipsNestedInput
   bids?: Prisma.BidUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateWithoutBusinessInput = {
@@ -715,6 +805,7 @@ export type BoardMembershipUncheckedUpdateWithoutBusinessInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateManyWithoutBusinessInput = {
@@ -743,6 +834,7 @@ export type BoardMembershipUpdateWithoutBoardInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business?: Prisma.BusinessUpdateOneRequiredWithoutMembershipsNestedInput
   bids?: Prisma.BidUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateWithoutBoardInput = {
@@ -753,6 +845,7 @@ export type BoardMembershipUncheckedUpdateWithoutBoardInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bids?: Prisma.BidUncheckedUpdateManyWithoutMembershipNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type BoardMembershipUncheckedUpdateManyWithoutBoardInput = {
@@ -771,10 +864,12 @@ export type BoardMembershipUncheckedUpdateManyWithoutBoardInput = {
 
 export type BoardMembershipCountOutputType = {
   bids: number
+  payments: number
 }
 
 export type BoardMembershipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bids?: boolean | BoardMembershipCountOutputTypeCountBidsArgs
+  payments?: boolean | BoardMembershipCountOutputTypeCountPaymentsArgs
 }
 
 /**
@@ -794,6 +889,13 @@ export type BoardMembershipCountOutputTypeCountBidsArgs<ExtArgs extends runtime.
   where?: Prisma.BidWhereInput
 }
 
+/**
+ * BoardMembershipCountOutputType without action
+ */
+export type BoardMembershipCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
 
 export type BoardMembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -806,6 +908,7 @@ export type BoardMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
   bids?: boolean | Prisma.BoardMembership$bidsArgs<ExtArgs>
+  payments?: boolean | Prisma.BoardMembership$paymentsArgs<ExtArgs>
   _count?: boolean | Prisma.BoardMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["boardMembership"]>
 
@@ -848,6 +951,7 @@ export type BoardMembershipInclude<ExtArgs extends runtime.Types.Extensions.Inte
   business?: boolean | Prisma.BusinessDefaultArgs<ExtArgs>
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
   bids?: boolean | Prisma.BoardMembership$bidsArgs<ExtArgs>
+  payments?: boolean | Prisma.BoardMembership$paymentsArgs<ExtArgs>
   _count?: boolean | Prisma.BoardMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BoardMembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -865,6 +969,7 @@ export type $BoardMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
     business: Prisma.$BusinessPayload<ExtArgs>
     board: Prisma.$BoardPayload<ExtArgs>
     bids: Prisma.$BidPayload<ExtArgs>[]
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1271,6 +1376,7 @@ export interface Prisma__BoardMembershipClient<T, Null = never, ExtArgs extends 
   business<T extends Prisma.BusinessDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BusinessDefaultArgs<ExtArgs>>): Prisma.Prisma__BusinessClient<runtime.Types.Result.GetResult<Prisma.$BusinessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   board<T extends Prisma.BoardDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BoardDefaultArgs<ExtArgs>>): Prisma.Prisma__BoardClient<runtime.Types.Result.GetResult<Prisma.$BoardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   bids<T extends Prisma.BoardMembership$bidsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BoardMembership$bidsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.BoardMembership$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BoardMembership$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1729,6 +1835,30 @@ export type BoardMembership$bidsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.BidScalarFieldEnum | Prisma.BidScalarFieldEnum[]
+}
+
+/**
+ * BoardMembership.payments
+ */
+export type BoardMembership$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
 }
 
 /**

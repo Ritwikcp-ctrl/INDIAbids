@@ -59,7 +59,8 @@ export const ModelName = {
   Payment: 'Payment',
   Bid: 'Bid',
   Click: 'Click',
-  AuthSession: 'AuthSession'
+  AuthSession: 'AuthSession',
+  PaymentWebhookEvent: 'PaymentWebhookEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -157,11 +158,20 @@ export type BoardMembershipScalarFieldEnum = (typeof BoardMembershipScalarFieldE
 export const PaymentScalarFieldEnum = {
   id: 'id',
   businessId: 'businessId',
+  membershipId: 'membershipId',
+  initiatedById: 'initiatedById',
   provider: 'provider',
+  providerOrderId: 'providerOrderId',
   providerPaymentId: 'providerPaymentId',
+  idempotencyKey: 'idempotencyKey',
   amountPaise: 'amountPaise',
   currency: 'currency',
   status: 'status',
+  failureReason: 'failureReason',
+  providerRefundId: 'providerRefundId',
+  refundReason: 'refundReason',
+  refundedAt: 'refundedAt',
+  expiresAt: 'expiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -203,6 +213,21 @@ export const AuthSessionScalarFieldEnum = {
 } as const
 
 export type AuthSessionScalarFieldEnum = (typeof AuthSessionScalarFieldEnum)[keyof typeof AuthSessionScalarFieldEnum]
+
+
+export const PaymentWebhookEventScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  providerOrderId: 'providerOrderId',
+  providerPaymentId: 'providerPaymentId',
+  status: 'status',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentWebhookEventScalarFieldEnum = (typeof PaymentWebhookEventScalarFieldEnum)[keyof typeof PaymentWebhookEventScalarFieldEnum]
 
 
 export const SortOrder = {

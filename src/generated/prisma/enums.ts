@@ -49,6 +49,7 @@ export const PaymentStatus = {
   PENDING: 'PENDING',
   SUCCEEDED: 'SUCCEEDED',
   FAILED: 'FAILED',
+  REFUND_PENDING: 'REFUND_PENDING',
   REFUNDED: 'REFUNDED'
 } as const
 
@@ -62,3 +63,11 @@ export const BidStatus = {
 } as const
 
 export type BidStatus = (typeof BidStatus)[keyof typeof BidStatus]
+
+
+export const WebhookEventStatus = {
+  PROCESSED: 'PROCESSED',
+  IGNORED: 'IGNORED'
+} as const
+
+export type WebhookEventStatus = (typeof WebhookEventStatus)[keyof typeof WebhookEventStatus]

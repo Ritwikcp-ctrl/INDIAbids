@@ -86,3 +86,8 @@ export type Click = Prisma.ClickModel
  * 
  */
 export type AuthSession = Prisma.AuthSessionModel
+/**
+ * Model PaymentWebhookEvent
+ * 
+ */
+export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
