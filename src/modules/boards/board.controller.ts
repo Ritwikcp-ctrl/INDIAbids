@@ -7,7 +7,10 @@ import {
   listBoardsQuerySchema,
 } from "./board.schema";
 
-import * as boardService from "./board.service";
+import * as boardService from "./board.service"
+import {
+  serializeBoard,
+} from "./board.serializer";
 
 export async function createBoard(
   req: Request,
@@ -22,7 +25,7 @@ export async function createBoard(
     res.status(201).json({
       success: true,
       data: {
-        board,
+        board:serializeBoard(board),
       },
     });
   } catch (error) {
@@ -43,7 +46,7 @@ export async function listBoards(
     res.status(200).json({
       success: true,
       data: {
-        boards,
+        boards:boards.map(serializeBoard),
       },
     });
   } catch (error) {
@@ -64,7 +67,7 @@ export async function getBoardByKey(
     res.status(200).json({
       success: true,
       data: {
-        board,
+        board:serializeBoard(board),
       },
     });
   } catch (error) {
