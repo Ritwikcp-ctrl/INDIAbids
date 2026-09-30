@@ -11,6 +11,11 @@ import {
   joinBoard,
 } from "./membership.controller";
 
+import {
+  getQuote,
+  getBoardLeaderboard,
+} from "../bidding/bidding.controller";
+
 
 
 const router = Router();
@@ -66,6 +71,17 @@ router.post(
   requireRole("ADMIN"),
   createBoardLimiter,
   createBoard
+);
+
+router.post(
+  "/:boardId/bids/quote",
+  requireAuth,
+  getQuote,
+);
+
+router.get(
+  "/:boardId/leaderboard",
+  getBoardLeaderboard,
 );
 
 /*
