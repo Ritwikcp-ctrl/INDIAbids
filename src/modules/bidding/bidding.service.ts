@@ -435,21 +435,146 @@ export async function ApplyVerifiedBid(input: ApplyVerifiedBidInput) {
       );
     }
 
-    if(membership.board.status !== "ACTIVE") {
-        throw new AppError (409,"BOARD_UNAVAILABLE","This board is no longer accepting bids.",
-
-        );
+    if (membership.board.status !== "ACTIVE") {
+      throw new AppError(
+        409,
+        "BOARD_UNAVAILABLE",
+        "This board is no longer accepting bids."
+      );
     }
 
-    if(membership.business.status !== "ACTIVE") {
-        throw new AppError(
-        409,"BUSINESS_NOT_ACTIVE","Business is not allowed to bid.",
-    );
+    if (membership.business.status !== "ACTIVE") {
+      throw new AppError(
+        409,
+        "BUSINESS_NOT_ACTIVE",
+        "Business is not allowed to bid."
+      );
     }
-
 
     const competitor = await tx.boardMembership.findFirst({
+      where: {
+        boardId: input.boardId,
 
-    })
+        id: {
+          not: membership.id,
+        },
+
+        totalSpendPaise: {
+          gt: 0n,
+        },
+
+        business: {
+          status: "ACTIVE",
+        },
+      },
+
+      orderBy: [
+        {
+          totalSpendPaise: "desc",
+        },
+        {
+          lastBidAt: "asc",
+        },
+        {
+          id: "asc",
+        },
+      ],
+
+      select: {
+        totalSpendPaise: true,
+      },
+    });
+
+    let minimumAdditional = 0n;
+
+    if (membership.totalSpendPaise === 0n) {
+      minimumAdditional = membership.board.minBidPaise;
+    }
+
+    if (competitor) {
+      const targetSpend =
+        competitor.totalSpendPaise + membership.board.bidIncrementPaise;
+
+      const required =
+        targetSpend > membership.totalSpendPaise
+          ? targetSpend - membership.totalSpendPaise
+          : 0n;
+
+      if (required > minimumAdditional) {
+        minimumAdditional = required;
+      }
+    }
+
+    if (input.amountPaise < minimumAdditional) {
+      throw new AppError(
+        409,
+        "BID_QUOTE_EXPIRED",
+        "The board changed while the payment was processing.",
+        {
+          requiredAdditionalPaise: minimumAdditional.toString(),
+        }
+      );
+    }
+
+    const bid = await tx.bid.create({
+      data: {
+        membershipId: membership.id,
+
+        paymentId: payment.id,
+
+        amountPaise: input.amountPaise,
+
+        status: "ACTIVE",
+      },
+      select: {
+        id: true,
+        membershipId: true,
+        paymentId: true,
+        amountPaise: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    const updatedMembership = await tx.boardMembership.update({
+      where: {
+        id: membership.id,
+      },
+      data: {
+        totalSpendPaise: {
+          increment: input.amountPaise,
+        },
+        lastBidAt: new Date(),
+      },
+
+      select: {
+        id: true,
+        totalSpendPaise: true,
+        lastBidAt: true,
+      },
+    });
+
+    return {
+      alreadyApplied: false,
+
+      bid: {
+        id: bid.id,
+        membershipId: bid.membershipId,
+        paymentId: bid.paymentId,
+        amountPaise: bid.amountPaise.toString(),
+
+        status: bid.status,
+
+        createdAt: bid.createdAt.toISOString(),
+      },
+
+      membership: {
+        id: updatedMembership.id,
+
+        totalSpendPaise: updatedMembership.totalSpendPaise.toString(),
+
+        lastBidAt: updatedMembership.lastBidAt?.toISOString() ?? null,
+      },
+    };
   });
 }
