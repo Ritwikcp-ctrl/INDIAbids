@@ -55,7 +55,16 @@ app.use(
 app.use(
   express.json({
     limit: "100kb",
-  })
+
+    verify:(req,res,buffer) => {
+      if(req.url?.startsWith("/api/v1/payments/webhooks/razorpay",
+
+      )
+    ) {
+      req.rawBody = Buffer.from(buffer);
+    }
+    },
+  }),
 );
 
 app.use(
