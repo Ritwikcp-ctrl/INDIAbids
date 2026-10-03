@@ -19,6 +19,8 @@ import authRoutes from "./modules/auth/auth.routes";
 import categoryRoutes from "./modules/categories/category.routes";
 import businessRoutes from "./modules/businesses/business.routes";
 import boardRoutes from "./modules/boards/board.routes.js";
+import paymentRoutes
+  from "./modules/payments/payment.routes.js";
 
 const app = express();
 
@@ -99,6 +101,11 @@ app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
 
 app.use("/api/v1/boards", boardRoutes);
+
+app.use(
+  "/api/v1/payments",
+  paymentRoutes,
+);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
