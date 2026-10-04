@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../lib/app-error";
+import {Prisma,PrismaClient} from "../../generated/prisma/client";
 
 import { paiseToInr } from "./bidding.money";
 
@@ -320,7 +321,7 @@ type ApplyVerifiedBidInput = {
   amountPaise: bigint;
 };
 
-export async function ApplyVerifiedBid(input: ApplyVerifiedBidInput) {
+export async function ApplyVerifiedBid(input: ApplyVerifiedBidInput, tx: Prisma.TransactionClient,) {
   return prisma.$transaction(async (tx) => {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashextextended(${input.boardId},0)
         )`;
