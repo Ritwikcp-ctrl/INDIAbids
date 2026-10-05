@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
 
-    "rootDir": "src",
+    "rootDir": "server/src",
     "outDir": "dist",
 
     "strict": true,
@@ -16,7 +16,7 @@
   },
 
   "include": [
-    "src"
+    "server/src"
   ],
 
   "exclude": [

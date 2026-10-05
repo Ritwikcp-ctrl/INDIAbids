@@ -5,19 +5,19 @@ import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
 import { randomUUID } from "node:crypto";
 
-import { env } from "./config/env";
-import { logger } from "./lib/logger";
+import { env } from "./config/env.js";
+import { logger } from "./lib/logger.js";
 
-import healthRoutes from "./routes/health.routes";
+import healthRoutes from "./routes/health.routes.js";
 
-import { notFoundHandler } from "./middleware/not-found";
-import { errorHandler } from "./middleware/error-handler";
+import { notFoundHandler } from "./middleware/not-found.js";
+import { errorHandler } from "./middleware/error-handler.js";
 import { success } from "zod";
 import cookieParser from "cookie-parser";
 
-import authRoutes from "./modules/auth/auth.routes";
-import categoryRoutes from "./modules/categories/category.routes";
-import businessRoutes from "./modules/businesses/business.routes";
+import authRoutes from "./modules/auth/auth.routes.js";
+import categoryRoutes from "./modules/categories/category.routes.js";
+import businessRoutes from "./modules/businesses/business.routes.js";
 import boardRoutes from "./modules/boards/board.routes.js";
 import paymentRoutes
   from "./modules/payments/payment.routes.js";
