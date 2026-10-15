@@ -12,15 +12,14 @@ import healthRoutes from "./routes/health.routes.js";
 
 import { notFoundHandler } from "./middleware/not-found.js";
 import { errorHandler } from "./middleware/error-handler.js";
-import { success } from "zod";
 import cookieParser from "cookie-parser";
-
 import authRoutes from "./modules/auth/auth.routes.js";
 import categoryRoutes from "./modules/categories/category.routes.js";
 import businessRoutes from "./modules/businesses/business.routes.js";
 import boardRoutes from "./modules/boards/board.routes.js";
 import paymentRoutes
   from "./modules/payments/payment.routes.js";
+import biddingRoutes from "./modules/bidding/bidding.routes";
 
 const app = express();
 
@@ -101,6 +100,7 @@ app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
 
 app.use("/api/v1/boards", boardRoutes);
+app.use("/api/v1/bids", biddingRoutes);
 
 app.use(
   "/api/v1/payments",
