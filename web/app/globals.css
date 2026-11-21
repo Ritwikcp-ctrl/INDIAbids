@@ -1,26 +1,208 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────────────────────
+   IndiaBids palette — Soft Black (60%) · Butter Cream (30%) · Strawberry Pink (10%)
+   ───────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Soft Black 60% — structure */
+  --background:         oklch(0.16 0.008 60);
+  --foreground:         oklch(0.94 0.055 90);   /* butter cream */
+
+  --card:               oklch(0.20 0.010 60);
+  --card-foreground:    oklch(0.94 0.055 90);
+
+  --popover:            oklch(0.22 0.010 60);
+  --popover-foreground: oklch(0.94 0.055 90);
+
+  --muted:              oklch(0.24 0.010 60);
+  --muted-foreground:   oklch(0.70 0.045 90);   /* butter cream muted */
+
+  --border:             oklch(0.30 0.012 60);
+  --input:              oklch(0.24 0.010 60);
+  --ring:               oklch(0.68 0.20 10 / 0.5);   /* strawberry pink */
+
+  /* Soft Black tokens */
+  --soft-black:         oklch(0.16 0.008 60);
+  --soft-black-muted:   oklch(0.24 0.010 60);
+  --soft-black-dim:     oklch(0.10 0.006 60);
+
+  /* Butter Cream 30% — text + inverted surfaces */
+  --butter-cream:       oklch(0.94 0.055 90);
+  --butter-cream-muted: oklch(0.70 0.045 90);
+  --butter-cream-dim:   oklch(0.52 0.035 90);
+
+  /* Strawberry Pink 10% — accents only */
+  --strawberry-pink:    oklch(0.68 0.20 10);
+  --primary:            var(--strawberry-pink);
+  --primary-foreground: oklch(0.16 0.008 60);   /* soft black on pink */
+  --accent:             var(--strawberry-pink);
+  --accent-foreground:  oklch(0.16 0.008 60);
+
+  --secondary:          oklch(0.26 0.012 60);
+  --secondary-foreground: oklch(0.94 0.055 90);
+
+  /* Semantic exception — deeper red so errors don’t read as the pink action */
+  --destructive:        oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  /* Status */
+  --success:            oklch(0.72 0.16 155);
+
+  /* Charts (soft black / butter cream / strawberry family only) */
+  --chart-1: oklch(0.68 0.20 10);    /* strawberry pink */
+  --chart-2: oklch(0.94 0.055 90);   /* butter cream */
+  --chart-3: oklch(0.52 0.035 90);   /* butter cream dim */
+  --chart-4: oklch(0.58 0.16 10);    /* strawberry muted */
+  --chart-5: oklch(0.34 0.014 60);   /* soft black raised */
+
+  --radius: 0.5rem;
+
+  --success-foreground:         var(--color-emerald-900);
+
+  --info:         var(--color-violet-500);
+
+  --info-foreground:         var(--color-violet-900);
+
+  --warning:         var(--color-yellow-500);
+
+  --warning-foreground:         var(--color-yellow-900);
+
+  --invert:         var(--color-zinc-900);
+
+  --invert-foreground:         var(--color-zinc-50);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-soft-black: var(--soft-black);
+  --color-soft-black-muted: var(--soft-black-muted);
+  --color-soft-black-dim: var(--soft-black-dim);
+
+  --color-butter-cream: var(--butter-cream);
+  --color-butter-cream-muted: var(--butter-cream-muted);
+  --color-butter-cream-dim: var(--butter-cream-dim);
+
+  --color-strawberry-pink: var(--strawberry-pink);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-invert-foreground:         var(--invert-foreground);
+  --color-invert:         var(--invert);
+  --color-warning-foreground:         var(--warning-foreground);
+  --color-warning:         var(--warning);
+  --color-info-foreground:         var(--info-foreground);
+  --color-info:         var(--info);
+  --color-success-foreground:         var(--success-foreground);
+  --color-success:         var(--success);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Numbers everywhere use tabular */
+  .tabular,
+  [data-tabular] {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Selection matches the strawberry accent */
+  ::selection {
+    background-color: oklch(0.68 0.20 10 / 0.35);
+    color: var(--butter-cream);
+  }
+  /* Focus visible = strawberry pink ring */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─────────────────────────────────────────────────────────────
+   Utilities
+   ───────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* One inverted "butter cream card" per screen, max */
+  .bg-inverted {
+    background-color: var(--butter-cream);
+    color: var(--soft-black-dim);
+  }
+  /* Strawberry glow — use on live dots and primary CTAs */
+  .glow-strawberry {
+    box-shadow:
+      0 0 0 1px oklch(0.68 0.20 10 / 0.4),
+      0 0 24px oklch(0.68 0.20 10 / 0.26);
+  }
+  /* Soft-black haze behind hero content */
+  .haze-soft {
+    background: radial-gradient(
+      ellipse at center,
+      oklch(0.26 0.012 60 / 0.65) 0%,
+      transparent 70%
+    );
+  }
+  /* Subtle noise texture — breaks up flat soft black */
+  .noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.94 0 0 0 0 0.94 0 0 0 0 0.94 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+  }
+}
+
+.dark {
+  --destructive-foreground:         var(--color-red-600);
+  --success:         var(--color-emerald-500);
+  --success-foreground:         var(--color-emerald-600);
+  --info:         var(--color-violet-500);
+  --info-foreground:         var(--color-violet-600);
+  --warning:         var(--color-yellow-500);
+  --warning-foreground:         var(--color-yellow-600);
+  --invert:         var(--color-zinc-700);
+  --invert-foreground:         var(--color-zinc-50);
 }

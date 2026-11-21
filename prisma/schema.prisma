@@ -166,7 +166,6 @@ model BoardMembership {
   updatedAt DateTime @updatedAt
 
   @@unique([businessId, boardId])
-  @@unique([boardId])
   @@index([businessId])
 }
 

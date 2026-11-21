@@ -11,6 +11,8 @@ import {
 
 import * as paymentService from "./payment.service";
 
+import { serializeBigInt } from "../../utils/jsonSerilizer";
+
 
 export async function createOrder(
   req: Request,
@@ -28,9 +30,9 @@ export async function createOrder(
 
     const input = createPaymentOrderSchema.parse(req.body);
 
-    const rawIdemptotencyKey = req.get("Idempotnecy-key");
+    const rawIdempotencyKey = req.get("Idempotency-key");
 
-    if (!rawIdemptotencyKey) {
+    if (!rawIdempotencyKey) {
       throw new AppError(
         400,
         "IDEMPOTENCY_KEY_REQUIRED",
@@ -38,7 +40,7 @@ export async function createOrder(
       );
     }
 
-    const idempotencyKey = idempotencyKeySchema.parse(rawIdemptotencyKey);
+    const idempotencyKey = idempotencyKeySchema.parse(rawIdempotencyKey);
 
     const result = await paymentService.createPaymentOrder(
       req.auth.userId,
@@ -50,7 +52,7 @@ export async function createOrder(
 
     res.status(result.replayed ? 200 : 201).json({
       success: true,
-      data: result,
+      data: serializeBigInt(result),
     });
   } catch (error) {
     next(error);
