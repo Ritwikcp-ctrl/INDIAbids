@@ -87,3 +87,5 @@ export const errorHandler: ErrorRequestHandler = (
     },
   });
 };
+
+//To do: Integrate with an error-tracking service like Sentry for production visibility.
