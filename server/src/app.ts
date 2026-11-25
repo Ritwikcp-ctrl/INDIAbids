@@ -89,19 +89,17 @@ app.use(
 
 app.use(cookieParser());
 
-// Base API v1 Routes
+
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
 app.use("/api/v1/boards", boardRoutes);
 app.use("/api/v1/bids", biddingRoutes);
-app.use("/api/v1/checkout", biddingRoutes); // Alias for bid checkout
+app.use("/api/v1/checkout", biddingRoutes); 
 app.use("/api/v1/payments", paymentRoutes);
 
-// Direct /manage routes per the spine specification:
-// /manage/:token -> get listing
-// /manage/:token/claim -> claim listing
+
 app.get("/api/v1/manage/:token", getBusinessByManageToken);
 app.post("/api/v1/manage/:token/claim", requireAuth, claimBusinessByManageToken);
 
@@ -109,3 +107,5 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 export default app;
+
+//To Do : Add a web application firewall , implement stricter CORS policies for production and conduct a security audit.
