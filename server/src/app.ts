@@ -109,3 +109,5 @@ app.use(errorHandler);
 export default app;
 
 //To Do : Add a web application firewall , implement stricter CORS policies for production and conduct a security audit.
+
+//To do : Ship logs to a centralized service like Datadog, Logtail.
