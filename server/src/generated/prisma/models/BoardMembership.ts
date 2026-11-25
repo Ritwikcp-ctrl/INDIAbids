@@ -254,12 +254,12 @@ export type BoardMembershipOrderByWithRelationInput = {
 
 export type BoardMembershipWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  boardId?: string
   businessId_boardId?: Prisma.BoardMembershipBusinessIdBoardIdCompoundUniqueInput
   AND?: Prisma.BoardMembershipWhereInput | Prisma.BoardMembershipWhereInput[]
   OR?: Prisma.BoardMembershipWhereInput[]
   NOT?: Prisma.BoardMembershipWhereInput | Prisma.BoardMembershipWhereInput[]
   businessId?: Prisma.StringFilter<"BoardMembership"> | string
+  boardId?: Prisma.StringFilter<"BoardMembership"> | string
   totalSpendPaise?: Prisma.BigIntFilter<"BoardMembership"> | bigint | number
   lastBidAt?: Prisma.DateTimeNullableFilter<"BoardMembership"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BoardMembership"> | Date | string
@@ -268,7 +268,7 @@ export type BoardMembershipWhereUniqueInput = Prisma.AtLeast<{
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
   bids?: Prisma.BidListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
-}, "id" | "businessId_boardId" | "boardId">
+}, "id" | "businessId_boardId">
 
 export type BoardMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

@@ -1,11 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../server/src/generated/prisma"
 }
 
 datasource db {
@@ -27,6 +25,11 @@ enum BusinessStatus {
   ACTIVE
   SUSPENDED
   REJECTED
+}
+
+enum BoardScope {
+  NATIONAL
+  STATE
 }
 
 enum BoardStatus {
@@ -58,6 +61,7 @@ enum WebhookEventStatus {
 model User {
   id           String     @id @default(uuid())
   email        String     @unique
+  name         String?
   passwordHash String
   role         UserRole   @default(USER)
   status       UserStatus @default(ACTIVE)
@@ -86,25 +90,28 @@ model Category {
 }
 
 model Business {
-  id         String @id @default(uuid())
-  ownerId    String
-  categoryId String
+  id              String         @id @default(uuid())
+  ownerId         String?
+  manageTokenHash String?        @unique
+  categoryId      String
 
-  name        String
-  slug        String  @unique
-  description String?
+  name            String
+  slug            String         @unique
+  description     String?
 
-  website String?
-  logoUrl String?
+  website         String?
+  contactEmail    String?
+  contactPhone    String?
+  logoUrl         String?
 
-  country String
-  state   String?
-  city    String?
+  country         String         @default("IN")
+  state           String?
+  city            String?
 
-  status BusinessStatus @default(PENDING)
+  status          BusinessStatus @default(ACTIVE)
 
-  owner    User     @relation(fields: [ownerId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
+  owner    User?     @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  category Category  @relation(fields: [categoryId], references: [id])
 
   memberships BoardMembership[]
   payments    Payment[]
@@ -116,16 +123,18 @@ model Business {
   @@index([ownerId])
   @@index([categoryId])
   @@index([status])
+  @@index([manageTokenHash])
   @@index([city, state, country])
 }
 
 model Board {
-  id         String @id @default(uuid())
+  id         String     @id @default(uuid())
   categoryId String
-  key        String @unique
+  key        String     @unique
   name       String
+  scope      BoardScope @default(NATIONAL)
 
-  country String?
+  country String? @default("IN")
   state   String?
   city    String?
 
@@ -143,7 +152,7 @@ model Board {
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
-  @@index([country, state, city])
+  @@index([scope, state])
   @@index([status])
 }
 
@@ -156,8 +165,8 @@ model BoardMembership {
   totalSpendPaise BigInt    @default(0)
   lastBidAt       DateTime?
 
-  business Business @relation(fields: [businessId], references: [id])
-  board    Board    @relation(fields: [boardId], references: [id])
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  board    Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   bids     Bid[]
   payments Payment[]
@@ -167,6 +176,7 @@ model BoardMembership {
 
   @@unique([businessId, boardId])
   @@index([businessId])
+  @@index([boardId])
 }
 
 model Payment {
@@ -174,11 +184,11 @@ model Payment {
 
   businessId    String
   membershipId  String
-  initiatedById String
+  initiatedById String?
 
-  provider          String
-  providerOrderId   String?
-  providerPaymentId String?
+  provider          String  @default("razorpay")
+  providerOrderId   String? @unique
+  providerPaymentId String? @unique
 
   idempotencyKey String @unique
 
@@ -195,19 +205,15 @@ model Payment {
 
   expiresAt DateTime?
 
-  business Business @relation(fields: [businessId], references: [id])
-
-  membership BoardMembership @relation(fields: [membershipId], references: [id])
-
-  initiatedBy User @relation(fields: [initiatedById], references: [id])
+  business    Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  membership  BoardMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  initiatedBy User?           @relation(fields: [initiatedById], references: [id], onDelete: SetNull)
 
   bid Bid?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([provider, providerOrderId])
-  @@unique([provider, providerPaymentId])
   @@index([businessId])
   @@index([membershipId])
   @@index([initiatedById])
@@ -222,11 +228,10 @@ model Bid {
   paymentId    String @unique
 
   amountPaise BigInt
-  status      BidStatus @default(PENDING)
+  status      BidStatus @default(ACTIVE)
 
-  membership BoardMembership @relation(fields: [membershipId], references: [id])
-
-  payment Payment @relation(fields: [paymentId], references: [id])
+  membership BoardMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  payment    Payment         @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -239,8 +244,8 @@ model Click {
   businessId String
   boardId    String
 
-  business Business @relation(fields: [businessId], references: [id])
-  board    Board    @relation(fields: [boardId], references: [id])
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  board    Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 

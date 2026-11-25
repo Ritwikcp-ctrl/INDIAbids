@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { z } from "zod";
 
 const envSchema = z.object({
@@ -29,6 +30,9 @@ const envSchema = z.object({
   RAZORPAY_WEBHOOK_SECRET:z.string().min(1),
 
   PAYMENT_ORDER_TTL_MINUTES:z.coerce.number().int().min(5).max(60).default(30),
+
+  REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
+  REDIS_SOCKET_PATH: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

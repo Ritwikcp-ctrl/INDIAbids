@@ -21,6 +21,10 @@ export const BusinessStatus = {
     SUSPENDED: 'SUSPENDED',
     REJECTED: 'REJECTED'
 };
+export const BoardScope = {
+    NATIONAL: 'NATIONAL',
+    STATE: 'STATE'
+};
 export const BoardStatus = {
     ACTIVE: 'ACTIVE',
     PAUSED: 'PAUSED',

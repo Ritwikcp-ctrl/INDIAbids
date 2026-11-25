@@ -27,11 +27,14 @@ export type AggregateBusiness = {
 export type BusinessMinAggregateOutputType = {
   id: string | null
   ownerId: string | null
+  manageTokenHash: string | null
   categoryId: string | null
   name: string | null
   slug: string | null
   description: string | null
   website: string | null
+  contactEmail: string | null
+  contactPhone: string | null
   logoUrl: string | null
   country: string | null
   state: string | null
@@ -44,11 +47,14 @@ export type BusinessMinAggregateOutputType = {
 export type BusinessMaxAggregateOutputType = {
   id: string | null
   ownerId: string | null
+  manageTokenHash: string | null
   categoryId: string | null
   name: string | null
   slug: string | null
   description: string | null
   website: string | null
+  contactEmail: string | null
+  contactPhone: string | null
   logoUrl: string | null
   country: string | null
   state: string | null
@@ -61,11 +67,14 @@ export type BusinessMaxAggregateOutputType = {
 export type BusinessCountAggregateOutputType = {
   id: number
   ownerId: number
+  manageTokenHash: number
   categoryId: number
   name: number
   slug: number
   description: number
   website: number
+  contactEmail: number
+  contactPhone: number
   logoUrl: number
   country: number
   state: number
@@ -80,11 +89,14 @@ export type BusinessCountAggregateOutputType = {
 export type BusinessMinAggregateInputType = {
   id?: true
   ownerId?: true
+  manageTokenHash?: true
   categoryId?: true
   name?: true
   slug?: true
   description?: true
   website?: true
+  contactEmail?: true
+  contactPhone?: true
   logoUrl?: true
   country?: true
   state?: true
@@ -97,11 +109,14 @@ export type BusinessMinAggregateInputType = {
 export type BusinessMaxAggregateInputType = {
   id?: true
   ownerId?: true
+  manageTokenHash?: true
   categoryId?: true
   name?: true
   slug?: true
   description?: true
   website?: true
+  contactEmail?: true
+  contactPhone?: true
   logoUrl?: true
   country?: true
   state?: true
@@ -114,11 +129,14 @@ export type BusinessMaxAggregateInputType = {
 export type BusinessCountAggregateInputType = {
   id?: true
   ownerId?: true
+  manageTokenHash?: true
   categoryId?: true
   name?: true
   slug?: true
   description?: true
   website?: true
+  contactEmail?: true
+  contactPhone?: true
   logoUrl?: true
   country?: true
   state?: true
@@ -203,12 +221,15 @@ export type BusinessGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type BusinessGroupByOutputType = {
   id: string
-  ownerId: string
+  ownerId: string | null
+  manageTokenHash: string | null
   categoryId: string
   name: string
   slug: string
   description: string | null
   website: string | null
+  contactEmail: string | null
+  contactPhone: string | null
   logoUrl: string | null
   country: string
   state: string | null
@@ -241,12 +262,15 @@ export type BusinessWhereInput = {
   OR?: Prisma.BusinessWhereInput[]
   NOT?: Prisma.BusinessWhereInput | Prisma.BusinessWhereInput[]
   id?: Prisma.StringFilter<"Business"> | string
-  ownerId?: Prisma.StringFilter<"Business"> | string
+  ownerId?: Prisma.StringNullableFilter<"Business"> | string | null
+  manageTokenHash?: Prisma.StringNullableFilter<"Business"> | string | null
   categoryId?: Prisma.StringFilter<"Business"> | string
   name?: Prisma.StringFilter<"Business"> | string
   slug?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
   website?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Business"> | string | null
   logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
   state?: Prisma.StringNullableFilter<"Business"> | string | null
@@ -254,7 +278,7 @@ export type BusinessWhereInput = {
   status?: Prisma.EnumBusinessStatusFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   memberships?: Prisma.BoardMembershipListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -263,12 +287,15 @@ export type BusinessWhereInput = {
 
 export type BusinessOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  ownerId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  manageTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   website?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -285,15 +312,18 @@ export type BusinessOrderByWithRelationInput = {
 
 export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  manageTokenHash?: string
   slug?: string
   AND?: Prisma.BusinessWhereInput | Prisma.BusinessWhereInput[]
   OR?: Prisma.BusinessWhereInput[]
   NOT?: Prisma.BusinessWhereInput | Prisma.BusinessWhereInput[]
-  ownerId?: Prisma.StringFilter<"Business"> | string
+  ownerId?: Prisma.StringNullableFilter<"Business"> | string | null
   categoryId?: Prisma.StringFilter<"Business"> | string
   name?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
   website?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Business"> | string | null
   logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
   state?: Prisma.StringNullableFilter<"Business"> | string | null
@@ -301,21 +331,24 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumBusinessStatusFilter<"Business"> | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   memberships?: Prisma.BoardMembershipListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   clicks?: Prisma.ClickListRelationFilter
-}, "id" | "slug">
+}, "id" | "manageTokenHash" | "slug">
 
 export type BusinessOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  ownerId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  manageTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   website?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -333,12 +366,15 @@ export type BusinessScalarWhereWithAggregatesInput = {
   OR?: Prisma.BusinessScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BusinessScalarWhereWithAggregatesInput | Prisma.BusinessScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Business"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"Business"> | string
+  ownerId?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
+  manageTokenHash?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   categoryId?: Prisma.StringWithAggregatesFilter<"Business"> | string
   name?: Prisma.StringWithAggregatesFilter<"Business"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Business"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   website?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
+  contactEmail?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
+  contactPhone?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
   country?: Prisma.StringWithAggregatesFilter<"Business"> | string
   state?: Prisma.StringNullableWithAggregatesFilter<"Business"> | string | null
@@ -350,18 +386,21 @@ export type BusinessScalarWhereWithAggregatesInput = {
 
 export type BusinessCreateInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
+  owner?: Prisma.UserCreateNestedOneWithoutBusinessesInput
   category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
@@ -370,14 +409,17 @@ export type BusinessCreateInput = {
 
 export type BusinessUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -390,10 +432,13 @@ export type BusinessUncheckedCreateInput = {
 
 export type BusinessUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -401,7 +446,7 @@ export type BusinessUpdateInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutBusinessesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
@@ -410,12 +455,15 @@ export type BusinessUpdateInput = {
 
 export type BusinessUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -430,14 +478,17 @@ export type BusinessUncheckedUpdateInput = {
 
 export type BusinessCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -447,10 +498,13 @@ export type BusinessCreateManyInput = {
 
 export type BusinessUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -462,12 +516,15 @@ export type BusinessUpdateManyMutationInput = {
 
 export type BusinessUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -490,11 +547,14 @@ export type BusinessOrderByRelationAggregateInput = {
 export type BusinessCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  manageTokenHash?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   website?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
@@ -507,11 +567,14 @@ export type BusinessCountOrderByAggregateInput = {
 export type BusinessMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  manageTokenHash?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   website?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
@@ -524,11 +587,14 @@ export type BusinessMaxOrderByAggregateInput = {
 export type BusinessMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  manageTokenHash?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   website?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
@@ -675,12 +741,15 @@ export type BusinessUpdateOneRequiredWithoutClicksNestedInput = {
 
 export type BusinessCreateWithoutOwnerInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -694,13 +763,16 @@ export type BusinessCreateWithoutOwnerInput = {
 
 export type BusinessUncheckedCreateWithoutOwnerInput = {
   id?: string
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -742,12 +814,15 @@ export type BusinessScalarWhereInput = {
   OR?: Prisma.BusinessScalarWhereInput[]
   NOT?: Prisma.BusinessScalarWhereInput | Prisma.BusinessScalarWhereInput[]
   id?: Prisma.StringFilter<"Business"> | string
-  ownerId?: Prisma.StringFilter<"Business"> | string
+  ownerId?: Prisma.StringNullableFilter<"Business"> | string | null
+  manageTokenHash?: Prisma.StringNullableFilter<"Business"> | string | null
   categoryId?: Prisma.StringFilter<"Business"> | string
   name?: Prisma.StringFilter<"Business"> | string
   slug?: Prisma.StringFilter<"Business"> | string
   description?: Prisma.StringNullableFilter<"Business"> | string | null
   website?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Business"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Business"> | string | null
   logoUrl?: Prisma.StringNullableFilter<"Business"> | string | null
   country?: Prisma.StringFilter<"Business"> | string
   state?: Prisma.StringNullableFilter<"Business"> | string | null
@@ -759,18 +834,21 @@ export type BusinessScalarWhereInput = {
 
 export type BusinessCreateWithoutCategoryInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
+  owner?: Prisma.UserCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
@@ -778,13 +856,16 @@ export type BusinessCreateWithoutCategoryInput = {
 
 export type BusinessUncheckedCreateWithoutCategoryInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -823,18 +904,21 @@ export type BusinessUpdateManyWithWhereWithoutCategoryInput = {
 
 export type BusinessCreateWithoutMembershipsInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
+  owner?: Prisma.UserCreateNestedOneWithoutBusinessesInput
   category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
@@ -842,14 +926,17 @@ export type BusinessCreateWithoutMembershipsInput = {
 
 export type BusinessUncheckedCreateWithoutMembershipsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -877,10 +964,13 @@ export type BusinessUpdateToOneWithWhereWithoutMembershipsInput = {
 
 export type BusinessUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -888,7 +978,7 @@ export type BusinessUpdateWithoutMembershipsInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutBusinessesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
@@ -896,12 +986,15 @@ export type BusinessUpdateWithoutMembershipsInput = {
 
 export type BusinessUncheckedUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -915,18 +1008,21 @@ export type BusinessUncheckedUpdateWithoutMembershipsInput = {
 
 export type BusinessCreateWithoutPaymentsInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
+  owner?: Prisma.UserCreateNestedOneWithoutBusinessesInput
   category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   clicks?: Prisma.ClickCreateNestedManyWithoutBusinessInput
@@ -934,14 +1030,17 @@ export type BusinessCreateWithoutPaymentsInput = {
 
 export type BusinessUncheckedCreateWithoutPaymentsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -969,10 +1068,13 @@ export type BusinessUpdateToOneWithWhereWithoutPaymentsInput = {
 
 export type BusinessUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,7 +1082,7 @@ export type BusinessUpdateWithoutPaymentsInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutBusinessesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
@@ -988,12 +1090,15 @@ export type BusinessUpdateWithoutPaymentsInput = {
 
 export type BusinessUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1007,18 +1112,21 @@ export type BusinessUncheckedUpdateWithoutPaymentsInput = {
 
 export type BusinessCreateWithoutClicksInput = {
   id?: string
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutBusinessesInput
+  owner?: Prisma.UserCreateNestedOneWithoutBusinessesInput
   category: Prisma.CategoryCreateNestedOneWithoutBusinessesInput
   memberships?: Prisma.BoardMembershipCreateNestedManyWithoutBusinessInput
   payments?: Prisma.PaymentCreateNestedManyWithoutBusinessInput
@@ -1026,14 +1134,17 @@ export type BusinessCreateWithoutClicksInput = {
 
 export type BusinessUncheckedCreateWithoutClicksInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -1061,10 +1172,13 @@ export type BusinessUpdateToOneWithWhereWithoutClicksInput = {
 
 export type BusinessUpdateWithoutClicksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1072,7 +1186,7 @@ export type BusinessUpdateWithoutClicksInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutBusinessesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
@@ -1080,12 +1194,15 @@ export type BusinessUpdateWithoutClicksInput = {
 
 export type BusinessUncheckedUpdateWithoutClicksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1099,13 +1216,16 @@ export type BusinessUncheckedUpdateWithoutClicksInput = {
 
 export type BusinessCreateManyOwnerInput = {
   id?: string
+  manageTokenHash?: string | null
   categoryId: string
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -1115,10 +1235,13 @@ export type BusinessCreateManyOwnerInput = {
 
 export type BusinessUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1134,11 +1257,14 @@ export type BusinessUpdateWithoutOwnerInput = {
 
 export type BusinessUncheckedUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1153,11 +1279,14 @@ export type BusinessUncheckedUpdateWithoutOwnerInput = {
 
 export type BusinessUncheckedUpdateManyWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1169,13 +1298,16 @@ export type BusinessUncheckedUpdateManyWithoutOwnerInput = {
 
 export type BusinessCreateManyCategoryInput = {
   id?: string
-  ownerId: string
+  ownerId?: string | null
+  manageTokenHash?: string | null
   name: string
   slug: string
   description?: string | null
   website?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   logoUrl?: string | null
-  country: string
+  country?: string
   state?: string | null
   city?: string | null
   status?: $Enums.BusinessStatus
@@ -1185,10 +1317,13 @@ export type BusinessCreateManyCategoryInput = {
 
 export type BusinessUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1196,7 +1331,7 @@ export type BusinessUpdateWithoutCategoryInput = {
   status?: Prisma.EnumBusinessStatusFieldUpdateOperationsInput | $Enums.BusinessStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutBusinessesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutBusinessesNestedInput
   memberships?: Prisma.BoardMembershipUpdateManyWithoutBusinessNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutBusinessNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutBusinessNestedInput
@@ -1204,11 +1339,14 @@ export type BusinessUpdateWithoutCategoryInput = {
 
 export type BusinessUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1223,11 +1361,14 @@ export type BusinessUncheckedUpdateWithoutCategoryInput = {
 
 export type BusinessUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  manageTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1289,11 +1430,14 @@ export type BusinessCountOutputTypeCountClicksArgs<ExtArgs extends runtime.Types
 export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ownerId?: boolean
+  manageTokenHash?: boolean
   categoryId?: boolean
   name?: boolean
   slug?: boolean
   description?: boolean
   website?: boolean
+  contactEmail?: boolean
+  contactPhone?: boolean
   logoUrl?: boolean
   country?: boolean
   state?: boolean
@@ -1301,7 +1445,7 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
   payments?: boolean | Prisma.Business$paymentsArgs<ExtArgs>
@@ -1312,11 +1456,14 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type BusinessSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ownerId?: boolean
+  manageTokenHash?: boolean
   categoryId?: boolean
   name?: boolean
   slug?: boolean
   description?: boolean
   website?: boolean
+  contactEmail?: boolean
+  contactPhone?: boolean
   logoUrl?: boolean
   country?: boolean
   state?: boolean
@@ -1324,18 +1471,21 @@ export type BusinessSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
 export type BusinessSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   ownerId?: boolean
+  manageTokenHash?: boolean
   categoryId?: boolean
   name?: boolean
   slug?: boolean
   description?: boolean
   website?: boolean
+  contactEmail?: boolean
+  contactPhone?: boolean
   logoUrl?: boolean
   country?: boolean
   state?: boolean
@@ -1343,18 +1493,21 @@ export type BusinessSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
 export type BusinessSelectScalar = {
   id?: boolean
   ownerId?: boolean
+  manageTokenHash?: boolean
   categoryId?: boolean
   name?: boolean
   slug?: boolean
   description?: boolean
   website?: boolean
+  contactEmail?: boolean
+  contactPhone?: boolean
   logoUrl?: boolean
   country?: boolean
   state?: boolean
@@ -1364,9 +1517,9 @@ export type BusinessSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BusinessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "categoryId" | "name" | "slug" | "description" | "website" | "logoUrl" | "country" | "state" | "city" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["business"]>
+export type BusinessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "manageTokenHash" | "categoryId" | "name" | "slug" | "description" | "website" | "contactEmail" | "contactPhone" | "logoUrl" | "country" | "state" | "city" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["business"]>
 export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
   payments?: boolean | Prisma.Business$paymentsArgs<ExtArgs>
@@ -1374,18 +1527,18 @@ export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BusinessIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }
 export type BusinessIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Business$ownerArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }
 
 export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Business"
   objects: {
-    owner: Prisma.$UserPayload<ExtArgs>
+    owner: Prisma.$UserPayload<ExtArgs> | null
     category: Prisma.$CategoryPayload<ExtArgs>
     memberships: Prisma.$BoardMembershipPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
@@ -1393,12 +1546,15 @@ export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    ownerId: string
+    ownerId: string | null
+    manageTokenHash: string | null
     categoryId: string
     name: string
     slug: string
     description: string | null
     website: string | null
+    contactEmail: string | null
+    contactPhone: string | null
     logoUrl: string | null
     country: string
     state: string | null
@@ -1800,7 +1956,7 @@ readonly fields: BusinessFieldRefs;
  */
 export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  owner<T extends Prisma.Business$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$ownerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.CategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   memberships<T extends Prisma.Business$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.Business$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1836,11 +1992,14 @@ export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime
 export interface BusinessFieldRefs {
   readonly id: Prisma.FieldRef<"Business", 'String'>
   readonly ownerId: Prisma.FieldRef<"Business", 'String'>
+  readonly manageTokenHash: Prisma.FieldRef<"Business", 'String'>
   readonly categoryId: Prisma.FieldRef<"Business", 'String'>
   readonly name: Prisma.FieldRef<"Business", 'String'>
   readonly slug: Prisma.FieldRef<"Business", 'String'>
   readonly description: Prisma.FieldRef<"Business", 'String'>
   readonly website: Prisma.FieldRef<"Business", 'String'>
+  readonly contactEmail: Prisma.FieldRef<"Business", 'String'>
+  readonly contactPhone: Prisma.FieldRef<"Business", 'String'>
   readonly logoUrl: Prisma.FieldRef<"Business", 'String'>
   readonly country: Prisma.FieldRef<"Business", 'String'>
   readonly state: Prisma.FieldRef<"Business", 'String'>
@@ -2246,6 +2405,25 @@ export type BusinessDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Businesses to delete.
    */
   limit?: number
+}
+
+/**
+ * Business.owner
+ */
+export type Business$ownerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

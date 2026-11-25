@@ -1,63 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
-
-import { AppError } from "../../lib/app-error";
-
+import { AppError } from "../../lib/app-error.js";
 import {
   createPaymentOrderSchema,
   verifyPaymentSchema,
   paymentIdSchema,
   idempotencyKeySchema,
-} from "./payment.schemas";
-
-import * as paymentService from "./payment.service";
-
-import { serializeBigInt } from "../../utils/jsonSerilizer";
-
-
-export async function createOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    if (!req.auth) {
-      throw new AppError(
-        401,
-        "AUTHENTICATION_REQUIRED",
-        "Authentication is required."
-      );
-    }
-
-    const input = createPaymentOrderSchema.parse(req.body);
-
-    const rawIdempotencyKey = req.get("Idempotency-key");
-
-    if (!rawIdempotencyKey) {
-      throw new AppError(
-        400,
-        "IDEMPOTENCY_KEY_REQUIRED",
-        "Idempotency-key header is required."
-      );
-    }
-
-    const idempotencyKey = idempotencyKeySchema.parse(rawIdempotencyKey);
-
-    const result = await paymentService.createPaymentOrder(
-      req.auth.userId,
-      input,
-      idempotencyKey
-    );
-
-    res.setHeader("cache-control", "no-store");
-
-    res.status(result.replayed ? 200 : 201).json({
-      success: true,
-      data: serializeBigInt(result),
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+} from "./payment.schemas.js";
+import * as paymentService from "./payment.service.js";
 
 export async function verifyPayment(
   req: Request,
@@ -65,23 +14,10 @@ export async function verifyPayment(
   next: NextFunction
 ): Promise<void> {
   try {
-    if (!req.auth) {
-      throw new AppError(
-        401,
-        "AUTHENTICATION_REQUIRED",
-        "Authentication is required."
-      );
-    }
-
     const input = verifyPaymentSchema.parse(req.body);
-
-    const result = await paymentService.verifyPaymentForUser(
-      req.auth.userId,
-      input
-    );
+    const result = await paymentService.verifyPayment(input);
 
     res.setHeader("Cache-Control", "no-store");
-
     res.status(200).json({
       success: true,
       data: result,
@@ -91,29 +27,23 @@ export async function verifyPayment(
   }
 }
 
-export async function getPayment(
-  req: Request,
+export async function getPaymentStatus(
+  req: Request<{ id: string }>,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    if (!req.auth) {
-      throw new AppError(
-        401,
-        "AUTHENTICATION_REQUIRED",
-        "Authentication is required."
-      );
+    const { id } = req.params;
+    if (!id) {
+      throw new AppError(400, "PAYMENT_ID_REQUIRED", "Payment ID is required.");
     }
 
-    const { id } = paymentIdSchema.parse(req.params);
+    const payment = await paymentService.getPaymentStatus(id);
 
-    const payment = await paymentService.getPaymentForUser(req.auth.userId, id);
-
+    res.setHeader("Cache-Control", "no-store");
     res.status(200).json({
       success: true,
-      data: {
-        payment,
-      },
+      data: payment,
     });
   } catch (error) {
     next(error);

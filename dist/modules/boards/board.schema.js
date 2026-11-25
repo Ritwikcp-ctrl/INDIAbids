@@ -27,6 +27,7 @@ export const boardKeySchema = z.object({
 });
 export const listBoardsQuerySchema = z.object({
     category: z.string().trim().toLowerCase().max(100).optional(),
+    scope: z.enum(["NATIONAL", "STATE"]).optional(),
     state: z.string().trim().max(100).optional(),
     city: z.string().trim().max(100).optional(),
 });

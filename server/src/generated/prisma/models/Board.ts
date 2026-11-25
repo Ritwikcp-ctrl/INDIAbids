@@ -41,6 +41,7 @@ export type BoardMinAggregateOutputType = {
   categoryId: string | null
   key: string | null
   name: string | null
+  scope: $Enums.BoardScope | null
   country: string | null
   state: string | null
   city: string | null
@@ -56,6 +57,7 @@ export type BoardMaxAggregateOutputType = {
   categoryId: string | null
   key: string | null
   name: string | null
+  scope: $Enums.BoardScope | null
   country: string | null
   state: string | null
   city: string | null
@@ -71,6 +73,7 @@ export type BoardCountAggregateOutputType = {
   categoryId: number
   key: number
   name: number
+  scope: number
   country: number
   state: number
   city: number
@@ -98,6 +101,7 @@ export type BoardMinAggregateInputType = {
   categoryId?: true
   key?: true
   name?: true
+  scope?: true
   country?: true
   state?: true
   city?: true
@@ -113,6 +117,7 @@ export type BoardMaxAggregateInputType = {
   categoryId?: true
   key?: true
   name?: true
+  scope?: true
   country?: true
   state?: true
   city?: true
@@ -128,6 +133,7 @@ export type BoardCountAggregateInputType = {
   categoryId?: true
   key?: true
   name?: true
+  scope?: true
   country?: true
   state?: true
   city?: true
@@ -230,6 +236,7 @@ export type BoardGroupByOutputType = {
   categoryId: string
   key: string
   name: string
+  scope: $Enums.BoardScope
   country: string | null
   state: string | null
   city: string | null
@@ -268,6 +275,7 @@ export type BoardWhereInput = {
   categoryId?: Prisma.StringFilter<"Board"> | string
   key?: Prisma.StringFilter<"Board"> | string
   name?: Prisma.StringFilter<"Board"> | string
+  scope?: Prisma.EnumBoardScopeFilter<"Board"> | $Enums.BoardScope
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
@@ -286,6 +294,7 @@ export type BoardOrderByWithRelationInput = {
   categoryId?: Prisma.SortOrder
   key?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -307,6 +316,7 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BoardWhereInput | Prisma.BoardWhereInput[]
   categoryId?: Prisma.StringFilter<"Board"> | string
   name?: Prisma.StringFilter<"Board"> | string
+  scope?: Prisma.EnumBoardScopeFilter<"Board"> | $Enums.BoardScope
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
@@ -325,6 +335,7 @@ export type BoardOrderByWithAggregationInput = {
   categoryId?: Prisma.SortOrder
   key?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -348,6 +359,7 @@ export type BoardScalarWhereWithAggregatesInput = {
   categoryId?: Prisma.StringWithAggregatesFilter<"Board"> | string
   key?: Prisma.StringWithAggregatesFilter<"Board"> | string
   name?: Prisma.StringWithAggregatesFilter<"Board"> | string
+  scope?: Prisma.EnumBoardScopeWithAggregatesFilter<"Board"> | $Enums.BoardScope
   country?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   state?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   city?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
@@ -362,6 +374,7 @@ export type BoardCreateInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -380,6 +393,7 @@ export type BoardUncheckedCreateInput = {
   categoryId: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -396,6 +410,7 @@ export type BoardUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -414,6 +429,7 @@ export type BoardUncheckedUpdateInput = {
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -431,6 +447,7 @@ export type BoardCreateManyInput = {
   categoryId: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -445,6 +462,7 @@ export type BoardUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -460,6 +478,7 @@ export type BoardUncheckedUpdateManyInput = {
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -485,6 +504,7 @@ export type BoardCountOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   key?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -505,6 +525,7 @@ export type BoardMaxOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   key?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -520,6 +541,7 @@ export type BoardMinOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   key?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -582,6 +604,10 @@ export type BoardUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.BoardScalarWhereInput | Prisma.BoardScalarWhereInput[]
 }
 
+export type EnumBoardScopeFieldUpdateOperationsInput = {
+  set?: $Enums.BoardScope
+}
+
 export type BigIntFieldUpdateOperationsInput = {
   set?: bigint | number
   increment?: bigint | number
@@ -626,6 +652,7 @@ export type BoardCreateWithoutCategoryInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -642,6 +669,7 @@ export type BoardUncheckedCreateWithoutCategoryInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -688,6 +716,7 @@ export type BoardScalarWhereInput = {
   categoryId?: Prisma.StringFilter<"Board"> | string
   key?: Prisma.StringFilter<"Board"> | string
   name?: Prisma.StringFilter<"Board"> | string
+  scope?: Prisma.EnumBoardScopeFilter<"Board"> | $Enums.BoardScope
   country?: Prisma.StringNullableFilter<"Board"> | string | null
   state?: Prisma.StringNullableFilter<"Board"> | string | null
   city?: Prisma.StringNullableFilter<"Board"> | string | null
@@ -702,6 +731,7 @@ export type BoardCreateWithoutMembershipsInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -719,6 +749,7 @@ export type BoardUncheckedCreateWithoutMembershipsInput = {
   categoryId: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -750,6 +781,7 @@ export type BoardUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -767,6 +799,7 @@ export type BoardUncheckedUpdateWithoutMembershipsInput = {
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -782,6 +815,7 @@ export type BoardCreateWithoutClicksInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -799,6 +833,7 @@ export type BoardUncheckedCreateWithoutClicksInput = {
   categoryId: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -830,6 +865,7 @@ export type BoardUpdateWithoutClicksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -847,6 +883,7 @@ export type BoardUncheckedUpdateWithoutClicksInput = {
   categoryId?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -862,6 +899,7 @@ export type BoardCreateManyCategoryInput = {
   id?: string
   key: string
   name: string
+  scope?: $Enums.BoardScope
   country?: string | null
   state?: string | null
   city?: string | null
@@ -876,6 +914,7 @@ export type BoardUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -892,6 +931,7 @@ export type BoardUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -908,6 +948,7 @@ export type BoardUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumBoardScopeFieldUpdateOperationsInput | $Enums.BoardScope
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -963,6 +1004,7 @@ export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   categoryId?: boolean
   key?: boolean
   name?: boolean
+  scope?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -982,6 +1024,7 @@ export type BoardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   categoryId?: boolean
   key?: boolean
   name?: boolean
+  scope?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -998,6 +1041,7 @@ export type BoardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   categoryId?: boolean
   key?: boolean
   name?: boolean
+  scope?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -1014,6 +1058,7 @@ export type BoardSelectScalar = {
   categoryId?: boolean
   key?: boolean
   name?: boolean
+  scope?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -1024,7 +1069,7 @@ export type BoardSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "key" | "name" | "country" | "state" | "city" | "minBidPaise" | "bidIncrementPaise" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
+export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "key" | "name" | "scope" | "country" | "state" | "city" | "minBidPaise" | "bidIncrementPaise" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
 export type BoardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Board$membershipsArgs<ExtArgs>
@@ -1050,6 +1095,7 @@ export type $BoardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     categoryId: string
     key: string
     name: string
+    scope: $Enums.BoardScope
     country: string | null
     state: string | null
     city: string | null
@@ -1488,6 +1534,7 @@ export interface BoardFieldRefs {
   readonly categoryId: Prisma.FieldRef<"Board", 'String'>
   readonly key: Prisma.FieldRef<"Board", 'String'>
   readonly name: Prisma.FieldRef<"Board", 'String'>
+  readonly scope: Prisma.FieldRef<"Board", 'BoardScope'>
   readonly country: Prisma.FieldRef<"Board", 'String'>
   readonly state: Prisma.FieldRef<"Board", 'String'>
   readonly city: Prisma.FieldRef<"Board", 'String'>

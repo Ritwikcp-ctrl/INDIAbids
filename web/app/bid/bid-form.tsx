@@ -1,227 +1,314 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import {api} from "@/api/client"
-import {loadRazorpay} from "@/api/razorpay"
-import {useAuth} from "@/auth/auth-provider"
-import {useRouter} from "next/navigation"
-import type { CheckoutResponse,Scope } from "@/types/api"
-import { formatInr } from "@/components/ui/lib/money"
-import { categories } from "@/components/ui/lib/mock"
-import type { Category } from "@/components/types/mock"
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { formatInr } from "@/components/ui/lib/money";
+import { api } from "@/api/client";
+import { loadRazorpay } from "@/api/razorpay";
+import { useAuth } from "@/auth/auth-provider";
+import { ShieldCheck, UserCheck, ArrowRight, Lock } from "lucide-react";
+import type { Scope } from "@/types/api";
+import { REAL_CATEGORIES } from "@/types/categories";
 
-const MIN_BID = 499
-const MAX_BID = 200_000
-
-function extractTitle(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "").split(".")[0]
-  } catch {
-    return url.slice(0, 24) || "Untitled"
-  }
+interface BidFormProps {
+  scope: Scope;
+  state: string;
+  categorySlug: string;
+  onCategoryChange: (slug: string) => void;
 }
 
-export function BidForm({scope = "NATIONAL", state}: {scope?:Scope; state?:string }) {
-    const router = useRouter();
-    const {user} = useAuth();
-   const listings = useListings()
-  const [url, setUrl] = useState("")
-  const [category, setCategory] = useState<Category>("AI & Agents")
-  const [amount, setAmount] = useState<number>(MIN_BID)
+export function BidForm({
+  scope,
+  state,
+  categorySlug,
+  onCategoryChange,
+}: BidFormProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const currentCategory =
+    REAL_CATEGORIES.find((c) => c.slug === categorySlug) || REAL_CATEGORIES[0];
+
+  // Form state
+  const [name, setName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [description, setDescription] = useState("");
+  const [contactEmail, setContactEmail] = useState(user?.email || "");
+  const [contactPhone, setContactPhone] = useState("");
+
+  // Existing listing target if outbidding
+  const [targetBusinessId, setTargetBusinessId] = useState<string | null>(null);
+
+  // Amount in INR
+  const minBidInr = scope === "NATIONAL" ? 500 : 100;
+  const [amount, setAmount] = useState(minBidInr);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    if (user?.email) {
+      setContactEmail(user.email);
+    }
+  }, [user]);
+
+  // Adjust min bid if scope changes
+  useEffect(() => {
+    setAmount((prev) => Math.max(prev, minBidInr));
+  }, [minBidInr]);
+
+  // Listen to prefill events from leaderboard
+  useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent<{ url: string }>).detail
-      setUrl(detail.url)
-      document
-        .getElementById("bid-form")
-        ?.scrollIntoView({ behavior: "smooth", block: "center" })
-    }
-    document.addEventListener("indiabids:prefill-bid", handler)
-    return () =>
-      document.removeEventListener("indiabids:prefill-bid", handler)
-  }, [])
+      const detail = (e as CustomEvent<{
+        businessId?: string;
+        name?: string;
+        slug?: string;
+        suggestedAmount?: number;
+      }>).detail;
 
-  const existing = useMemo(
-    () =>
-      listings.find(
-        (l) => l.url.toLowerCase() === url.trim().toLowerCase()
-      ),
-    [listings, url]
-  )
+      if (detail.name) setName(detail.name);
+      if (detail.businessId) setTargetBusinessId(detail.businessId);
+      if (detail.suggestedAmount) {
+        setAmount(Math.max(detail.suggestedAmount, minBidInr));
+      }
 
-  const minAmount = existing ? existing.totalPaidInr + 100 : MIN_BID
-  const charge = existing ? Math.max(0, amount - existing.totalPaidInr) : amount
+      document.getElementById("bid-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
 
-  const projectedRank = useMemo(() => {
-    const above = listings.filter(
-      (l) => l.totalPaidInr >= amount && l.id !== existing?.id
-    )
-    return above.length + 1
-  }, [listings, amount, existing])
+    document.addEventListener("indiabids:prefill-bid", handler);
+    return () => document.removeEventListener("indiabids:prefill-bid", handler);
+  }, [minBidInr]);
 
- async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    updateListing(listing.id, {...});
-    toast.success("Bid placed!");
-    const trimmed = url.trim()
-    if (!trimmed) return toast.error("Enter a URL or handle first");
 
-   setBusy(true);
-   try {
-     const checkout = await api.post<CheckoutResponse>("/checkout", {
-      name: extractTitle(trimmed),
-       website: trimmed,
-       contactEmail,
-       contactPhone: "0000000000",
-       categorySlug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      scope,
-       state: scope === "STATE" ? state : undefined,
-       amountPaise: String(amount * 100),
-     });
-
-     if (checkout.manageToken) {
-       sessionStorage.setItem("manageToken", checkout.manageToken);
-     }
-
-     await loadRazorpay();
-     const rzp = new window.Razorpay({
-      key: checkout.keyId,
-      amount: Number(checkout.amountPaise),
-       currency: "INR",
-       name: "IndiaBids",
-       order_id: checkout.orderId,
-       prefill: { email: contactEmail },
-      handler: () => router.push(`/success/${checkout.paymentId}`),
-      modal: { ondismiss: () => setBusy(false) },
-     });
-     rzp.open();
-   } catch (err) {
-     toast.error(err instanceof Error ? err.message : "Checkout failed.");
-     setBusy(false);
-    
+    const trimmedName = name.trim();
+    if (!trimmedName && !targetBusinessId) {
+      return toast.error("Please enter a business name");
     }
 
-    setUrl("")
-    setAmount(MIN_BID)
+    if (!contactEmail.trim()) {
+      return toast.error("Receipt email is required");
+    }
+
+    if (amount < minBidInr) {
+      return toast.error(`Minimum bid for this board is ${formatInr(minBidInr)}`);
+    }
+
+    setBusy(true);
+
+    try {
+      const amountPaise = String(Math.round(amount * 100));
+
+      const res = await api.post<any>("/bids", {
+        name: trimmedName,
+        website: website.trim() || undefined,
+        description: description.trim() || undefined,
+        contactEmail: contactEmail.trim(),
+        contactPhone: contactPhone.trim() || undefined,
+        categorySlug,
+        scope,
+        state: scope === "STATE" ? state : undefined,
+        businessId: targetBusinessId || undefined,
+        amountPaise,
+      });
+
+      // Anonymous users receive one-time manageToken
+      if (res.manageToken) {
+        sessionStorage.setItem("manageToken", res.manageToken);
+      }
+
+      // Load Razorpay Checkout modal
+      try {
+        await loadRazorpay();
+        const rzp = new window.Razorpay({
+          key: res.keyId || "rzp_test_TVWGKXZsXZhrbd",
+          amount: Number(res.amountPaise),
+          currency: "INR",
+          name: "INDIAbids",
+          description: `${scope === "NATIONAL" ? "National" : `State · ${state}`} Board Rank Bid`,
+          order_id: res.orderId,
+          prefill: {
+            name: trimmedName,
+            email: contactEmail,
+            contact: contactPhone,
+          },
+          notes: {
+            paymentId: res.paymentId,
+            businessId: res.businessId,
+          },
+          handler: () => {
+            router.push(`/success/${res.paymentId}`);
+          },
+          modal: {
+            ondismiss: () => {
+              setBusy(false);
+              router.push(`/success/${res.paymentId}`);
+            },
+          },
+        });
+        rzp.open();
+      } catch (rzpErr) {
+        toast.info("Navigating to payment confirmation…");
+        router.push(`/success/${res.paymentId}`);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Bid placement failed. Please try again.");
+      setBusy(false);
+    }
   }
 
   return (
-    <Card id="bid-form" className="scroll-mt-20">
-      <CardHeader>
-        <CardTitle className="text-base">Place a bid</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div
+      id="bid-form"
+      className="card-surface rounded-xl p-5 sm:p-6 shadow-md border border-border/80"
+    >
+      <div className="pb-4 border-b border-border/50">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-foreground">
+            {targetBusinessId ? "Raise Listing Bid" : "Place Your Bid"}
+          </h2>
+          <Badge variant="outline" className="text-[10px] uppercase font-semibold">
+            {scope === "NATIONAL" ? "National" : state}
+          </Badge>
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-1">
+          {user ? (
+            <span className="flex items-center gap-1 text-emerald-400">
+              <UserCheck className="h-3.5 w-3.5" /> Bidding as {user.email}
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Auth optional · You receive a secure manage link
+            </span>
+          )}
+        </p>
+      </div>
+
+      <div className="pt-4">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="url">URL or handle</Label>
-            <Input
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://yoursite.in"
-            />
-            {existing && (
-              <p className="text-xs text-muted-foreground">
-                Already listed at {formatInr(existing.totalPaidInr)} · rank #
-                {existing.rank}
-              </p>
-            )}
+          {/* Target Board Summary */}
+          <div className="rounded-lg bg-card/60 p-3 border border-border/60 text-xs flex justify-between items-center">
+            <span className="text-muted-foreground">Target Board:</span>
+            <span className="font-semibold text-foreground">
+              {currentCategory.name} · {scope === "NATIONAL" ? "National" : state}
+            </span>
           </div>
 
-          {!existing && (
-            <div className="space-y-1.5">
-              <Label>Category</Label>
-              <Select
-                value={category}
-                onValueChange={(v) => setCategory(v as Category)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {/* Business Name */}
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold text-foreground">
+              Business or Brand Name
+            </Label>
+            <Input
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Acme Technologies"
+              className="h-9 text-xs bg-background"
+            />
+          </div>
 
-          <div className="space-y-2">
+          {/* Website URL */}
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold text-foreground">
+              Website or Profile Link
+            </Label>
+            <Input
+              type="url"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              placeholder="https://yourbrand.in"
+              className="h-9 text-xs bg-background"
+            />
+          </div>
+
+          {/* Short Description */}
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold text-foreground">
+              Tagline / Short Description (Optional)
+            </Label>
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="e.g. India's fastest B2B logistics network"
+              className="h-9 text-xs bg-background"
+            />
+          </div>
+
+          {/* Receipt Email */}
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold text-foreground">Receipt Email</Label>
+            <Input
+              type="email"
+              required
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              placeholder="receipt@yourbrand.in"
+              className="h-9 text-xs bg-background"
+            />
+          </div>
+
+          {/* Bid Amount & Quick Bump Chips */}
+          <div className="space-y-2 pt-3 border-t border-border/50">
             <div className="flex items-center justify-between">
-              <Label>Bid amount</Label>
-              <span className="text-2xl font-black tabular-nums">
+              <Label className="text-xs font-semibold text-foreground">Your Bid Amount</Label>
+              <span className="font-bold text-base text-foreground tabular-nums">
                 {formatInr(amount)}
               </span>
             </div>
+
             <Slider
+              min={minBidInr}
+              max={minBidInr * 25}
+              step={50}
               value={[amount]}
-              min={minAmount}
-              max={MAX_BID}
-              step={100}
-              onValueChange={(v) => setAmount(Array.isArray(v) ? v[0] : v)}
+              onValueChange={([val]) => setAmount(val)}
+              className="py-1.5"
             />
-            <div className="flex gap-2">
-              {[
-                minAmount,
-                minAmount + 500,
-                minAmount + 2_000,
-                minAmount + 10_000,
-              ].map((v) => (
-                <Button
-                  key={v}
+
+            <div className="grid grid-cols-4 gap-1.5 pt-1">
+              {[+100, +500, +1000, +5000].map((bump) => (
+                <button
+                  key={bump}
                   type="button"
-                  size="sm"
-                  variant={amount === v ? "default" : "outline"}
-                  onClick={() => setAmount(Math.min(v, MAX_BID))}
-                  className="flex-1 text-xs"
+                  className="rounded border border-border/80 bg-background hover:bg-muted text-muted-foreground hover:text-foreground text-[11px] h-7 font-semibold transition-all"
+                  onClick={() => setAmount((curr) => curr + bump)}
                 >
-                  {formatInr(v)}
-                </Button>
+                  +{bump}
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="rounded-md border bg-muted/40 p-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">You'll pay</span>
-              <span className="font-semibold tabular-nums">
-                {formatInr(charge)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">New rank</span>
-              <Badge variant="outline" className="tabular-nums">
-                #{projectedRank}
-              </Badge>
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full" size="lg">
-            {existing ? "Raise bid" : "Place bid"} →
+          {/* Submit Action */}
+          <Button
+            type="submit"
+            className="w-full mt-3 h-10 text-xs font-semibold shadow-sm"
+            disabled={busy}
+          >
+            {busy ? (
+              "Initializing payment gateway…"
+            ) : (
+              <>
+                Confirm & Pay {formatInr(amount)}
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </>
+            )}
           </Button>
-          <p className="text-center text-[11px] text-muted-foreground">
-            Mock mode — real Razorpay checkout is the next step.
-          </p>
+
+          <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground pt-1">
+            <Lock className="h-3 w-3 text-emerald-400" />
+            <span>Fulfilled instantly via Razorpay · Bids never expire</span>
+          </div>
         </form>
-      </CardContent>
-    </Card>
-  )
+      </div>
+    </div>
+  );
 }

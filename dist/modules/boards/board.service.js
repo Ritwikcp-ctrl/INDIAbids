@@ -6,6 +6,7 @@ const boardSelect = {
     id: true,
     key: true,
     name: true,
+    scope: true,
     country: true,
     state: true,
     city: true,
@@ -77,6 +78,7 @@ export async function listBoards(query) {
     return prisma.board.findMany({
         where: {
             status: "ACTIVE",
+            ...(query.scope ? { scope: query.scope } : {}),
             ...(query.category
                 ? {
                     category: {

@@ -9,7 +9,7 @@ function safeCompare(expected, received) {
     return timingSafeEqual(expectedBuffer, receivedBuffer);
 }
 export function verifyCheckoutSignature(orderId, paymentId, signature) {
-    const message = `${orderId}| ${paymentId}`;
+    const message = `${orderId}|${paymentId}`;
     const expected = createHmac("sha256", env.RAZORPAY_KEY_SECRET)
         .update(message, "utf8")
         .digest("hex");

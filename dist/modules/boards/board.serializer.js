@@ -1,9 +1,9 @@
-import { BidScalarFieldEnum } from "../../generated/prisma/internal/prismaNamespace";
 export function serializeBoard(board) {
     return {
         id: board.id,
         key: board.key,
         name: board.name,
+        scope: board.scope,
         country: board.country,
         state: board.state,
         city: board.city,

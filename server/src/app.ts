@@ -3,28 +3,31 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
+import cookieParser from "cookie-parser";
 import { randomUUID } from "node:crypto";
 
 import { env } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 
 import healthRoutes from "./routes/health.routes.js";
-
-import { notFoundHandler } from "./middleware/not-found.js";
-import { errorHandler } from "./middleware/error-handler.js";
-import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes.js";
 import categoryRoutes from "./modules/categories/category.routes.js";
 import businessRoutes from "./modules/businesses/business.routes.js";
 import boardRoutes from "./modules/boards/board.routes.js";
-import paymentRoutes
-  from "./modules/payments/payment.routes.js";
-import biddingRoutes from "./modules/bidding/bidding.routes";
+import biddingRoutes from "./modules/bidding/bidding.routes.js";
+import paymentRoutes from "./modules/payments/payment.routes.js";
+
+import {
+  getBusinessByManageToken,
+  claimBusinessByManageToken,
+} from "./modules/businesses/business.controller.js";
+import { requireAuth } from "./middleware/require-auth.js";
+import { notFoundHandler } from "./middleware/not-found.js";
+import { errorHandler } from "./middleware/error-handler.js";
 
 const app = express();
 
 app.set("trust proxy", env.TRUST_PROXY);
-
 app.disable("x-powered-by");
 
 app.use(helmet());
@@ -40,32 +43,25 @@ app.use((req, res, next) => {
   const requestId = randomUUID();
   res.locals.requestId = requestId;
   res.setHeader("x-Request-ID", requestId);
-
   next();
 });
 
 app.use(
   pinoHttp({
     logger,
-    genReqId: (req, res) => {
-      return res.locals.requestId;
-    },
+    genReqId: (req, res) => res.locals.requestId,
   })
 );
 
 app.use(
   express.json({
     limit: "100kb",
-
-    verify:(req,res,buffer) => {
-      if(req.url?.startsWith("/api/v1/payments/webhooks/razorpay",
-
-      )
-    ) {
-      req.rawBody = Buffer.from(buffer);
-    }
+    verify: (req, res, buffer) => {
+      if (req.url?.startsWith("/api/v1/payments/webhooks/razorpay")) {
+        req.rawBody = Buffer.from(buffer);
+      }
     },
-  }),
+  })
 );
 
 app.use(
@@ -78,14 +74,14 @@ app.use(
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 300,
+    limit: 500,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
       success: false,
       error: {
         code: "RATE_LIMITED",
-        message: "Too many request.Please try again later.",
+        message: "Too many requests. Please try again later.",
       },
     },
   })
@@ -93,19 +89,21 @@ app.use(
 
 app.use(cookieParser());
 
+// Base API v1 Routes
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
-
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
-
 app.use("/api/v1/boards", boardRoutes);
 app.use("/api/v1/bids", biddingRoutes);
+app.use("/api/v1/checkout", biddingRoutes); // Alias for bid checkout
+app.use("/api/v1/payments", paymentRoutes);
 
-app.use(
-  "/api/v1/payments",
-  paymentRoutes,
-);
+// Direct /manage routes per the spine specification:
+// /manage/:token -> get listing
+// /manage/:token/claim -> claim listing
+app.get("/api/v1/manage/:token", getBusinessByManageToken);
+app.post("/api/v1/manage/:token/claim", requireAuth, claimBusinessByManageToken);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

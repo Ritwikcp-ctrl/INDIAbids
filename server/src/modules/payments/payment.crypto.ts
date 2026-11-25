@@ -18,7 +18,7 @@ export function verifyCheckoutSignature(
   paymentId: string,
   signature: string
 ): boolean {
-  const message = `${orderId}| ${paymentId}`;
+  const message = `${orderId}|${paymentId}`;
 
   const expected = createHmac("sha256", env.RAZORPAY_KEY_SECRET)
     .update(message, "utf8")

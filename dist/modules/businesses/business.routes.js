@@ -1,11 +1,12 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { createBusiness, listMyBusinesses, getPublicBusinessBySlug, updateBusiness, } from "./business.controller";
-import { requireAuth } from "../../middleware/require-auth";
+import { createBusiness, listMyBusinesses, getPublicBusinessBySlug, getBusinessByManageToken, claimBusinessByManageToken, updateBusiness, } from "./business.controller.js";
+import { requireAuth } from "../../middleware/require-auth.js";
+import { attachUser } from "../../middleware/attach-user.js";
 const router = Router();
 const createBusinessLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
-    limit: 10,
+    limit: 20,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -18,7 +19,7 @@ const createBusinessLimiter = rateLimit({
 });
 const updateBusinessLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 30,
+    limit: 60,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -29,14 +30,16 @@ const updateBusinessLimiter = rateLimit({
         },
     },
 });
-/*
- * IMPORTANT:
- *
- * /mine must come before /:slug.
- * Otherwise Express may interpret "mine" as a slug.
- */
+// Strict gate for authenticated user's listings
 router.get("/mine", requireAuth, listMyBusinesses);
-router.post("/", requireAuth, createBusinessLimiter, createBusiness);
+// Manage listing anonymously via one-time token
+router.get("/manage/:token", getBusinessByManageToken);
+// Claim listing: requires auth, sets ownerId, nulls manageTokenHash (old URL 404s)
+router.post("/manage/:token/claim", requireAuth, claimBusinessByManageToken);
+// Create business (optional auth)
+router.post("/", attachUser, createBusinessLimiter, createBusiness);
+// Update business (auth or manageToken)
+router.patch("/:id", attachUser, updateBusinessLimiter, updateBusiness);
+// Public business profile by slug (must come after specific routes)
 router.get("/:slug", getPublicBusinessBySlug);
-router.patch("/:id", requireAuth, updateBusinessLimiter, updateBusiness);
 export default router;

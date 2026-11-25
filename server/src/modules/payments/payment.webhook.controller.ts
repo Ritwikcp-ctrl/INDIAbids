@@ -1,15 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
-
-import { AppError } from "../../lib/app-error";
-import { verifyWebhookSignature } from "./payment.crypto";
-
-import { reconcileCapturedPayment } from "./payment.service";
-
-import { prisma } from "../../lib/prisma";
+import { AppError } from "../../lib/app-error.js";
+import { verifyWebhookSignature } from "./payment.crypto.js";
+import { reconcileCapturedPayment } from "./payment.service.js";
+import { prisma } from "../../lib/prisma.js";
+import { logger } from "../../lib/logger.js";
 
 type RazorpayWebhook = {
   event: string;
-
   payload?: {
     payment?: {
       entity?: {
@@ -31,61 +28,33 @@ export async function handleRazorpayWebhook(
 ): Promise<void> {
   try {
     const rawBody = req.rawBody;
-
     if (!rawBody) {
-      throw new AppError(
-        400,
-        "RAW_BODY_REQUIRED",
-        "Raw webhook body is required."
-      );
+      throw new AppError(400, "RAW_BODY_REQUIRED", "Raw webhook body is required.");
     }
 
-    const signature = req.get("X-Razorpay-signature");
-
+    const signature = req.get("x-razorpay-signature") || req.get("X-Razorpay-Signature");
     if (!signature) {
-      throw new AppError(
-        400,
-        "WEBHOOK_SIGNATURE_REQUIRED",
-        "Webhook signature is required."
-      );
+      throw new AppError(400, "WEBHOOK_SIGNATURE_REQUIRED", "Webhook signature is required.");
     }
 
     const valid = verifyWebhookSignature(rawBody, signature);
-
     if (!valid) {
-      throw new AppError(
-        401,
-        "WEBHOOK_SIGNATURE_INVALID",
-        "Webhook signature is invalid."
-      );
+      throw new AppError(401, "WEBHOOK_SIGNATURE_INVALID", "Webhook signature is invalid.");
     }
 
-    const eventId = req.get("x-razorpay-event-id");
-
+    const eventId = req.get("x-razorpay-event-id") || req.get("X-Razorpay-Event-Id");
     if (!eventId) {
-      throw new AppError(
-        400,
-        "WEBHOOK_EVENT_ID_REQUIRED",
-        "Webhook event ID is required."
-      );
+      throw new AppError(400, "WEBHOOK_EVENT_ID_REQUIRED", "Webhook event ID is required.");
     }
 
     const payload = JSON.parse(rawBody.toString("utf8")) as RazorpayWebhook;
-
     const eventType = payload.event;
 
     if (!eventType) {
-      throw new AppError(
-        400,
-        "WEBHOOK_EVENT_INVALID",
-        "Webhook event type is missing."
-      );
+      throw new AppError(400, "WEBHOOK_EVENT_INVALID", "Webhook event type is missing.");
     }
 
-    const providerPaymentId = payload.payload?.payment?.entity?.id;
-
-    const providerOrderId = payload.payload?.payment?.entity?.order_id;
-
+    // Idempotency check: @@unique([provider, eventId])
     const existingEvent = await prisma.paymentWebhookEvent.findUnique({
       where: {
         provider_eventId: {
@@ -96,12 +65,12 @@ export async function handleRazorpayWebhook(
     });
 
     if (existingEvent) {
-      res.status(200).json({
-        received: true,
-        duplicate: true,
-      });
+      res.status(200).json({ received: true, duplicate: true });
       return;
     }
+
+    const providerPaymentId = payload.payload?.payment?.entity?.id;
+    const providerOrderId = payload.payload?.payment?.entity?.order_id;
 
     if (eventType !== "payment.captured" && eventType !== "payment.failed") {
       await prisma.paymentWebhookEvent.create({
@@ -109,21 +78,14 @@ export async function handleRazorpayWebhook(
           provider: "razorpay",
           eventId,
           eventType,
-
           providerOrderId: providerOrderId ?? null,
-
           providerPaymentId: providerPaymentId ?? null,
-
           status: "IGNORED",
-
           processedAt: new Date(),
         },
       });
 
-      res.status(200).json({
-        received: true,
-        ignored: true,
-      });
+      res.status(200).json({ received: true, ignored: true });
       return;
     }
 
@@ -136,102 +98,66 @@ export async function handleRazorpayWebhook(
     }
 
     if (eventType === "payment.failed") {
-      await prisma.$transaction(async (tx) => {
-        await tx.paymentWebhookEvent.create({
-          data: {
-            provider: "razorpay",
-            eventId,
-            eventType,
-
-            providerOrderId,
-            providerPaymentId,
-
-            status: "PROCESSED",
-
-            processedAt: new Date(),
-          },
-        });
-
-        await tx.payment.updateMany({
-          where: {
-            providerOrderId,
-            providerPaymentId: null,
-
-            status: {
-              in: ["CREATED", "PENDING"],
-            },
-          },
-
-          data: {
-            status: "FAILED",
-          },
-        });
-      });
-
-      res.status(200).json({
-        received: true,
-      });
-      return;
-    }
-
-    const entity = payload.payload?.payment?.entity;
-
-    if (!entity) {
-      throw new AppError(
-        400,
-        "WEBHOOK_PAYMENT_DATA_INVALID",
-        "Payment entity is missing."
-      );
-    }
-
-    const amount = entity.amount;
-    const currency = entity.currency;
-
-    if (
-      typeof amount !== "number" ||
-      !Number.isSafeInteger(amount) ||
-      amount <= 0 ||
-      typeof currency !== "string" ||
-      !currency
-    ) {
-      throw new AppError(
-        400,
-        "WEBHOOK_PAYMENT_DATA_INVALID",
-        "Payment amount or currency is invalid."
-      );
-    }
-
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.paymentWebhookEvent.create({
+      await prisma.paymentWebhookEvent.create({
         data: {
           provider: "razorpay",
           eventId,
           eventType,
-
           providerOrderId,
           providerPaymentId,
-
           status: "PROCESSED",
-
           processedAt: new Date(),
         },
       });
 
-      return reconcileCapturedPayment({
+      await prisma.payment.updateMany({
+        where: {
+          providerOrderId,
+          status: { in: ["CREATED", "PENDING"] },
+        },
+        data: { status: "FAILED" },
+      });
+
+      res.status(200).json({ received: true, status: "FAILED" });
+      return;
+    }
+
+    const entity = payload.payload?.payment?.entity;
+    const amount = entity?.amount;
+    const currency = entity?.currency || "INR";
+
+    if (typeof amount !== "number" || amount <= 0) {
+      throw new AppError(400, "WEBHOOK_PAYMENT_DATA_INVALID", "Invalid payment amount.");
+    }
+
+    // Record webhook event as PROCESSED
+    await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "razorpay",
+        eventId,
+        eventType,
         providerOrderId,
         providerPaymentId,
+        status: "PROCESSED",
+        processedAt: new Date(),
+      },
+    });
 
-        amountPaise: BigInt(amount),
-
-        currency,
-      });
+    // Reconcile captured payment in Postgres ACID transaction + Redis ZADD
+    const result = await reconcileCapturedPayment({
+      providerOrderId,
+      providerPaymentId,
+      amountPaise: BigInt(amount),
+      currency,
     });
 
     res.status(200).json({
       received: true,
-      status: result.refundRequired ? "REFUND_PENDING" : "SUCCEEDED",
+      status: "SUCCEEDED",
+      alreadyHandled: result.alreadyHandled,
     });
   } catch (error) {
+    logger.error({ error }, "Error handling Razorpay webhook");
     next(error);
   }
 }

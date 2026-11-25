@@ -35,6 +35,14 @@ export const BusinessStatus = {
 export type BusinessStatus = (typeof BusinessStatus)[keyof typeof BusinessStatus]
 
 
+export const BoardScope = {
+  NATIONAL: 'NATIONAL',
+  STATE: 'STATE'
+} as const
+
+export type BoardScope = (typeof BoardScope)[keyof typeof BoardScope]
+
+
 export const BoardStatus = {
   ACTIVE: 'ACTIVE',
   PAUSED: 'PAUSED',

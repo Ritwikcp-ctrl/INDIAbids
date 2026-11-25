@@ -1,14 +1,30 @@
 import type { Request, Response, NextFunction } from "express";
-
-import { AppError } from "../../lib/app-error";
-
+import { AppError } from "../../lib/app-error.js";
 import {
   boardIdSchema,
   quoteSchema,
   leaderboardQuerySchema,
-} from "./bidding.schemas";
+  placeBidSchema,
+} from "./bidding.schemas.js";
+import { getBidQuote, getLeaderboard, placeBid } from "./bidding.service.js";
 
-import { getBidQuote, getLeaderboard } from "./bidding.service";
+export async function createBid(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const input = placeBidSchema.parse(req.body);
+    const result = await placeBid(req.auth?.userId ?? null, input);
+
+    res.status(201).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function getQuote(
   req: Request,
@@ -16,24 +32,14 @@ export async function getQuote(
   next: NextFunction
 ): Promise<void> {
   try {
-    if (!req.auth) {
-      throw new AppError(
-        401,
-        "AUTHENTICATION_REQUIRED",
-        "Authentication is required."
-      );
-    }
-
     const { boardId } = boardIdSchema.parse(req.params);
-    const input = quoteSchema.parse(req.body);
-    const quote = await getBidQuote(req.auth.userId, boardId, input);
+    const input = quoteSchema.parse(req.body || {});
+    const quote = await getBidQuote(boardId, input);
 
-    res.setHeader("cache-Control", "no-store");
+    res.setHeader("Cache-Control", "no-store");
     res.status(200).json({
       success: true,
-      data: {
-        quote,
-      },
+      data: { quote },
     });
   } catch (error) {
     next(error);
@@ -47,15 +53,15 @@ export async function getBoardLeaderboard(
 ): Promise<void> {
   try {
     const { boardId } = boardIdSchema.parse(req.params);
-
     const { limit } = leaderboardQuerySchema.parse(req.query);
 
-    const leaderboard = await getLeaderboard(boardId, limit);
+    const data = await getLeaderboard(boardId, limit);
 
     res.status(200).json({
       success: true,
       data: {
-        leaderboard,
+        leaderboard: data.entries,
+        board: data.board,
       },
     });
   } catch (error) {

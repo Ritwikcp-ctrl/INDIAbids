@@ -1208,6 +1208,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  name: 'name',
   passwordHash: 'passwordHash',
   role: 'role',
   status: 'status',
@@ -1233,11 +1234,14 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 export const BusinessScalarFieldEnum = {
   id: 'id',
   ownerId: 'ownerId',
+  manageTokenHash: 'manageTokenHash',
   categoryId: 'categoryId',
   name: 'name',
   slug: 'slug',
   description: 'description',
   website: 'website',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
   logoUrl: 'logoUrl',
   country: 'country',
   state: 'state',
@@ -1255,6 +1259,7 @@ export const BoardScalarFieldEnum = {
   categoryId: 'categoryId',
   key: 'key',
   name: 'name',
+  scope: 'scope',
   country: 'country',
   state: 'state',
   city: 'city',
@@ -1453,6 +1458,20 @@ export type EnumBusinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'BusinessStatus[]'
  */
 export type ListEnumBusinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BusinessStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BoardScope'
+ */
+export type EnumBoardScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardScope'>
+    
+
+
+/**
+ * Reference to a field of type 'BoardScope[]'
+ */
+export type ListEnumBoardScopeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoardScope[]'>
     
 
 
