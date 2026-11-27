@@ -35,9 +35,9 @@ import SlingButton from "@/components/sling-button";
 import SocialFlipButton, { type SocialItem } from "@/components/social-flip-button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/dialog";
 import { Reveal } from "@/components/reveal";
+import { GitHubContributionGraph } from "@/components/github-contributions";
 import {
   BLOG_POSTS,
-  CONTRIBUTION_WEEKS,
   EXPERIENCE_ITEMS,
   HIGHLIGHTS,
   PORTFOLIO_PROFILE,
@@ -46,14 +46,6 @@ import {
   type BlogPost,
   type ProjectItem,
 } from "@/lib/portfolio-data";
-
-const HEAT_LEVELS = [
-  "bg-black/[0.06] dark:bg-white/[0.06]",
-  "bg-neutral-300 dark:bg-neutral-700",
-  "bg-neutral-500 dark:bg-neutral-500",
-  "bg-neutral-700 dark:bg-neutral-300",
-  "bg-neutral-950 dark:bg-white",
-];
 
 const INDEX_SECTIONS = [
   { id: "profile", num: "00", label: "Profile" },
@@ -228,7 +220,7 @@ export function PortfolioView() {
       />
 
       <header className="sticky top-0 z-40 border-b border-neutral-200 bg-[#FAFAFA]/85 backdrop-blur-xl dark:border-neutral-800 dark:bg-[#0A0A0A]/85">
-        <div className="mx-auto flex h-14 max-w-[1060px] items-center justify-between gap-3 px-4">
+        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4">
           <a href="#profile" className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-950 text-[11px] font-black text-white dark:bg-white dark:text-neutral-950">
               T
@@ -243,7 +235,7 @@ export function PortfolioView() {
 
           <div className="flex items-center gap-2.5">
             <PulseHeart
-              count={128}
+              count={0}
               liked={liked}
               onChange={(nextLiked) => setLiked(nextLiked)}
               showCount
@@ -266,8 +258,8 @@ export function PortfolioView() {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-[1060px] justify-center gap-8 px-3 sm:px-5">
-        <main className="w-full max-w-[820px] border-x border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto flex max-w-[1200px] justify-center gap-8 px-3 sm:px-5">
+        <main className="w-full max-w-[940px] border-x border-neutral-200 dark:border-neutral-800">
           <section
             id="profile"
             className="border-b border-neutral-200 dark:border-neutral-800"
@@ -628,32 +620,9 @@ export function PortfolioView() {
             </div>
 
             <Reveal>
-              <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-3.5 dark:border-neutral-800 dark:bg-neutral-950">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-xs font-bold">Shipping Cadence</p>
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-500 dark:text-neutral-400">
-                    <span>Less</span>
-                    {HEAT_LEVELS.map((cls, i) => (
-                      <span key={i} className={`h-2.5 w-2.5 rounded-[2px] ${cls}`} />
-                    ))}
-                    <span>More</span>
-                  </div>
-                </div>
-                <div className="overflow-x-auto pb-1">
-                  <div className="inline-flex gap-1.5">
-                    {CONTRIBUTION_WEEKS.map((week, wIdx) => (
-                      <div key={wIdx} className="flex flex-col gap-1.5">
-                        {week.map((level, dIdx) => (
-                          <span
-                            key={`${wIdx}-${dIdx}`}
-                            className={`h-3 w-3 rounded-[3px] ${HEAT_LEVELS[level]}`}
-                          />
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <GitHubContributionGraph
+                defaultUsername={PORTFOLIO_PROFILE.githubUsername}
+              />
             </Reveal>
           </section>
 

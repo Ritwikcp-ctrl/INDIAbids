@@ -58,8 +58,9 @@ export const PORTFOLIO_PROFILE = {
   bio: "Actions speak louder than words — I architect full-stack TypeScript applications from ACID database transactions and payment pipelines to interactive motion-driven UIs.",
   bannerImage: "", // Optional: set "/banner.jpg" or paste directly in the UI
   avatarImage: "", // Optional: set "/avatar.jpg" or paste directly in the UI
+  githubUsername: "Ritwikcp-ctrl",
   socials: {
-    github: "https://github.com",
+    github: "https://github.com/Ritwikcp-ctrl",
     twitter: "https://x.com",
     linkedin: "https://linkedin.com",
     email: "mailto:hello@indiabids.in",
