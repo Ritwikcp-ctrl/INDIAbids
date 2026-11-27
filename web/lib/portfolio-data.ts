@@ -52,12 +52,6 @@ export type SkillIconId =
 export interface SkillItem {
   id: SkillIconId;
   name: string;
-  sub: string;
-}
-
-export interface SkillGroup {
-  group: string;
-  items: SkillItem[];
 }
 
 export interface BlogPost {
@@ -239,41 +233,21 @@ export const HIGHLIGHTS: HighlightItem[] = [
   },
 ];
 
-export const SKILL_GROUPS: SkillGroup[] = [
-  {
-    group: "Languages & Systems",
-    items: [
-      { id: "javascript", name: "JavaScript", sub: "ESNext / Async" },
-      { id: "typescript", name: "TypeScript", sub: "Strict Types" },
-      { id: "systems", name: "System Programming", sub: "Memory / IPC / POSIX" },
-    ],
-  },
-  {
-    group: "Backend & Motion",
-    items: [
-      { id: "nodejs", name: "Node.js", sub: "Server Runtime" },
-      { id: "express", name: "Express", sub: "REST / Middleware" },
-      { id: "motion", name: "Motion", sub: "Framer Physics" },
-    ],
-  },
-  {
-    group: "Databases & ORM",
-    items: [
-      { id: "postgresql", name: "PostgreSQL", sub: "ACID / Advisory Locks" },
-      { id: "prisma", name: "Prisma", sub: "Schema & Migrations" },
-      { id: "mongodb", name: "MongoDB", sub: "Document Store" },
-      { id: "redis", name: "Redis", sub: "Sorted Sets / Cache" },
-    ],
-  },
-  {
-    group: "Web3 & Infrastructure",
-    items: [
-      { id: "blockchain", name: "Blockchain", sub: "Consensus / EVM" },
-      { id: "solidity", name: "Solidity", sub: "Smart Contracts" },
-      { id: "docker", name: "Docker", sub: "Containers & Compose" },
-      { id: "github", name: "GitHub", sub: "Git & Actions CI/CD" },
-    ],
-  },
+export const SKILLS: SkillItem[] = [
+  { id: "typescript", name: "TypeScript" },
+  { id: "docker", name: "Docker" },
+  { id: "postgresql", name: "PostgreSQL" },
+  { id: "express", name: "Express" },
+  { id: "solidity", name: "Solidity" },
+  { id: "redis", name: "Redis" },
+  { id: "motion", name: "Motion" },
+  { id: "systems", name: "System Programming" },
+  { id: "prisma", name: "Prisma" },
+  { id: "javascript", name: "JavaScript" },
+  { id: "blockchain", name: "Blockchain" },
+  { id: "mongodb", name: "MongoDB" },
+  { id: "nodejs", name: "Node.js" },
+  { id: "github", name: "GitHub" },
 ];
 
 export const LINUX_FOUNDATION = {
