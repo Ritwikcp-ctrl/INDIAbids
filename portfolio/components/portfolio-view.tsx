@@ -18,7 +18,6 @@ import {
   FileText,
   FolderGit2,
   ImagePlus,
-  Layers,
   Link2,
   Mail,
   MapPin,
@@ -36,13 +35,13 @@ import SocialFlipButton, { type SocialItem } from "@/components/social-flip-butt
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/dialog";
 import { Reveal } from "@/components/reveal";
 import { GitHubContributionGraph } from "@/components/github-contributions";
+import { SkillsSection } from "@/components/skills-section";
 import {
   BLOG_POSTS,
   EXPERIENCE_ITEMS,
   HIGHLIGHTS,
   PORTFOLIO_PROFILE,
   PROJECT_ITEMS,
-  SKILL_GROUPS,
   type BlogPost,
   type ProjectItem,
 } from "@/lib/portfolio-data";
@@ -626,44 +625,7 @@ export function PortfolioView() {
             </Reveal>
           </section>
 
-          <section
-            id="skills"
-            className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
-          >
-            <Reveal>
-              <div className="mb-8">
-                <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  04 / Stack
-                </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                  Skills &amp; Technologies
-                </h2>
-              </div>
-            </Reveal>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {SKILL_GROUPS.map((group, idx) => (
-                <Reveal key={group.group} delay={idx * 0.04}>
-                  <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-3 dark:border-neutral-800 dark:bg-neutral-950">
-                    <div className="flex items-center gap-2 text-xs font-bold">
-                      <Layers className="h-3.5 w-3.5" />
-                      <span>{group.group}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {group.items.map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-md border border-neutral-200 bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-800 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </section>
+          <SkillsSection />
 
           <section
             id="blogs"

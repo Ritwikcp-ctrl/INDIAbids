@@ -32,6 +32,34 @@ export interface HighlightItem {
   detail: string;
 }
 
+export type SkillIconId =
+  | "javascript"
+  | "typescript"
+  | "systems"
+  | "nodejs"
+  | "express"
+  | "motion"
+  | "postgresql"
+  | "prisma"
+  | "mongodb"
+  | "redis"
+  | "blockchain"
+  | "solidity"
+  | "docker"
+  | "github"
+  | "linux";
+
+export interface SkillItem {
+  id: SkillIconId;
+  name: string;
+  sub: string;
+}
+
+export interface SkillGroup {
+  group: string;
+  items: SkillItem[];
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -214,24 +242,47 @@ export const HIGHLIGHTS: HighlightItem[] = [
   },
 ];
 
-export const SKILL_GROUPS = [
+export const SKILL_GROUPS: SkillGroup[] = [
   {
-    group: "Frontend & Motion",
-    items: ["Next.js (App Router)", "React 19", "TypeScript", "Tailwind CSS v4", "Framer Motion", "Radix / shadcn"],
+    group: "Languages & Systems",
+    items: [
+      { id: "javascript", name: "JavaScript", sub: "ESNext / Async" },
+      { id: "typescript", name: "TypeScript", sub: "Strict Types" },
+      { id: "systems", name: "System Programming", sub: "Memory / IPC / POSIX" },
+    ],
   },
   {
-    group: "Backend & Auth",
-    items: ["Node.js", "Express 5", "Zod", "JWT & HttpOnly Cookies", "Google OAuth 2.0", "Pino Logging"],
+    group: "Backend & Motion",
+    items: [
+      { id: "nodejs", name: "Node.js", sub: "Server Runtime" },
+      { id: "express", name: "Express", sub: "REST / Middleware" },
+      { id: "motion", name: "Motion", sub: "Framer Physics" },
+    ],
   },
   {
-    group: "Data & Payments",
-    items: ["PostgreSQL", "Prisma 7 ORM", "Redis Sorted Sets", "ACID Transactions", "Razorpay Orders", "Webhooks"],
+    group: "Databases & ORM",
+    items: [
+      { id: "postgresql", name: "PostgreSQL", sub: "ACID / Advisory Locks" },
+      { id: "prisma", name: "Prisma", sub: "Schema & Migrations" },
+      { id: "mongodb", name: "MongoDB", sub: "Document Store" },
+      { id: "redis", name: "Redis", sub: "Sorted Sets / Cache" },
+    ],
   },
   {
-    group: "Infra & Hosting",
-    items: ["Docker & Compose", "GitHub Actions CI/CD", "Vercel", "Cloudflare Pages", "Zoho Catalyst", "Linux"],
+    group: "Web3 & Infrastructure",
+    items: [
+      { id: "blockchain", name: "Blockchain", sub: "Consensus / EVM" },
+      { id: "solidity", name: "Solidity", sub: "Smart Contracts" },
+      { id: "docker", name: "Docker", sub: "Containers & Compose" },
+      { id: "github", name: "GitHub", sub: "Git & Actions CI/CD" },
+    ],
   },
 ];
+
+export const LINUX_FOUNDATION = {
+  name: "Linux OS",
+  capabilities: ["Kernel & Processes", "Shell & Networking", "Containers", "Self-Hosted Prod"],
+};
 
 /**
  * Add future blog posts directly to this array.
