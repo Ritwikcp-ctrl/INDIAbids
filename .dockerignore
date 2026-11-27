@@ -1,0 +1,11 @@
+node_modules
+web/node_modules
+.next
+web/.next
+dist
+.git
+.env
+web/.env.local
+dump.rdb
+cookies.txt
+server/src/cookies.txt
