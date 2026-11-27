@@ -373,7 +373,7 @@ export function PortfolioView({
                       <img
                         src={avatarSrc}
                         alt="Tejas profile photo"
-                        className="h-full w-full object-cover grayscale"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
                       <div className="flex flex-col items-center gap-0.5 text-center">
