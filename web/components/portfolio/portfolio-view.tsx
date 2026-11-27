@@ -291,7 +291,7 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-44 sm:h-52 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
+              className="group relative h-52 sm:h-60 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -302,23 +302,32 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
                 />
               ) : (
                 <div
-                  className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-center px-4"
+                  lang="hi"
+                  className="flex h-full w-full flex-col items-center justify-center gap-3 px-5 pb-6 sm:pb-4 text-center"
                   style={{
                     backgroundImage:
                       "radial-gradient(circle at 1px 1px, rgba(120,120,120,0.22) 1px, transparent 0)",
                     backgroundSize: "16px 16px",
                   }}
                 >
-                  <ImagePlus className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-                  <p className="text-[11px] font-mono text-neutral-600 dark:text-neutral-400">
-                    {pasteTarget === "tejas_portfolio_banner"
-                      ? "Press Ctrl+V / Cmd+V to paste banner image, or Upload"
-                      : "Cover Banner Slot — Click & press Ctrl+V or Upload"}
+                  <p className="text-xs sm:text-sm md:text-[16px] font-medium leading-relaxed text-neutral-900 dark:text-neutral-100">
+                    श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।
+                    <br />
+                    बरनउँ रघुबर बिमल जसु, जो दायकु फल चारि॥
+                  </p>
+                  <span
+                    aria-hidden="true"
+                    className="h-px w-14 bg-neutral-300 dark:bg-neutral-700"
+                  />
+                  <p className="text-xs sm:text-sm md:text-[16px] font-medium leading-relaxed text-neutral-800 dark:text-neutral-200">
+                    बुद्धिहीन तनु जानिके, सुमिरौं पवन-कुमार।
+                    <br />
+                    बल बुद्धि बिद्या देहु मोहिं, हरहु कलेस बिकार॥
                   </p>
                 </div>
               )}
 
-              <div className="absolute right-3 bottom-3 flex items-center gap-1.5 opacity-85 group-hover:opacity-100">
+              <div className="absolute right-3 bottom-3 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                 <button
                   type="button"
                   onClick={(e) => {
