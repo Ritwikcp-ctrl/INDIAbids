@@ -110,7 +110,7 @@ export async function listBoards(query) {
     });
 }
 export async function getBoardByKey(key) {
-    const board = await prisma.board.findFirst({
+    let board = await prisma.board.findFirst({
         where: {
             key,
             status: "ACTIVE",
@@ -118,6 +118,40 @@ export async function getBoardByKey(key) {
         select: boardSelect,
     });
     if (!board) {
+        // If board is not found, attempt auto-resolution from key
+        const isNational = key.endsWith("-national");
+        const categorySlug = isNational
+            ? key.replace(/-national$/, "")
+            : key.split("-").slice(0, -1).join("-");
+        const category = await prisma.category.findUnique({
+            where: { slug: categorySlug },
+        });
+        if (category) {
+            const statePart = isNational ? null : key.slice(categorySlug.length + 1);
+            const stateName = statePart
+                ? statePart
+                    .split("-")
+                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                    .join(" ")
+                : null;
+            const newBoard = await prisma.board.create({
+                data: {
+                    categoryId: category.id,
+                    key,
+                    name: isNational
+                        ? `${category.name} - National`
+                        : `${category.name} - ${stateName || "State"}`,
+                    scope: isNational ? "NATIONAL" : "STATE",
+                    state: stateName,
+                    country: "IN",
+                    minBidPaise: isNational ? 50000n : 10000n,
+                    bidIncrementPaise: 100n,
+                    status: "ACTIVE",
+                },
+                select: boardSelect,
+            });
+            return newBoard;
+        }
         throw new AppError(404, "BOARD_NOT_FOUND", "Board not found.");
     }
     return board;

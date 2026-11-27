@@ -1,6 +1,6 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { register, login, refresh, logout, me } from "./auth.controller";
+import { register, login, refresh, logout, me, authProviders, googleAuthStart, googleAuthCallback, } from "./auth.controller";
 import { requireAuth } from "../../middleware/require-auth";
 import { requireSameOrigin } from "../../middleware/require-same-origin";
 const router = Router();
@@ -34,5 +34,8 @@ router.post("/register", registerLimiter, requireSameOrigin, register);
 router.post("/login", loginLimiter, requireSameOrigin, login);
 router.post("/refresh", requireSameOrigin, refresh);
 router.post("/logout", requireSameOrigin, logout);
+router.get("/providers", authProviders);
+router.get("/google", googleAuthStart);
+router.get("/google/callback", googleAuthCallback);
 router.get("/me", requireAuth, me);
 export default router;

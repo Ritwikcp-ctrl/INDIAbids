@@ -8,9 +8,10 @@ async function startServer() {
     try {
         await prisma.$connect();
         logger.info("Database connection established");
-        server = app.listen(env.PORT, () => {
+        const listenPort = Number(process.env.X_ZOHO_CATALYST_LISTEN_PORT || env.PORT);
+        server = app.listen(listenPort, "0.0.0.0", () => {
             logger.info({
-                port: env.PORT,
+                port: listenPort,
                 environment: env.NODE_ENV,
             }, "INDIAbids API started");
         });

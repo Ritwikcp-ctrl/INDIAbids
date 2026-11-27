@@ -21,10 +21,19 @@ import { errorHandler } from "./middleware/error-handler.js";
 const app = express();
 app.set("trust proxy", env.TRUST_PROXY);
 app.disable("x-powered-by");
-app.use(helmet());
+app.use(helmet({
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
+const allowedOrigins = env.CORS_ORIGIN.split(",")
+    .map((o) => o.trim().replace(/\/$/, ""))
+    .filter(Boolean);
 app.use(cors({
-    origin: env.CORS_ORIGIN,
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Manage-Token"],
+    maxAge: 86_400,
 }));
 app.use((req, res, next) => {
     const requestId = randomUUID();
@@ -62,20 +71,31 @@ app.use(rateLimit({
     },
 }));
 app.use(cookieParser());
-// Base API v1 Routes
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/businesses", businessRoutes);
 app.use("/api/v1/boards", boardRoutes);
 app.use("/api/v1/bids", biddingRoutes);
-app.use("/api/v1/checkout", biddingRoutes); // Alias for bid checkout
+app.use("/api/v1/checkout", biddingRoutes);
 app.use("/api/v1/payments", paymentRoutes);
-// Direct /manage routes per the spine specification:
-// /manage/:token -> get listing
-// /manage/:token/claim -> claim listing
-app.get("/api/v1/manage/:token", getBusinessByManageToken);
-app.post("/api/v1/manage/:token/claim", requireAuth, claimBusinessByManageToken);
+const manageLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        error: {
+            code: "RATE_LIMITED",
+            message: "Too many listing management requests. Please try again later.",
+        },
+    },
+});
+app.get("/api/v1/manage/:token", manageLimiter, getBusinessByManageToken);
+app.post("/api/v1/manage/:token/claim", manageLimiter, requireAuth, claimBusinessByManageToken);
 app.use(notFoundHandler);
 app.use(errorHandler);
 export default app;
+//To Do : Add a web application firewall , implement stricter CORS policies for production and conduct a security audit.
+//To do : Ship logs to a centralized service like Datadog, Logtail.

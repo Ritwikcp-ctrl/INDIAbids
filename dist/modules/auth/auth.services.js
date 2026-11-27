@@ -3,10 +3,11 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../lib/app-error";
 import { createAccessToken, generateRefreshToken, hashRefreshToken, } from "./tokens";
 import { hashPassword, verifyPassword } from "./password";
-import { env } from "node:process";
+import { env } from "../../config/env";
 const publicUserSelect = {
     id: true,
     email: true,
+    name: true,
     role: true,
     status: true,
     createdAt: true,
@@ -29,6 +30,7 @@ export async function register(input) {
             const user = await tx.user.create({
                 data: {
                     email: input.email,
+                    name: input.name?.trim() || null,
                     passwordHash,
                     role: "USER",
                     status: "ACTIVE",
@@ -81,6 +83,9 @@ export async function login(input) {
     if (!user) {
         throw new AppError(401, "INVALID_CREDENTIALS", "Invalid email or password.");
     }
+    if (!user.passwordHash) {
+        throw new AppError(401, "USE_GOOGLE_SIGNIN", "This account uses Google Sign-In. Please continue with Google.");
+    }
     const passwordValid = await verifyPassword(user.passwordHash, input.password);
     if (!passwordValid) {
         throw new AppError(401, "INVALID_CREDENTIALS", "Invalid email or password.");
@@ -113,6 +118,82 @@ export async function login(input) {
         user: {
             id: user.id,
             email: user.email,
+            name: user.name,
+            role: user.role,
+            status: user.status,
+            createdAt: user.createdAt,
+        },
+    };
+}
+export async function loginWithGoogle(input) {
+    const email = input.email.trim().toLowerCase();
+    let user = await prisma.user.findFirst({
+        where: {
+            OR: [{ googleId: input.googleId }, { email }],
+        },
+        select: {
+            ...publicUserSelect,
+            googleId: true,
+        },
+    });
+    if (user) {
+        if (user.status !== "ACTIVE") {
+            throw new AppError(403, "ACCOUNT_UNAVAILABLE", "This account is currently unavailable.");
+        }
+        if (!user.googleId || (!user.name && input.name)) {
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    googleId: user.googleId ?? input.googleId,
+                    name: user.name ?? (input.name?.trim() || null),
+                },
+                select: {
+                    ...publicUserSelect,
+                    googleId: true,
+                },
+            });
+        }
+    }
+    else {
+        user = await prisma.user.create({
+            data: {
+                email,
+                name: input.name?.trim() || null,
+                googleId: input.googleId,
+                passwordHash: null,
+                role: "USER",
+                status: "ACTIVE",
+            },
+            select: {
+                ...publicUserSelect,
+                googleId: true,
+            },
+        });
+    }
+    const refreshToken = generateRefreshToken();
+    const tokenHash = hashRefreshToken(refreshToken);
+    const familyId = randomUUID();
+    const ttlDays = Number(env.REFRESH_TOKEN_TTL_DAYS ?? 7);
+    if (!Number.isFinite(ttlDays) || ttlDays <= 0) {
+        throw new Error("REFRESH_TOKEN_TTL_DAYS must be a positive number");
+    }
+    const session = await prisma.authSession.create({
+        data: {
+            userId: user.id,
+            tokenHash,
+            familyId,
+            expiresAt: new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000),
+        },
+        select: { id: true },
+    });
+    const accessToken = await createAccessToken(user.id, user.role, session.id);
+    return {
+        accessToken,
+        refreshToken,
+        user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
             role: user.role,
             status: user.status,
             createdAt: user.createdAt,
@@ -130,6 +211,7 @@ export async function refresh(rawRefreshToken) {
                 select: {
                     id: true,
                     email: true,
+                    name: true,
                     role: true,
                     status: true,
                     createdAt: true,

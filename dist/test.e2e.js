@@ -11,8 +11,8 @@ async function runE2ETest() {
     const baseUrl = `http://127.0.0.1:${port}/api/v1`;
     try {
         // 1. Check boards
-        console.log("Step 1: Fetching National board for tech-ai...");
-        const boardRes = await fetch(`${baseUrl}/boards/tech-ai-national`);
+        console.log("Step 1: Fetching National board for ai-media-generation...");
+        const boardRes = await fetch(`${baseUrl}/boards/ai-media-generation-national`);
         const boardData = await boardRes.json();
         if (!boardData.success)
             throw new Error("Failed to get board: " + JSON.stringify(boardData));
@@ -155,6 +155,9 @@ async function runE2ETest() {
         console.log("==========================================\n");
     }
     finally {
+        // Clean up test records
+        await prisma.$executeRawUnsafe(`TRUNCATE TABLE "PaymentWebhookEvent", "Bid", "Payment", "BoardMembership", "Business", "AuthSession", "User" CASCADE;`);
+        await redis.flushdb();
         server.close();
     }
 }

@@ -10,6 +10,7 @@ import { ZodError } from "zod";
 import { env } from "../config/env";
 import { logger } from "../lib/logger";
 import { AppError } from "../lib/app-error";
+import { reportServerError } from "../lib/error-tracker";
 
 export const errorHandler: ErrorRequestHandler = (
   error: unknown,
@@ -58,6 +59,12 @@ export const errorHandler: ErrorRequestHandler = (
     },
     "Unhandled request error",
   );
+
+  reportServerError(error, {
+    method: req.method,
+    path: req.originalUrl,
+    requestId: res.locals.requestId as string | undefined,
+  });
 
   const developmentError =
     env.NODE_ENV !== "production" &&

@@ -34,6 +34,13 @@ export function loadRazorpay(): Promise<void> {
   return loadingPromise;
 }
 
+/** Minimal type for the Razorpay payment success payload. */
+export interface RazorpaySuccessResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
 /** Minimal type for the Razorpay constructor injected by the script. */
 export interface RazorpayOptions {
   key: string;
@@ -45,7 +52,7 @@ export interface RazorpayOptions {
   prefill?: { name?: string; email?: string; contact?: string };
   notes?: Record<string, string>;
   theme?: { color?: string };
-  handler?: () => void;
+  handler?: (response: RazorpaySuccessResponse) => void | Promise<void>;
   modal?: { ondismiss?: () => void };
 }
 

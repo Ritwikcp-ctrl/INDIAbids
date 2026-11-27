@@ -129,6 +129,10 @@ export async function joinBoard(
     throw new AppError(404, "BUSINESS_NOT_FOUND", "Business not found.");
   }
 
+  if (business.ownerId !== userId) {
+    throw new AppError(403, "FORBIDDEN", "You do not own this business.");
+  }
+
   const board = await prisma.board.findUnique({
     where: {
       id: boardId,

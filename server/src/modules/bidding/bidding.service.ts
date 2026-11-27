@@ -93,16 +93,25 @@ export async function placeBid(userId: string | null, input: PlaceBidInput) {
     if (!business) {
       throw new AppError(404, "BUSINESS_NOT_FOUND", "No listing found for the provided manage token.");
     }
+    if (business.status !== "ACTIVE") {
+      throw new AppError(403, "BUSINESS_UNAVAILABLE", "This listing is not active.");
+    }
   } else if (input.businessId) {
-    // Authenticated user raising bid via businessId
+    // Authenticated owner raising bid via businessId
+    if (!userId) {
+      throw new AppError(401, "AUTHENTICATION_REQUIRED", "Authentication or a valid manage token is required to bid on an existing listing.");
+    }
     business = await prisma.business.findUnique({
       where: { id: input.businessId },
     });
     if (!business) {
       throw new AppError(404, "BUSINESS_NOT_FOUND", "Business not found.");
     }
-    if (userId && business.ownerId && business.ownerId !== userId) {
+    if (!business.ownerId || business.ownerId !== userId) {
       throw new AppError(403, "FORBIDDEN", "You do not own this business.");
+    }
+    if (business.status !== "ACTIVE") {
+      throw new AppError(403, "BUSINESS_UNAVAILABLE", "This listing is not active.");
     }
   } else {
     // New business creation
@@ -259,9 +268,12 @@ export async function placeBid(userId: string | null, input: PlaceBidInput) {
   });
 
   // 6. Create Razorpay order
-  let providerOrderId = `order_${randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  let providerOrderId: string;
   try {
     const amountNumber = Number(input.amountPaise);
+    if (!Number.isSafeInteger(amountNumber) || amountNumber <= 0) {
+      throw new AppError(400, "INVALID_AMOUNT", "Bid amount exceeds safe gateway range.");
+    }
     const order = await razorpay.orders.create({
       amount: amountNumber,
       currency: "INR",
@@ -274,7 +286,21 @@ export async function placeBid(userId: string | null, input: PlaceBidInput) {
     });
     providerOrderId = order.id;
   } catch (err) {
-    logger.warn({ err }, "Razorpay API order creation warning, using order ID for local workflow");
+    if (env.NODE_ENV === "test") {
+      logger.warn({ err }, "Razorpay API bypassed in test mode; using synthetic order ID");
+      providerOrderId = `order_test_${randomUUID().replace(/-/g, "").slice(0, 14)}`;
+    } else {
+      logger.error({ err, paymentId: payment.id }, "Razorpay order creation failed");
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: { status: "FAILED", failureReason: "Razorpay order creation failed" },
+      });
+      throw new AppError(
+        502,
+        "PAYMENT_GATEWAY_ERROR",
+        "Unable to initialize payment with Razorpay. Please try again."
+      );
+    }
   }
 
   await prisma.payment.update({

@@ -1,23 +1,36 @@
 import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../lib/app-error.js";
-import { env } from "../../config/env.js";
-import { logger } from "../../lib/logger.js";
-import { razorpay } from "./razorpay.js";
 import { verifyCheckoutSignature } from "./payment.crypto.js";
 import { updateRedisLeaderboard } from "../../lib/redis.js";
-function paymentExpiry() {
-    return new Date(Date.now() + env.PAYMENT_ORDER_TTL_MINUTES * 60 * 1000);
-}
 /**
  * Reconcile a captured payment.
- * ACID transaction across Payment -> Bid -> BoardMembership.
+ * ACID transaction across PaymentWebhookEvent -> Payment -> Bid -> BoardMembership.
  * FOR UPDATE on payment row + pg_advisory_xact_lock on membership serialises concurrent bidders.
  * After commit: updates Redis sorted set in O(log N).
  */
 export async function reconcileCapturedPayment(input) {
     // 1. Run ACID Postgres transaction
     const updatedMembership = await prisma.$transaction(async (tx) => {
+        if (input.webhookEvent) {
+            const existingEvent = await tx.paymentWebhookEvent.findUnique({
+                where: {
+                    provider_eventId: {
+                        provider: input.webhookEvent.provider,
+                        eventId: input.webhookEvent.eventId,
+                    },
+                },
+                select: { id: true },
+            });
+            if (existingEvent) {
+                return {
+                    alreadyHandled: true,
+                    duplicateWebhook: true,
+                    paymentId: null,
+                    membership: null,
+                };
+            }
+        }
         // Row lock on payment row
         const payments = await tx.$queryRaw `
       SELECT id, "businessId", "membershipId", "amountPaise", currency, status, "providerPaymentId"
@@ -29,12 +42,45 @@ export async function reconcileCapturedPayment(input) {
         if (!payment) {
             throw new AppError(404, "PAYMENT_NOT_FOUND", "Local payment record was not found.");
         }
+        if (payment.amountPaise !== input.amountPaise) {
+            throw new AppError(400, "AMOUNT_MISMATCH", "Captured payment amount does not match order amount.");
+        }
+        if (payment.currency !== input.currency) {
+            throw new AppError(400, "CURRENCY_MISMATCH", "Captured payment currency does not match order currency.");
+        }
         if (payment.status === "SUCCEEDED") {
+            if (input.webhookEvent) {
+                await tx.paymentWebhookEvent.create({
+                    data: {
+                        provider: input.webhookEvent.provider,
+                        eventId: input.webhookEvent.eventId,
+                        eventType: input.webhookEvent.eventType,
+                        providerOrderId: input.providerOrderId,
+                        providerPaymentId: input.providerPaymentId,
+                        status: "PROCESSED",
+                        processedAt: new Date(),
+                    },
+                });
+            }
             const mem = await tx.boardMembership.findUnique({
                 where: { id: payment.membershipId },
-                select: { id: true, boardId: true, businessId: true, totalSpendPaise: true, lastBidAt: true },
+                select: {
+                    id: true,
+                    boardId: true,
+                    businessId: true,
+                    totalSpendPaise: true,
+                    lastBidAt: true,
+                },
             });
-            return { alreadyHandled: true, paymentId: payment.id, membership: mem };
+            return {
+                alreadyHandled: true,
+                duplicateWebhook: false,
+                paymentId: payment.id,
+                membership: mem,
+            };
+        }
+        if (payment.status === "REFUNDED" || payment.status === "REFUND_PENDING") {
+            throw new AppError(409, "PAYMENT_REFUNDED", "Cannot reconcile a refunded payment.");
         }
         // Serialise concurrent bidders on the same membership/board using advisory lock
         await tx.$executeRaw `
@@ -46,9 +92,10 @@ export async function reconcileCapturedPayment(input) {
             data: {
                 status: "SUCCEEDED",
                 providerPaymentId: input.providerPaymentId,
+                failureReason: null,
             },
         });
-        // Create Bid record
+        // Create Bid record idempotently
         const existingBid = await tx.bid.findUnique({
             where: { paymentId: payment.id },
         });
@@ -79,8 +126,22 @@ export async function reconcileCapturedPayment(input) {
                 lastBidAt: true,
             },
         });
+        if (input.webhookEvent) {
+            await tx.paymentWebhookEvent.create({
+                data: {
+                    provider: input.webhookEvent.provider,
+                    eventId: input.webhookEvent.eventId,
+                    eventType: input.webhookEvent.eventType,
+                    providerOrderId: input.providerOrderId,
+                    providerPaymentId: input.providerPaymentId,
+                    status: "PROCESSED",
+                    processedAt: new Date(),
+                },
+            });
+        }
         return {
             alreadyHandled: false,
+            duplicateWebhook: false,
             paymentId: payment.id,
             membership,
         };
@@ -95,6 +156,7 @@ export async function reconcileCapturedPayment(input) {
         success: true,
         paymentId: updatedMembership.paymentId,
         alreadyHandled: updatedMembership.alreadyHandled,
+        duplicateWebhook: updatedMembership.duplicateWebhook,
     };
 }
 export async function getPaymentStatus(paymentId) {
@@ -150,10 +212,13 @@ export async function verifyPayment(input) {
     }
     const payment = await prisma.payment.findUnique({
         where: { providerOrderId: input.razorpayOrderId },
-        select: { id: true, amountPaise: true, currency: true },
+        select: { id: true, amountPaise: true, currency: true, status: true },
     });
     if (!payment) {
         throw new AppError(404, "PAYMENT_NOT_FOUND", "Payment record not found for this order.");
+    }
+    if (payment.status === "FAILED") {
+        throw new AppError(409, "PAYMENT_FAILED", "This payment order has already failed.");
     }
     return reconcileCapturedPayment({
         providerOrderId: input.razorpayOrderId,
@@ -161,4 +226,8 @@ export async function verifyPayment(input) {
         amountPaise: payment.amountPaise,
         currency: payment.currency,
     });
+}
+export function isPrismaUniqueViolation(error) {
+    return (error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002");
 }

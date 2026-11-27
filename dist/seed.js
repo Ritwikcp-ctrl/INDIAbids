@@ -1,48 +1,168 @@
 import { prisma } from "./lib/prisma.js";
-import { updateRedisLeaderboard, reconcileBoardLeaderboard } from "./lib/redis.js";
-const categoriesData = [
+export const realCategories = [
     {
-        name: "Tech & AI",
-        slug: "tech-ai",
-        description: "SaaS, AI products, dev tools, and IT services in India",
+        name: "Media and News",
+        slug: "media-news",
+        description: "Newspapers, digital media portals, newsletters, and press outlets",
     },
     {
-        name: "E-Commerce & D2C",
-        slug: "ecommerce-d2c",
-        description: "Consumer brands, online retailers, and direct-to-consumer businesses",
+        name: "Real Estate and Property",
+        slug: "real-estate-property",
+        description: "Brokers, builders, commercial property, and residential rentals",
     },
     {
-        name: "Finance & FinTech",
-        slug: "fintech",
-        description: "Payments, wealth, insurance, lending, and crypto services",
+        name: "Travel, Local and Lifestyle",
+        slug: "travel-local-lifestyle",
+        description: "Tours, travel agencies, city guides, luxury experiences, and lifestyle brands",
     },
     {
-        name: "Healthcare & Meds",
-        slug: "healthcare",
-        description: "Clinics, diagnostics, wellness, telemedicine, and pharma",
+        name: "Sales and Lead Generation",
+        slug: "sales-lead-generation",
+        description: "B2B lead generation, cold outreach agencies, sales tech, and CRM partners",
     },
     {
-        name: "Legal & CA Services",
-        slug: "legal-ca",
-        description: "Advocates, chartered accountants, IP attorneys, and compliance advisors",
+        name: "Podcasting",
+        slug: "podcasting",
+        description: "Audio shows, podcast production agencies, hosts, and audio platforms",
     },
     {
-        name: "Real Estate & Co-Working",
-        slug: "real-estate",
-        description: "Developers, property consultants, co-working, and commercial leasing",
+        name: "YouTube Channels",
+        slug: "youtube-channels",
+        description: "Creators, video channels, review shows, and media networks",
+    },
+    {
+        name: "Instagram Profiles & Creators",
+        slug: "instagram-creators",
+        description: "Influencers, creators, aesthetic brands, and social agency profiles",
+    },
+    {
+        name: "AI Media Generation",
+        slug: "ai-media-generation",
+        description: "Generative AI art, synthetic media, voice synthesis, and video AI tools",
+    },
+    {
+        name: "Writing and Content",
+        slug: "writing-content",
+        description: "Copywriters, ghostwriting agencies, technical writers, and content studios",
+    },
+    {
+        name: "Fund Asking & Startups",
+        slug: "fund-asking",
+        description: "Early-stage founders pitching for pre-seed, seed, and angel capital",
+    },
+    {
+        name: "Ventures (Fund Providing Companies)",
+        slug: "ventures-capital",
+        description: "Venture capital funds, angel syndicates, micro-VCs, and incubators",
+    },
+    {
+        name: "Design and Creative",
+        slug: "design-creative",
+        description: "UI/UX agencies, branding studios, 3D artists, and creative directors",
+    },
+    {
+        name: "Product and Management",
+        slug: "product-management",
+        description: "Product strategy consultants, PM tools, roadmapping, and agile services",
+    },
+    {
+        name: "Games and Entertainment",
+        slug: "games-entertainment",
+        description: "Game studios, esports teams, animation houses, and interactive media",
+    },
+    {
+        name: "Ecommerce and Retail",
+        slug: "ecommerce-retail",
+        description: "Direct-to-consumer brands, online stores, marketplace sellers, and retail",
+    },
+    {
+        name: "Restaurants & Cafes",
+        slug: "restaurants-cafes",
+        description: "Fine dining, bistros, bakeries, cafes, and culinary brands across India",
+    },
+    {
+        name: "Hotels & Stays",
+        slug: "hotels-stays",
+        description: "Boutique hotels, luxury resorts, homestays, and bed & breakfasts",
+    },
+    {
+        name: "Local Dhaba in State",
+        slug: "local-dhaba",
+        description: "Highway dhabas, local food spots, authentic regional delicacies",
+    },
+    {
+        name: "Education and Learning",
+        slug: "education-learning",
+        description: "EdTech, coaching institutes, online academies, and skill bootcamps",
+    },
+    {
+        name: "Hiring and Jobs Careers",
+        slug: "hiring-jobs-careers",
+        description: "Staffing agencies, job boards, headhunters, and executive recruitment",
+    },
+    {
+        name: "Health, Fitness and Wellness",
+        slug: "health-fitness-wellness",
+        description: "Gyms, yoga studios, health supplements, fitness coaching, and nutrition",
+    },
+    {
+        name: "Developer Tools and GitHub Accounts",
+        slug: "developer-tools-github",
+        description: "Open-source projects, developer tools, CLI utilities, and engineering profiles",
+    },
+    {
+        name: "Crypto, Web3 and Investing",
+        slug: "crypto-web3-investing",
+        description: "Web3 protocols, crypto research, wealth advisory, and algorithmic trading",
     },
 ];
-const sampleStates = ["Delhi", "Maharashtra", "Karnataka", "Telangana", "Tamil Nadu"];
-export async function seed() {
-    console.log("Starting INDIAbids seed...");
-    for (const catData of categoriesData) {
-        const category = await prisma.category.upsert({
-            where: { slug: catData.slug },
-            update: {
-                name: catData.name,
-                description: catData.description,
-            },
-            create: {
+export const indianStates = [
+    "Delhi",
+    "Maharashtra",
+    "Karnataka",
+    "Tamil Nadu",
+    "Telangana",
+    "Gujarat",
+    "Uttar Pradesh",
+    "West Bengal",
+    "Rajasthan",
+    "Kerala",
+    "Punjab",
+    "Haryana",
+    "Andhra Pradesh",
+    "Madhya Pradesh",
+    "Bihar",
+    "Odisha",
+    "Assam",
+    "Goa",
+    "Jharkhand",
+    "Chhattisgarh",
+    "Uttarakhand",
+    "Himachal Pradesh",
+    "Jammu and Kashmir",
+    "Chandigarh",
+    "Puducherry",
+    "Tripura",
+    "Meghalaya",
+    "Manipur",
+    "Nagaland",
+    "Arunachal Pradesh",
+    "Mizoram",
+    "Sikkim",
+    "Ladakh",
+    "Andaman and Nicobar Islands",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep",
+];
+export async function cleanAndSeed() {
+    console.log("Purging all previous test data from Postgres...");
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "PaymentWebhookEvent", "Bid", "Payment", "BoardMembership", "Business", "AuthSession", "User" CASCADE;`);
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Board", "Category" CASCADE;`);
+    console.log(`Database clean! Now seeding 23 real categories and 36 states/UTs boards...`);
+    let totalBoards = 0;
+    for (const catData of realCategories) {
+        const category = await prisma.category.create({
+            data: {
                 name: catData.name,
                 slug: catData.slug,
                 description: catData.description,
@@ -50,59 +170,43 @@ export async function seed() {
         });
         // 1. National Board (scope: NATIONAL, state: null, minBidPaise: 50,000 = ₹500)
         const nationalKey = `${category.slug}-national`;
-        const nationalBoard = await prisma.board.upsert({
-            where: { key: nationalKey },
-            update: {
-                name: `${category.name} - National`,
-                scope: "NATIONAL",
-                state: null,
-                minBidPaise: 50000n,
-                bidIncrementPaise: 100n,
-                status: "ACTIVE",
-            },
-            create: {
+        await prisma.board.create({
+            data: {
                 categoryId: category.id,
                 key: nationalKey,
                 name: `${category.name} - National`,
                 scope: "NATIONAL",
                 state: null,
                 country: "IN",
-                minBidPaise: 50000n,
-                bidIncrementPaise: 100n,
+                minBidPaise: 50000n, // ₹500
+                bidIncrementPaise: 100n, // ₹1
                 status: "ACTIVE",
             },
         });
-        // 2. State Boards (scope: STATE, state: "Delhi", minBidPaise: 10,000 = ₹100)
-        for (const state of sampleStates) {
+        totalBoards++;
+        // 2. State Boards (scope: STATE, state: stateName, minBidPaise: 10,000 = ₹100)
+        for (const state of indianStates) {
             const stateKey = `${category.slug}-${state.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-            await prisma.board.upsert({
-                where: { key: stateKey },
-                update: {
-                    name: `${category.name} - ${state}`,
-                    scope: "STATE",
-                    state,
-                    minBidPaise: 10000n,
-                    bidIncrementPaise: 100n,
-                    status: "ACTIVE",
-                },
-                create: {
+            await prisma.board.create({
+                data: {
                     categoryId: category.id,
                     key: stateKey,
                     name: `${category.name} - ${state}`,
                     scope: "STATE",
                     state,
                     country: "IN",
-                    minBidPaise: 10000n,
-                    bidIncrementPaise: 100n,
+                    minBidPaise: 10000n, // ₹100
+                    bidIncrementPaise: 100n, // ₹1
                     status: "ACTIVE",
                 },
             });
+            totalBoards++;
         }
     }
-    console.log("Seeded categories and national/state boards successfully.");
+    console.log(`Successfully seeded ${realCategories.length} categories and ${totalBoards} boards.`);
 }
 if (process.argv[1]?.endsWith("seed.ts")) {
-    seed()
+    cleanAndSeed()
         .then(() => process.exit(0))
         .catch((err) => {
         console.error("Seed error:", err);

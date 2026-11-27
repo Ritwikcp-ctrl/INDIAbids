@@ -4,10 +4,9 @@ import { env } from "../config/env.js";
 import { logger } from "./logger.js";
 import { prisma } from "./prisma.js";
 function createRedisClient() {
-    const socketPath = env.REDIS_SOCKET_PATH || "/tmp/redis.sock";
-    if (fs.existsSync(socketPath)) {
+    if (env.REDIS_SOCKET_PATH && fs.existsSync(env.REDIS_SOCKET_PATH)) {
         return new Redis({
-            path: socketPath,
+            path: env.REDIS_SOCKET_PATH,
             retryStrategy: (times) => Math.min(times * 100, 3000),
             maxRetriesPerRequest: 3,
             enableReadyCheck: true,

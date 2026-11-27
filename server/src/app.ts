@@ -30,12 +30,24 @@ const app = express();
 app.set("trust proxy", env.TRUST_PROXY);
 app.disable("x-powered-by");
 
-app.use(helmet());
+app.use(
+  helmet({
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
+
+const allowedOrigins = env.CORS_ORIGIN.split(",")
+  .map((o) => o.trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Manage-Token"],
+    maxAge: 86_400,
   })
 );
 
@@ -100,8 +112,22 @@ app.use("/api/v1/checkout", biddingRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 
 
-app.get("/api/v1/manage/:token", getBusinessByManageToken);
-app.post("/api/v1/manage/:token/claim", requireAuth, claimBusinessByManageToken);
+const manageLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: "RATE_LIMITED",
+      message: "Too many listing management requests. Please try again later.",
+    },
+  },
+});
+
+app.get("/api/v1/manage/:token", manageLimiter, getBusinessByManageToken);
+app.post("/api/v1/manage/:token/claim", manageLimiter, requireAuth, claimBusinessByManageToken);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

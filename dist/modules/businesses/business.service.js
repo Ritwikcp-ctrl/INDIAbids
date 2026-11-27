@@ -4,6 +4,45 @@ import { AppError } from "../../lib/app-error.js";
 import { hashManageToken } from "../../lib/manage-token.js";
 import { getBusinessRank } from "../../lib/redis.js";
 import { createFallbackBusinessSlug, createUniqueallbackSlug, slugify, } from "../../lib/slug.js";
+export const publicBusinessSelect = {
+    id: true,
+    name: true,
+    slug: true,
+    description: true,
+    website: true,
+    logoUrl: true,
+    country: true,
+    state: true,
+    city: true,
+    status: true,
+    category: {
+        select: {
+            id: true,
+            name: true,
+            slug: true,
+        },
+    },
+    memberships: {
+        select: {
+            id: true,
+            totalSpendPaise: true,
+            lastBidAt: true,
+            board: {
+                select: {
+                    id: true,
+                    name: true,
+                    key: true,
+                    scope: true,
+                    state: true,
+                    minBidPaise: true,
+                    bidIncrementPaise: true,
+                },
+            },
+        },
+    },
+    createdAt: true,
+    updatedAt: true,
+};
 export const businessSelect = {
     id: true,
     name: true,
@@ -131,7 +170,7 @@ export async function getPublicBusinessBySlug(slug) {
             slug,
             status: "ACTIVE",
         },
-        select: businessSelect,
+        select: publicBusinessSelect,
     });
     if (!business) {
         throw new AppError(404, "BUSINESS_NOT_FOUND", "Business not found.");
@@ -185,28 +224,38 @@ export async function getBusinessByManageToken(token) {
 }
 export async function claimBusinessByManageToken(userId, token) {
     const tokenHash = hashManageToken(token);
-    const existing = await prisma.business.findUnique({
-        where: {
-            manageTokenHash: tokenHash,
-        },
-        select: {
-            id: true,
-            ownerId: true,
-        },
-    });
-    if (!existing) {
-        throw new AppError(404, "BUSINESS_NOT_FOUND", "Listing not found or has already been claimed.");
-    }
-    // Claim: set ownerId to userId, null manageTokenHash (old anonymous URL 404s)
-    const updated = await prisma.business.update({
-        where: {
-            id: existing.id,
-        },
-        data: {
-            ownerId: userId,
-            manageTokenHash: null,
-        },
-        select: businessSelect,
+    // Atomic conditional claim inside transaction to prevent concurrent claim races
+    const updated = await prisma.$transaction(async (tx) => {
+        const existing = await tx.business.findUnique({
+            where: {
+                manageTokenHash: tokenHash,
+            },
+            select: {
+                id: true,
+                ownerId: true,
+            },
+        });
+        if (!existing) {
+            throw new AppError(404, "BUSINESS_NOT_FOUND", "Listing not found or has already been claimed.");
+        }
+        const claimed = await tx.business.updateMany({
+            where: {
+                id: existing.id,
+                manageTokenHash: tokenHash,
+                ownerId: null,
+            },
+            data: {
+                ownerId: userId,
+                manageTokenHash: null,
+            },
+        });
+        if (claimed.count !== 1) {
+            throw new AppError(409, "ALREADY_CLAIMED", "This listing has already been claimed.");
+        }
+        return tx.business.findUniqueOrThrow({
+            where: { id: existing.id },
+            select: businessSelect,
+        });
     });
     return {
         ...updated,

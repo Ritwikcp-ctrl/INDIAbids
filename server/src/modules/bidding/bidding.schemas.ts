@@ -13,6 +13,30 @@ export const leaderboardQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
+const safeWebsite = z
+  .string()
+  .trim()
+  .refine(
+    (value) => {
+      if (!value) return true;
+      try {
+        const parsed = new URL(value);
+        return (
+          (parsed.protocol === "https:" || parsed.protocol === "http:") &&
+          !parsed.username &&
+          !parsed.password
+        );
+      } catch {
+        return false;
+      }
+    },
+    {
+      message: "Website must be a valid HTTP or HTTPS URL without credentials.",
+    }
+  )
+  .optional()
+  .or(z.literal(""));
+
 export const placeBidSchema = z.object({
   boardId: z.string().uuid().optional(),
   categorySlug: z.string().trim().optional(),
@@ -25,7 +49,7 @@ export const placeBidSchema = z.object({
 
   // New listing
   name: z.string().trim().min(2).max(120).optional(),
-  website: z.string().trim().optional().or(z.literal("")),
+  website: safeWebsite,
   description: z.string().trim().max(1000).optional(),
   contactEmail: z.string().email().optional(),
   contactPhone: z.string().trim().max(20).optional(),

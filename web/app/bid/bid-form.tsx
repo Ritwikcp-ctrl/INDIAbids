@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -23,11 +23,19 @@ interface BidFormProps {
   onCategoryChange: (slug: string) => void;
 }
 
+interface BidCreateResponse {
+  keyId?: string;
+  amountPaise: string | number;
+  orderId: string;
+  paymentId: string;
+  businessId: string;
+  manageToken?: string;
+}
+
 export function BidForm({
   scope,
   state,
   categorySlug,
-  onCategoryChange,
 }: BidFormProps) {
   const router = useRouter();
   const { user } = useAuth();
@@ -39,8 +47,9 @@ export function BidForm({
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
-  const [contactEmail, setContactEmail] = useState(user?.email || "");
-  const [contactPhone, setContactPhone] = useState("");
+  const [emailOverride, setEmailOverride] = useState<string | null>(null);
+  const contactEmail = emailOverride ?? user?.email ?? "";
+  const [contactPhone] = useState("");
 
   // Existing listing target if outbidding
   const [targetBusinessId, setTargetBusinessId] = useState<string | null>(null);
@@ -48,28 +57,20 @@ export function BidForm({
   // Amount in INR
   const minBidInr = scope === "NATIONAL" ? 500 : 100;
   const [amount, setAmount] = useState(minBidInr);
+  const effectiveAmount = Math.max(amount, minBidInr);
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    if (user?.email) {
-      setContactEmail(user.email);
-    }
-  }, [user]);
-
-  // Adjust min bid if scope changes
-  useEffect(() => {
-    setAmount((prev) => Math.max(prev, minBidInr));
-  }, [minBidInr]);
 
   // Listen to prefill events from leaderboard
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent<{
-        businessId?: string;
-        name?: string;
-        slug?: string;
-        suggestedAmount?: number;
-      }>).detail;
+      const detail = (
+        e as CustomEvent<{
+          businessId?: string;
+          name?: string;
+          slug?: string;
+          suggestedAmount?: number;
+        }>
+      ).detail;
 
       if (detail.name) setName(detail.name);
       if (detail.businessId) setTargetBusinessId(detail.businessId);
@@ -77,7 +78,9 @@ export function BidForm({
         setAmount(Math.max(detail.suggestedAmount, minBidInr));
       }
 
-      document.getElementById("bid-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document
+        .getElementById("bid-form")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
     };
 
     document.addEventListener("indiabids:prefill-bid", handler);
@@ -96,16 +99,16 @@ export function BidForm({
       return toast.error("Receipt email is required");
     }
 
-    if (amount < minBidInr) {
+    if (effectiveAmount < minBidInr) {
       return toast.error(`Minimum bid for this board is ${formatInr(minBidInr)}`);
     }
 
     setBusy(true);
 
     try {
-      const amountPaise = String(Math.round(amount * 100));
+      const amountPaise = String(Math.round(effectiveAmount * 100));
 
-      const res = await api.post<any>("/bids", {
+      const res = await api.post<BidCreateResponse>("/bids", {
         name: trimmedName,
         website: website.trim() || undefined,
         description: description.trim() || undefined,
@@ -123,11 +126,16 @@ export function BidForm({
         sessionStorage.setItem("manageToken", res.manageToken);
       }
 
+      const razorpayKey =
+        res.keyId ||
+        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+        "rzp_test_TVWGKXZsXZhrbd";
+
       // Load Razorpay Checkout modal
       try {
         await loadRazorpay();
         const rzp = new window.Razorpay({
-          key: res.keyId || "rzp_test_TVWGKXZsXZhrbd",
+          key: razorpayKey,
           amount: Number(res.amountPaise),
           currency: "INR",
           name: "INDIAbids",
@@ -142,8 +150,18 @@ export function BidForm({
             paymentId: res.paymentId,
             businessId: res.businessId,
           },
-          handler: () => {
-            router.push(`/success/${res.paymentId}`);
+          handler: async (response) => {
+            try {
+              await api.post("/payments/verify", {
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              });
+            } catch {
+              // Webhook reconciliation handles fallback if verify call times out
+            } finally {
+              router.push(`/success/${res.paymentId}`);
+            }
           },
           modal: {
             ondismiss: () => {
@@ -153,12 +171,14 @@ export function BidForm({
           },
         });
         rzp.open();
-      } catch (rzpErr) {
+      } catch {
         toast.info("Navigating to payment confirmation…");
         router.push(`/success/${res.paymentId}`);
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Bid placement failed. Please try again.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Bid placement failed. Please try again.";
+      toast.error(message);
       setBusy(false);
     }
   }
@@ -249,7 +269,7 @@ export function BidForm({
               type="email"
               required
               value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
+              onChange={(e) => setEmailOverride(e.target.value)}
               placeholder="receipt@yourbrand.in"
               className="h-9 text-xs bg-background"
             />
@@ -260,7 +280,7 @@ export function BidForm({
             <div className="flex items-center justify-between">
               <Label className="text-xs font-semibold text-foreground">Your Bid Amount</Label>
               <span className="font-bold text-base text-foreground tabular-nums">
-                {formatInr(amount)}
+                {formatInr(effectiveAmount)}
               </span>
             </div>
 
@@ -268,7 +288,7 @@ export function BidForm({
               min={minBidInr}
               max={minBidInr * 25}
               step={50}
-              value={[amount]}
+              value={[effectiveAmount]}
               onValueChange={([val]) => setAmount(val)}
               className="py-1.5"
             />
@@ -279,7 +299,7 @@ export function BidForm({
                   key={bump}
                   type="button"
                   className="rounded border border-border/80 bg-background hover:bg-muted text-muted-foreground hover:text-foreground text-[11px] h-7 font-semibold transition-all"
-                  onClick={() => setAmount((curr) => curr + bump)}
+                  onClick={() => setAmount((curr) => Math.max(curr, minBidInr) + bump)}
                 >
                   +{bump}
                 </button>
@@ -297,7 +317,7 @@ export function BidForm({
               "Initializing payment gateway…"
             ) : (
               <>
-                Confirm & Pay {formatInr(amount)}
+                Confirm &amp; Pay {formatInr(effectiveAmount)}
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </>
             )}

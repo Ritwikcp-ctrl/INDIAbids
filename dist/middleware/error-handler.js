@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 import { env } from "../config/env";
 import { logger } from "../lib/logger";
 import { AppError } from "../lib/app-error";
+import { reportServerError } from "../lib/error-tracker";
 export const errorHandler = (error, req, res, _next) => {
     if (res.headersSent) {
         return;
@@ -36,6 +37,11 @@ export const errorHandler = (error, req, res, _next) => {
         path: req.originalUrl,
         requestId: res.locals.requestId,
     }, "Unhandled request error");
+    reportServerError(error, {
+        method: req.method,
+        path: req.originalUrl,
+        requestId: res.locals.requestId,
+    });
     const developmentError = env.NODE_ENV !== "production" &&
         error instanceof Error
         ? {
@@ -61,3 +67,4 @@ export const errorHandler = (error, req, res, _next) => {
         },
     });
 };
+//To do: Integrate with an error-tracking service like Sentry for production visibility.

@@ -9,7 +9,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65_535).default(4000),
 
   DATABASE_URL: z.string().min(1),
-  CORS_ORIGIN: z.string().url(),
+  CORS_ORIGIN: z.string().min(1),
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
@@ -33,6 +33,13 @@ const envSchema = z.object({
 
   REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
   REDIS_SOCKET_PATH: z.string().optional(),
+
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_REDIRECT_URI: z.string().url().optional(),
+  FRONTEND_URL: z.string().url().optional(),
+
+  SENTRY_DSN: z.string().url().optional(),
 });
 
 export const env = envSchema.parse(process.env);
