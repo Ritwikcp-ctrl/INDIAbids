@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #111013;
+  --foreground: #EDE7DC;
+  --card: #1A171C;
+  --card-foreground: #EDE7DC;
+  --secondary: #241F26;
+  --secondary-foreground: #EDE7DC;
+  --muted-foreground: #8C8780;
+  --border: #2E2831;
+}
+
+.light {
+  --background: #FAF6F0;
+  --foreground: #1B171C;
+  --card: #FFFFFF;
+  --card-foreground: #1B171C;
+  --secondary: #EAE3D8;
+  --secondary-foreground: #1B171C;
+  --muted-foreground: #6B655F;
+  --border: #DDD6CB;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+}
