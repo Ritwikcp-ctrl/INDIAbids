@@ -32,9 +32,11 @@ export interface HighlightItem {
   detail: string;
 }
 
-export interface WritingItem {
+export interface BlogPost {
   slug: string;
   title: string;
+  category: string;
+  tags: string[];
   date: string;
   readTime: string;
   summary: string;
@@ -227,10 +229,16 @@ export const SKILL_GROUPS = [
   },
 ];
 
-export const WRITING_ITEMS: WritingItem[] = [
+/**
+ * Add future blog posts directly to this array.
+ * Each entry automatically appears in the Blogs section and /tejas/blogs.
+ */
+export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "deterministic-paid-leaderboards",
     title: "Designing Deterministic Paid Leaderboards with Postgres & Redis",
+    category: "Architecture",
+    tags: ["PostgreSQL", "Redis", "ACID"],
     date: "Nov 2026",
     readTime: "4 min read",
     summary:
@@ -244,6 +252,8 @@ export const WRITING_ITEMS: WritingItem[] = [
   {
     slug: "idempotent-razorpay-webhooks",
     title: "Idempotent Razorpay Webhooks & Checkout Signature Verification",
+    category: "Payments",
+    tags: ["Razorpay", "Webhooks", "Security"],
     date: "Nov 2026",
     readTime: "3 min read",
     summary:
@@ -252,6 +262,19 @@ export const WRITING_ITEMS: WritingItem[] = [
       "Recording a webhook event ID before reconciling the payment creates a subtle failure mode: if reconciliation throws transiently, retries see the duplicate event ID and skip fulfillment.",
       "Moving paymentWebhookEvent insertion inside the same ACID transaction as Payment, Bid, and BoardMembership updates ensures all-or-nothing durability, while strict amountPaise and currency assertions block tampered payloads.",
       "Pairing server-verified checkout callbacks (/payments/verify) with Razorpay webhooks gives users instant confirmation without sacrificing webhook reliability.",
+    ],
+  },
+  {
+    slug: "future-blog-template",
+    title: "Next Engineering Essay (Draft Slot — Ready for Future Posts)",
+    category: "Notes",
+    tags: ["Next.js", "TypeScript"],
+    date: "Coming Soon",
+    readTime: "Draft",
+    summary:
+      "Duplicate this object inside BLOG_POSTS in portfolio-data.ts to publish a new blog post anytime.",
+    body: [
+      "This template slot demonstrates how multi-paragraph engineering articles render inside the Blogs reader and /tejas/blogs directory.",
     ],
   },
 ];
