@@ -1,52 +1,66 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function ThemeToggle({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   if (!mounted) {
     return (
       <Button
+        type="button"
         variant="outline"
         size="sm"
         aria-label="Toggle theme"
-        className={`h-9 w-9 p-0 rounded-lg border-border bg-card/60 ${className || ""}`}
+        className={`${compact ? "h-7 w-7 rounded-full" : "h-8 w-8 rounded-lg"} p-0 border-border bg-card/60 ${className || ""}`}
       >
-        <span className="h-4 w-4" />
+        <span className="h-3.5 w-3.5" />
       </Button>
     );
   }
 
-  const isDark = resolvedTheme === "dark" || theme === "dark";
+  const isDark = (resolvedTheme ?? theme) === "dark";
 
   return (
     <Button
+      type="button"
       variant="outline"
       size="sm"
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`h-9 px-2.5 rounded-lg border-border bg-card/80 hover:bg-card text-foreground transition-all flex items-center gap-1.5 shadow-sm ${
+      className={`${
+        compact
+          ? "h-7 px-2 rounded-full text-[11px]"
+          : "h-8 px-2.5 rounded-lg text-[11px]"
+      } border-border bg-secondary/80 hover:bg-secondary text-foreground transition-all flex items-center gap-1.5 shadow-sm cursor-pointer ${
         className || ""
       }`}
     >
       {isDark ? (
         <>
-          <Sun className="h-4 w-4 text-[var(--butter-yellow)]" />
-          <span className="text-[11px] font-medium hidden sm:inline">Light</span>
+          <Sun className="h-3.5 w-3.5 text-amber-400" />
+          {!compact && <span className="font-medium hidden sm:inline">Light</span>}
         </>
       ) : (
         <>
-          <Moon className="h-4 w-4 text-[var(--burnt-coral)]" />
-          <span className="text-[11px] font-medium hidden sm:inline">Dark</span>
+          <Moon className="h-3.5 w-3.5 text-[#FF4D1F]" />
+          {!compact && <span className="font-medium hidden sm:inline">Dark</span>}
         </>
       )}
     </Button>

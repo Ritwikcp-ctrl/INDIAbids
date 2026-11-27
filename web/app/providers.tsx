@@ -10,7 +10,7 @@ const fetcher = <T,>(path: string) => api.get<T>(path);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} themes={["light", "dark"]}>
       <AuthProvider>
         <SWRConfig value={{ fetcher, revalidateOnFocus: false }}>
           {children}

@@ -1,9 +1,18 @@
 import FlipText from "./flip-text";
 
 export default function HeroHeader() {
-    return(
-        <FlipText className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-            The Transparent Paid Leaderboard for Indian Businesses.
-        </FlipText>
-    )
+  return (
+    <h1 className="max-w-4xl text-4xl font-extrabold tracking-[-0.03em] text-[#1B171C] dark:text-[#EDE7DC] leading-[1.12] sm:text-6xl">
+      <FlipText duration={3} delay={0.1}>
+        The Transparent Paid Leaderboard for
+      </FlipText>{" "}
+      <FlipText
+        duration={3}
+        delay={0.45}
+        className="text-[#FF4D1F]"
+      >
+        Indian Businesses.
+      </FlipText>
+    </h1>
+  );
 }

@@ -4,94 +4,89 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ─────────────────────────────────────────────────────────────
-   INDIAbids — GOTHIC EDITORIAL PALETTE
-   Colors: Burnt Coral · Butter Yellow · Espresso
-   Typography: Gothic Geometric / Grotesque Font Family
-   ───────────────────────────────────────────────────────────── */
-
 :root {
-  /* ── LIGHT THEME (Warm Butter Cream & Deep Espresso with Burnt Coral) ── */
-  --espresso: #241813;
-  --espresso-surface: #2E201A;
-  --espresso-muted: #6E5B51;
-  --burnt-coral: #D45B47;
-  --burnt-coral-hover: #BF4C39;
-  --burnt-coral-subtle: #FDF1EE;
-  --butter-yellow: #F6E79C;
-  --butter-yellow-accent: #E8CF58;
-  --parchment-cream: #FAF6EE;
+  /* ADVERTISING AGENCY PALETTE — Carbon · Bone · Signal Orange · Cobalt */
+  --carbon-ink: #111013;
+  --carbon-surface: #1A171C;
+  --carbon-muted: #8C8780;
 
-  --background: var(--parchment-cream);
-  --foreground: var(--espresso);
+  --bone: #EDE7DC;
+  --bone-soft: #F6F1E8;
+  --bone-deep: #DDD5C6;
 
-  --card: #FFFFFF;
-  --card-foreground: var(--espresso);
+  --signal-orange: #FF4D1F;
+  --signal-orange-hover: #E84317;
+  --signal-orange-subtle: #2A1510;
 
-  --popover: #FFFFFF;
-  --popover-foreground: var(--espresso);
+  --electric-cobalt: #2F6BFF;
+  --electric-cobalt-hover: #1F57E6;
+  --electric-cobalt-subtle: #101B33;
 
-  --primary: var(--burnt-coral);
-  --primary-foreground: #FFFFFF;
+  /* Default = dark advertising theme */
+  --background: var(--carbon-ink);
+  --foreground: var(--bone);
 
-  --secondary: #F4ECE0;
-  --secondary-foreground: var(--espresso);
+  --card: var(--carbon-surface);
+  --card-foreground: var(--bone);
 
-  --muted: #EFE6D8;
-  --muted-foreground: var(--espresso-muted);
+  --popover: #1F1B22;
+  --popover-foreground: var(--bone);
 
-  --accent: #FDF8DC;
-  --accent-foreground: var(--espresso);
+  --primary: var(--signal-orange);
+  --primary-foreground: var(--carbon-ink);
 
-  --destructive: #C93B2B;
-  --destructive-foreground: #FFFFFF;
+  --secondary: #241F26;
+  --secondary-foreground: var(--bone);
 
-  --border: #E8DDD0;
-  --input: #E8DDD0;
-  --ring: var(--burnt-coral);
+  --muted: #1C181F;
+  --muted-foreground: var(--carbon-muted);
 
-  --radius: 0.625rem;
-}
-
-.dark {
-  /* ── DARK THEME (Deep Roasted Espresso with Glowing Coral & Butter Yellow) ── */
-  --espresso: #140E0B;
-  --espresso-surface: #201712;
-  --espresso-muted: #A39086;
-  --burnt-coral: #E66E58;
-  --burnt-coral-hover: #F07E69;
-  --burnt-coral-subtle: #2A1713;
-  --butter-yellow: #F6E79C;
-  --butter-yellow-accent: #FDE885;
-  --parchment-cream: #FAF4E8;
-
-  --background: var(--espresso);
-  --foreground: var(--parchment-cream);
-
-  --card: var(--espresso-surface);
-  --card-foreground: var(--parchment-cream);
-
-  --popover: #261B16;
-  --popover-foreground: var(--parchment-cream);
-
-  --primary: var(--burnt-coral);
-  --primary-foreground: #140E0B;
-
-  --secondary: #2C1F19;
-  --secondary-foreground: var(--butter-yellow);
-
-  --muted: #271B16;
-  --muted-foreground: var(--espresso-muted);
-
-  --accent: #33231B;
-  --accent-foreground: var(--butter-yellow);
+  --accent: var(--electric-cobalt-subtle);
+  --accent-foreground: var(--electric-cobalt);
 
   --destructive: #E05244;
   --destructive-foreground: #FFFFFF;
 
-  --border: #3A2A22;
-  --input: #33241C;
-  --ring: var(--burnt-coral);
+  --border: #2E2831;
+  --input: #241F26;
+  --ring: var(--signal-orange);
+
+  --radius: 0.75rem;
+}
+
+/* Light mode: bone canvas, carbon text, same accents */
+.light {
+  --carbon-ink: #1B171C;
+  --carbon-surface: #FFFFFF;
+  --carbon-muted: #6B655F;
+
+  --bone: #1B171C;
+  --bone-soft: #FAF6F0;
+
+  --background: var(--bone-soft);
+  --foreground: var(--carbon-ink);
+
+  --card: #FFFFFF;
+  --card-foreground: var(--carbon-ink);
+
+  --popover: #FFFFFF;
+  --popover-foreground: var(--carbon-ink);
+
+  --primary: var(--signal-orange);
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #EAE3D8;
+  --secondary-foreground: var(--carbon-ink);
+
+  --muted: #F0EBE3;
+  --muted-foreground: var(--carbon-muted);
+
+  --accent: #E8EEFF;
+  --accent-foreground: var(--electric-cobalt);
+
+  --border: #DDD6CB;
+  --input: #DDD6CB;
+  --ring: var(--signal-orange);
 }
 
 @theme inline {
@@ -115,56 +110,86 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-espresso: var(--espresso);
-  --color-burnt-coral: var(--burnt-coral);
-  --color-butter-yellow: var(--butter-yellow);
+  --color-carbon-ink: var(--carbon-ink);
+  --color-bone: var(--bone);
+  --color-signal-orange: var(--signal-orange);
+  --color-electric-cobalt: var(--electric-cobalt);
 
-  /* Gothic Typography Everywhere */
-  --font-sans: "Century Gothic", "Franklin Gothic Medium", "Franklin Gothic", "Apple Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-gothic: "Century Gothic", "Franklin Gothic Medium", "Franklin Gothic", "Apple Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  --font-sans: "Druk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-gothic: "Druk", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-    font-family: var(--font-gothic);
-  }
-  html {
-    scroll-behavior: smooth;
-    font-family: var(--font-gothic);
-  }
+  * { @apply border-border outline-ring/50; font-family: var(--font-gothic); }
+  html { scroll-behavior: smooth; font-family: var(--font-gothic); }
   body {
     @apply antialiased bg-background text-foreground;
     font-family: var(--font-gothic);
-    font-variant-numeric: tabular-nums;
     transition: background-color 0.25s ease, color 0.25s ease;
-  }
-  input, button, select, textarea {
-    font-family: var(--font-gothic);
-  }
-  ::selection {
-    background-color: color-mix(in srgb, var(--burnt-coral) 30%, transparent);
-    color: var(--foreground);
   }
 }
 
-@layer utilities {
-  .card-surface {
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    transition: all 0.2s ease;
-  }
+.card-surface {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+}
 
-  .card-surface:hover {
-    border-color: color-mix(in srgb, var(--burnt-coral) 40%, var(--border));
-  }
+.flip-char {
+  display: inline-block;
+  transform-origin: center center;
+  animation: flip-char-wave var(--flip-duration, 2.2s) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--flip-delay, 0s) var(--flip-iteration, infinite);
+}
 
-  .coral-glow {
-    box-shadow: 0 0 25px color-mix(in srgb, var(--burnt-coral) 25%, transparent);
+@keyframes flip-char-wave {
+  0% {
+    transform: rotateX(0deg);
   }
+  28% {
+    transform: rotateX(360deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
 
-  .butter-glow {
-    box-shadow: 0 0 25px color-mix(in srgb, var(--butter-yellow) 30%, transparent);
+@media (prefers-reduced-motion: reduce) {
+  .flip-char {
+    animation: none;
   }
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation: none;
+  }
+}
+
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 36s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 40s linear infinite;
+}
+
+.marquee-group:hover .animate-marquee-left,
+.marquee-group:hover .animate-marquee-right {
+  animation-play-state: paused;
 }

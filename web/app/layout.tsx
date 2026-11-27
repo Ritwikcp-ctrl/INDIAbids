@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className="font-gothic">
-      <body className="min-h-screen bg-background text-foreground font-gothic antialiased selection:bg-[var(--burnt-coral)]/25 selection:text-[var(--burnt-coral)]">
+      <body className="min-h-screen bg-background text-foreground font-gothic antialiased selection:bg-primary/25 selection:text-primary">
         <Providers>
           {children}
           <Toaster richColors position="top-right" />
