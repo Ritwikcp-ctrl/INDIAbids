@@ -18,6 +18,7 @@ export interface ProjectItem {
   featured?: boolean;
   status: string;
   year: string;
+  image?: string;
   description: string;
   architecture: string[];
   stack: string[];
@@ -42,13 +43,19 @@ export interface WritingItem {
 
 export const PORTFOLIO_PROFILE = {
   name: "Tejas",
+  username: "@tejas_dev",
   handle: "Tejas | Developer",
   role: "Full-Stack Engineer & Product Builder",
   location: "India",
+  joined: "Building since 2024",
+  websiteLabel: "indiabids.in",
+  websiteHref: "/",
   email: "hello@indiabids.in",
   availability: "Open to full-stack & AI-native engineering roles",
   headline: "Building deterministic systems, sharp interfaces & shipped products.",
   bio: "Actions speak louder than words — I architect full-stack TypeScript applications from ACID database transactions and payment pipelines to interactive motion-driven UIs.",
+  bannerImage: "", // Optional: set "/banner.jpg" or paste directly in the UI
+  avatarImage: "", // Optional: set "/avatar.jpg" or paste directly in the UI
   socials: {
     github: "https://github.com",
     twitter: "https://x.com",
