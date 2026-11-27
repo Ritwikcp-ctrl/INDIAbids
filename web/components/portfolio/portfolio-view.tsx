@@ -18,7 +18,6 @@ import {
   Check,
   Copy,
   ExternalLink,
-  FileText,
   FolderGit2,
   ImagePlus,
   Link2,
@@ -38,19 +37,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Reveal } from "@/components/ui/reveal";
 import { GitHubContributionGraph } from "@/components/portfolio/github-contributions";
 import { SkillsSection } from "@/components/portfolio/skills-section";
+import { BlogFeedCard } from "@/components/portfolio/blog-index-client";
+import type { BlogPostMeta } from "@/lib/blog";
 import {
-  BLOG_POSTS,
   EXPERIENCE_ITEMS,
   HIGHLIGHTS,
   PORTFOLIO_PROFILE,
   PROJECT_ITEMS,
-  type BlogPost,
   type ProjectItem,
 } from "@/lib/portfolio-data";
 import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 interface PortfolioViewProps {
   showBackToIndiabids?: boolean;
+  posts?: BlogPostMeta[];
 }
 
 const INDEX_SECTIONS = [
@@ -104,7 +104,10 @@ function readImageFile(file: File, onDone: (dataUrl: string) => void) {
   reader.readAsDataURL(file);
 }
 
-export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProps) {
+export function PortfolioView({
+  showBackToIndiabids = false,
+  posts = [],
+}: PortfolioViewProps) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -116,7 +119,7 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
 
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [blogFilter, setBlogFilter] = useState<"all" | "article" | "gist">("all");
   const [activeSection, setActiveSection] = useState("profile");
   const [pasteTarget, setPasteTarget] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
@@ -291,7 +294,7 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-52 sm:h-60 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
+              className="group relative h-56 sm:h-64 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -303,23 +306,23 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
               ) : (
                 <div
                   lang="hi"
-                  className="flex h-full w-full flex-col items-center justify-center gap-3 px-5 pb-6 sm:pb-4 text-center"
+                  className="flex h-full w-full flex-col items-center justify-center gap-3.5 px-6 pb-7 sm:pb-5 text-center"
                   style={{
                     backgroundImage:
                       "radial-gradient(circle at 1px 1px, rgba(120,120,120,0.22) 1px, transparent 0)",
                     backgroundSize: "16px 16px",
                   }}
                 >
-                  <p className="text-xs sm:text-sm md:text-[16px] font-medium leading-relaxed text-neutral-900 dark:text-neutral-100">
+                  <p className="text-base sm:text-lg md:text-[21px] font-semibold leading-loose text-neutral-900 dark:text-neutral-100">
                     श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।
                     <br />
                     बरनउँ रघुबर बिमल जसु, जो दायकु फल चारि॥
                   </p>
                   <span
                     aria-hidden="true"
-                    className="h-px w-14 bg-neutral-300 dark:bg-neutral-700"
+                    className="h-px w-20 bg-neutral-300 dark:bg-neutral-700"
                   />
-                  <p className="text-xs sm:text-sm md:text-[16px] font-medium leading-relaxed text-neutral-800 dark:text-neutral-200">
+                  <p className="text-base sm:text-lg md:text-[21px] font-semibold leading-loose text-neutral-800 dark:text-neutral-200">
                     बुद्धिहीन तनु जानिके, सुमिरौं पवन-कुमार।
                     <br />
                     बल बुद्धि बिद्या देहु मोहिं, हरहु कलेस बिकार॥
@@ -683,18 +686,21 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
             className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
           >
             <Reveal>
-              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                    05 / Blogs
+                    05 / Blogs &amp; Gists
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Blogs &amp; Engineering Notes
+                    Engineering Notes &amp; Code Snippets
                   </h2>
+                  <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+                    MDX write-ups tied to production case studies alongside GitHub Gist-style code snippets.
+                  </p>
                 </div>
                 <CreepyButton
                   type="button"
-                  onClick={() => router.push(`${basePath}/blogs`)}
+                  onClick={() => router.push(`${basePath}/blog`)}
                   className="rounded-full min-w-[6.4em] bg-neutral-800 border-neutral-300 dark:border-neutral-700"
                   coverClassName="rounded-full bg-neutral-950 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-neutral-950 px-3.5 py-1.5 text-[11px] font-semibold min-w-[6.4em]"
                 >
@@ -703,33 +709,56 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
               </div>
             </Reveal>
 
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div className="inline-flex rounded-full border border-neutral-300 bg-white p-1 dark:border-neutral-800 dark:bg-neutral-950">
+                {(
+                  [
+                    { id: "all", label: `All (${posts.length})` },
+                    {
+                      id: "article",
+                      label: `Articles (${posts.filter((p) => p.type === "article").length})`,
+                    },
+                    {
+                      id: "gist",
+                      label: `Gists (${posts.filter((p) => p.type === "gist").length})`,
+                    },
+                  ] as const
+                ).map((tab) => {
+                  const active = blogFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setBlogFilter(tab.id)}
+                      className={`cursor-pointer rounded-full px-3 py-1 text-[11px] font-mono font-semibold transition-colors ${
+                        active
+                          ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
+                          : "text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Link
+                href={`${basePath}/blog`}
+                className="text-xs font-mono text-neutral-500 hover:text-neutral-950 hover:underline underline-offset-4 dark:text-neutral-400 dark:hover:text-white"
+              >
+                Browse full archive →
+              </Link>
+            </div>
+
             <div className="space-y-4">
-              {BLOG_POSTS.slice(0, 2).map((post, idx) => (
-                <Reveal key={post.slug} delay={idx * 0.04}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPost(post)}
-                    className="group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white p-5 text-left transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-white"
-                  >
-                    <div className="space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                        <FileText className="h-3.5 w-3.5" />
-                        <span className="rounded border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100">
-                          {post.category}
-                        </span>
-                        <span>{post.date}</span>
-                        <span>·</span>
-                        <span>{post.readTime}</span>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold">{post.title}</h3>
-                      <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                        {post.summary}
-                      </p>
-                    </div>
-                    <ArrowUpRight className="h-4 w-4 shrink-0 text-neutral-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-neutral-950 dark:group-hover:text-white" />
-                  </button>
-                </Reveal>
-              ))}
+              {posts
+                .filter((p) => blogFilter === "all" || p.type === blogFilter)
+                .slice(0, 3)
+                .map((post, idx) => (
+                  <Reveal key={post.slug} delay={idx * 0.04}>
+                    <BlogFeedCard post={post} basePath={basePath} />
+                  </Reveal>
+                ))}
             </div>
           </section>
 
@@ -933,38 +962,24 @@ export function PortfolioView({ showBackToIndiabids = false }: PortfolioViewProp
                     </span>
                   ))}
                 </div>
-                {selectedProject.liveHref && (
+                <div className="flex flex-wrap items-center gap-2">
                   <Link
-                    href={selectedProject.liveHref}
+                    href={`${basePath}/projects/${selectedProject.id}`}
                     onClick={() => setSelectedProject(null)}
-                    className="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                    className="inline-flex items-center gap-1 rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-semibold hover:border-neutral-950 dark:border-neutral-700 dark:hover:border-white"
                   >
-                    Open Live <ArrowUpRight className="h-3.5 w-3.5" />
+                    Case Study &amp; Logs <ArrowUpRight className="h-3.5 w-3.5" />
                   </Link>
-                )}
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Blog Reader Modal */}
-      <Dialog open={Boolean(selectedPost)} onOpenChange={() => setSelectedPost(null)}>
-        <DialogContent className="max-w-lg rounded-2xl border-neutral-200 bg-white p-6 text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white">
-          {selectedPost && (
-            <>
-              <DialogHeader className="space-y-1">
-                <span className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                  {selectedPost.category} · {selectedPost.date} · {selectedPost.readTime}
-                </span>
-                <DialogTitle className="text-xl font-bold leading-snug">
-                  {selectedPost.title}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="mt-4 space-y-3 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                {selectedPost.body.map((para, idx) => (
-                  <p key={idx}>{para}</p>
-                ))}
+                  {selectedProject.liveHref && (
+                    <Link
+                      href={selectedProject.liveHref}
+                      onClick={() => setSelectedProject(null)}
+                      className="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                    >
+                      Open Live <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  )}
+                </div>
               </div>
             </>
           )}

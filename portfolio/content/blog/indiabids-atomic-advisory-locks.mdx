@@ -1,0 +1,66 @@
+---
+title: "Deterministic Paid Leaderboards with PostgreSQL Advisory Locks & Redis"
+date: "2026-11-26"
+summary: "How INDIAbids guarantees ACID payment reconciliation using pg_advisory_xact_lock paired with O(log N) composite-scored Redis Sorted Sets."
+type: "article"
+tags: ["PostgreSQL", "Redis", "TypeScript", "System Design"]
+relatedProject: "indiabids"
+published: true
+---
+
+When real INR payments determine an organization's rank on a public leaderboard, eventual consistency or lost updates immediately break financial integrity.
+
+While **Redis Sorted Sets (`ZSET`)** give sub-millisecond `ZREVRANGE` rank lookups, memory should never be the source of truth for money. In **INDIAbids**, PostgreSQL remains the strict financial ledger, while Redis acts as a deterministically synchronized read projection.
+
+## 1. Serializing Concurrent Bids with Transaction Locks
+
+Every Razorpay checkout verification and webhook delivery runs inside the same idempotent reconciliation routine. Before adding a bid's spend to `BoardMembership`, we acquire a transaction-scoped advisory lock keyed to `(boardType, categorySlug, stateSlug)` alongside `FOR UPDATE` on the payment row.
+
+```ts title="server/src/services/reconcilePayment.ts" showLineNumbers
+export async function reconcilePaidOrder(orderId: string, paymentId: string) {
+  return prisma.$transaction(async (tx) => {
+    const [payment] = await tx.$queryRaw<PaymentRow[]>`
+      SELECT id, status, amount_paise, board_key
+      FROM "Payment"
+      WHERE razorpay_order_id = ${orderId}
+      FOR UPDATE
+    `;
+
+    if (!payment || payment.status === "PAID") return payment;
+
+    // Serialize all spend updates targeting the same leaderboard partition
+    await tx.$executeRaw`
+      SELECT pg_advisory_xact_lock(hashtext(${payment.board_key}))
+    `;
+
+    const updated = await tx.boardMembership.upsert({
+      where: { boardKey_ownerKey: { boardKey: payment.board_key, ownerKey: payment.id } },
+      update: { totalSpendPaise: { increment: payment.amount_paise } },
+      create: { boardKey: payment.board_key, ownerKey: payment.id, totalSpendPaise: payment.amount_paise },
+    });
+
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: { status: "PAID", razorpayPaymentId: paymentId },
+    });
+
+    return { payment, membership: updated };
+  });
+}
+```
+
+## 2. Tie-Breaking Composite Redis Scores
+
+Because Redis scores are IEEE-754 doubles, we encode both cumulative spend and an inverted timestamp tie-breaker so earlier spenders preserve precedence on equal amounts:
+
+```sql title="ranking-score-invariant.sql" showLineNumbers
+-- Composite score preserved safely inside IEEE-754 53-bit integer mantissa
+-- higher total_spend_paise always dominates; earlier updated_at wins ties
+SELECT
+  owner_key,
+  (total_spend_paise::bigint * 1000000) + (999999 - (EXTRACT(EPOCH FROM updated_at)::bigint % 1000000)) AS composite_score
+FROM "BoardMembership"
+WHERE board_key = 'NATIONAL:AI';
+```
+
+If Redis is ever flushed or restarts cold, the API read path automatically rebuilds the `ZSET` directly from PostgreSQL without dropping a single rank.

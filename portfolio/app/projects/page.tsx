@@ -205,32 +205,37 @@ export default function ProjectsPage() {
                   ))}
                 </div>
 
-                {(selectedProject.liveHref || selectedProject.repoHref) && (
-                  <div className="flex flex-wrap items-center gap-3 border-t border-neutral-200 pt-3 dark:border-neutral-800">
-                    {selectedProject.liveHref && (
-                      <a
-                        href={selectedProject.liveHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-                      >
-                        <span>Visit Live</span>
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {selectedProject.repoHref && (
-                      <a
-                        href={selectedProject.repoHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-semibold dark:border-neutral-700"
-                      >
-                        <span>Source Repo</span>
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                  </div>
-                )}
+                <div className="flex flex-wrap items-center gap-3 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+                  <Link
+                    href={`/projects/${selectedProject.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                  >
+                    <span>Case Study &amp; Dev Logs</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </Link>
+                  {selectedProject.liveHref && (
+                    <a
+                      href={selectedProject.liveHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-semibold dark:border-neutral-700"
+                    >
+                      <span>Visit Live</span>
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                  {selectedProject.repoHref && (
+                    <a
+                      href={selectedProject.repoHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-semibold dark:border-neutral-700"
+                    >
+                      <span>Source Repo</span>
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                </div>
               </div>
             </>
           )}

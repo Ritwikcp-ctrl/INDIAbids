@@ -48,3 +48,39 @@
     transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
+
+/* Shiki / rehype-pretty-code dual theme + line numbers */
+.mdx-code-pre code,
+.mdx-code-pre code * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+code[data-theme*=" "] span[data-line] span {
+  color: var(--shiki-light);
+}
+
+.dark code[data-theme*=" "] span[data-line] span {
+  color: var(--shiki-dark);
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1.75rem;
+  margin-right: 1.15rem;
+  text-align: right;
+  color: rgba(115, 115, 115, 0.55);
+  user-select: none;
+  font-size: 0.72rem;
+}
+
+[data-line] {
+  display: inline-block;
+  width: 100%;
+  padding-right: 1rem;
+}

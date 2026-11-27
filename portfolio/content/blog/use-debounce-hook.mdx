@@ -1,0 +1,29 @@
+---
+title: "useDebounce.ts — Zero-Stale-Closure React 19 Hook"
+date: "2026-11-27"
+summary: "A lightweight, strict TypeScript debounce hook for React 19 inputs, GitHub API handle switching, and search filters without extra dependencies."
+type: "gist"
+tags: ["TypeScript", "React 19", "Hooks", "Gist"]
+gistUrl: "https://gist.github.com/Ritwikcp-ctrl"
+published: true
+---
+
+Drop-in typed `useDebounce` hook safe under React 19 StrictMode and concurrent rendering—cancels pending timers cleanly on unmount or rapid keystrokes.
+
+```ts title="useDebounce.ts" showLineNumbers
+import { useEffect, useState } from "react";
+
+export function useDebounce<T>(value: T, delayMs = 250): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delayMs);
+
+    return () => clearTimeout(timer);
+  }, [value, delayMs]);
+
+  return debouncedValue;
+}
+```
