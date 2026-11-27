@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { formatInr } from "@/components/ui/lib/money";
-import { Trophy, TrendingUp, Crown, Zap } from "lucide-react";
+import { Trophy, Zap } from "lucide-react";
 
 interface BidChartProps {
   entries?: Array<{

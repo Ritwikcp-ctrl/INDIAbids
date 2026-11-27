@@ -57,7 +57,7 @@ export function LeaderboardView({
   const board = boardData?.board;
 
   const { data: lbData, isLoading: isLbLoading } = useLeaderboard(board?.id ?? null);
-  const entries = lbData?.leaderboard ?? [];
+  const entries = useMemo(() => lbData?.leaderboard ?? [], [lbData?.leaderboard]);
 
   const filtered = useMemo(() => {
     return entries.filter((e) => {

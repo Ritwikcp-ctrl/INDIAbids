@@ -20,9 +20,17 @@ import {
   Globe,
   MapPin,
   Sparkles,
-  ArrowLeft,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/ui/footer";
+
+interface RaiseBidResponse {
+  keyId: string;
+  amountPaise: string | number;
+  orderId: string;
+  paymentId: string;
+  businessId: string;
+}
 
 export default function ManageListingPage() {
   const { token } = useParams<{ token: string }>();
@@ -50,8 +58,9 @@ export default function ManageListingPage() {
       await api.post(`/manage/${token}/claim`);
       toast.success("Listing claimed to your account successfully!");
       router.push("/dashboard");
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to claim listing.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to claim listing.";
+      toast.error(message);
       setClaiming(false);
     }
   }
@@ -59,7 +68,7 @@ export default function ManageListingPage() {
   async function handleRaiseBid(boardId: string) {
     setSubmittingBid(true);
     try {
-      const res = await api.post<any>("/bids", {
+      const res = await api.post<RaiseBidResponse>("/bids", {
         boardId,
         manageToken: token,
         amountPaise: String(raiseAmount * 100),
@@ -74,10 +83,21 @@ export default function ManageListingPage() {
         description: `Raise bid for ${business?.name}`,
         order_id: res.orderId,
         notes: { paymentId: res.paymentId, businessId: res.businessId },
-        handler: () => {
-          toast.success("Bid submitted! Leaderboard updated.");
-          mutate();
-          setRaisingBoardId(null);
+        handler: async (response) => {
+          try {
+            await api.post("/payments/verify", {
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            toast.success("Bid verified and leaderboard updated!");
+          } catch {
+            toast.info("Payment received; awaiting confirmation.");
+          } finally {
+            setSubmittingBid(false);
+            mutate();
+            setRaisingBoardId(null);
+          }
         },
         modal: {
           ondismiss: () => {
@@ -87,8 +107,9 @@ export default function ManageListingPage() {
         },
       });
       rzp.open();
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to raise bid.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to raise bid.";
+      toast.error(message);
       setSubmittingBid(false);
     }
   }
@@ -130,8 +151,9 @@ export default function ManageListingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-10 px-4 sm:px-6 font-sans">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <Navbar user={user} />
+      <div className="mx-auto w-full max-w-4xl space-y-6 py-8 px-4 sm:px-6">
         {/* Header bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
           <div>
@@ -157,7 +179,6 @@ export default function ManageListingPage() {
             <Button asChild size="sm" className="text-xs font-semibold">
               <Link href="/bid?scope=national">Place New Bid</Link>
             </Button>
-            <ThemeToggle />
           </div>
         </div>
 
@@ -287,6 +308,8 @@ export default function ManageListingPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

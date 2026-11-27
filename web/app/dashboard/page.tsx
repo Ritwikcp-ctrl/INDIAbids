@@ -19,10 +19,10 @@ import {
   MapPin,
   ArrowUpRight,
   LogOut,
-  Sparkles,
   ShieldCheck,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/ui/footer";
 
 export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
@@ -49,8 +49,10 @@ export default function DashboardPage() {
       toast.success("Listing claimed to your account successfully!");
       setClaimToken("");
       mutate();
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to claim listing. Check your token.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to claim listing. Check your token.";
+      toast.error(message);
     } finally {
       setClaiming(false);
     }
@@ -69,20 +71,17 @@ export default function DashboardPage() {
   const businesses = data?.businesses || [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-10 px-4 sm:px-6 font-sans">
-      <div className="mx-auto max-w-5xl space-y-8">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <Navbar user={user} />
+
+      <div className="mx-auto w-full max-w-5xl space-y-8 py-8 px-4 sm:px-6">
         {/* Top bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-foreground">
-                INDIA<span className="text-primary font-black">bids</span>
-              </span>
-              <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                Dashboard
-              </Badge>
-            </div>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+            <Badge variant="outline" className="text-[10px] text-muted-foreground mb-1">
+              Dashboard
+            </Badge>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Welcome, {user.name || user.email.split("@")[0]}
             </h1>
             <p className="text-xs text-muted-foreground">
@@ -99,7 +98,6 @@ export default function DashboardPage() {
             <Button size="sm" variant="outline" onClick={() => logout()} className="text-xs">
               <LogOut className="mr-1 h-3.5 w-3.5" /> Log Out
             </Button>
-            <ThemeToggle />
           </div>
         </div>
 
@@ -231,6 +229,8 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

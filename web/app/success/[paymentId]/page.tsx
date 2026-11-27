@@ -1,26 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/auth/auth-provider";
 import { usePaymentStatus } from "@/api/hooks";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { formatInr } from "@/components/ui/lib/money";
 import { CheckCircle2, Clock, XCircle, ArrowRight, Copy, Check, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/ui/footer";
+
+const emptySubscribe = () => () => {};
 
 export default function SuccessPage() {
   const { paymentId } = useParams<{ paymentId: string }>();
   const { user } = useAuth();
-  const [manageToken, setManageToken] = useState<string | null>(null);
+  const manageToken = useSyncExternalStore(
+    emptySubscribe,
+    () => sessionStorage.getItem("manageToken"),
+    () => null
+  );
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    const token = sessionStorage.getItem("manageToken");
-    if (token) setManageToken(token);
-  }, []);
 
   const { data: payment } = usePaymentStatus(paymentId || null);
 
@@ -39,7 +41,9 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6 font-sans text-foreground">
+    <div className="min-h-screen bg-background flex flex-col font-sans text-foreground">
+      <Navbar user={user} />
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="max-w-md w-full rounded-xl card-surface p-6 sm:p-8 shadow-xl border border-border/80">
         <div className="text-center pb-5 border-b border-border/50">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-card border border-border">
@@ -152,6 +156,9 @@ export default function SuccessPage() {
           </div>
         </div>
       </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }
