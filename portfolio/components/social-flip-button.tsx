@@ -24,7 +24,7 @@ export default function SocialFlipButton({
   return (
     <div className={cn("inline-flex items-center justify-center", className)}>
       <div
-        className="relative flex items-center justify-center gap-1.5 rounded-2xl border border-border/80 bg-card/90 p-2.5 shadow-sm backdrop-blur-md"
+        className="relative flex items-center justify-center gap-1.5 rounded-2xl border border-border bg-card/90 p-2.5 shadow-sm backdrop-blur-md"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -33,12 +33,12 @@ export default function SocialFlipButton({
       >
         <div className="pointer-events-none absolute -inset-[1px] overflow-hidden rounded-2xl">
           <motion.div
-            className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent"
+            className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-900/50 to-transparent dark:via-white/50"
             animate={{ x: ["-100%", "100%"] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent"
+            className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-900/50 to-transparent dark:via-white/50"
             animate={{ x: ["100%", "-100%"] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
           />
@@ -87,13 +87,13 @@ export default function SocialFlipButton({
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <div
-                  className="absolute inset-0 flex items-center justify-center rounded-lg border border-border/70 bg-secondary text-sm font-bold text-foreground shadow-sm"
+                  className="absolute inset-0 flex items-center justify-center rounded-lg border border-border bg-secondary text-sm font-bold text-foreground shadow-sm"
                   style={{ backfaceVisibility: "hidden" }}
                 >
                   {item.letter}
                 </div>
                 <div
-                  className="absolute inset-0 flex items-center justify-center rounded-lg bg-[#FF4D1F] text-sm text-white dark:text-[#111013]"
+                  className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-950 text-sm text-white dark:bg-white dark:text-neutral-950"
                   style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
                 >
                   {item.icon}

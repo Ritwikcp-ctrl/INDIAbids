@@ -3,25 +3,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #111013;
-  --foreground: #EDE7DC;
-  --card: #1A171C;
-  --card-foreground: #EDE7DC;
-  --secondary: #241F26;
-  --secondary-foreground: #EDE7DC;
-  --muted-foreground: #8C8780;
-  --border: #2E2831;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #121212;
+  --card-foreground: #fafafa;
+  --secondary: #1c1c1c;
+  --secondary-foreground: #fafafa;
+  --muted-foreground: #a1a1aa;
+  --border: #262626;
 }
 
 .light {
-  --background: #FAF6F0;
-  --foreground: #1B171C;
-  --card: #FFFFFF;
-  --card-foreground: #1B171C;
-  --secondary: #EAE3D8;
-  --secondary-foreground: #1B171C;
-  --muted-foreground: #6B655F;
-  --border: #DDD6CB;
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #0a0a0a;
+  --muted-foreground: #52525b;
+  --border: #e4e4e7;
 }
 
 @theme inline {

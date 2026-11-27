@@ -27,6 +27,8 @@ interface SocialFlipButtonProps {
   itemClassName?: string;
   frontClassName?: string;
   backClassName?: string;
+  lineClassName?: string;
+  containerClassName?: string;
 }
 
 const defaultItems: SocialItem[] = [
@@ -143,6 +145,8 @@ export default function SocialFlipButton({
   itemClassName,
   frontClassName,
   backClassName,
+  lineClassName,
+  containerClassName,
 }: SocialFlipButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [tooltipIndex, setTooltipIndex] = useState<number | null>(null);
@@ -150,7 +154,10 @@ export default function SocialFlipButton({
   return (
     <div className={cn("inline-flex items-center justify-center", className)}>
       <div
-        className="group relative flex items-center justify-center gap-1.5 rounded-2xl border border-border/80 bg-card/90 p-2.5 shadow-sm backdrop-blur-md"
+        className={cn(
+          "group relative flex items-center justify-center gap-1.5 rounded-2xl border border-border/80 bg-card/90 p-2.5 shadow-sm backdrop-blur-md",
+          containerClassName
+        )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -160,7 +167,10 @@ export default function SocialFlipButton({
         {/* Border Lines Container - Clipped */}
         <div className="pointer-events-none absolute -inset-[1px] overflow-hidden rounded-2xl">
           <motion.div
-            className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent"
+            className={cn(
+              "absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent",
+              lineClassName
+            )}
             animate={{ x: ["-100%", "100%"] }}
             transition={{
               duration: 2.5,
@@ -169,7 +179,10 @@ export default function SocialFlipButton({
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent"
+            className={cn(
+              "absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#FF4D1F]/60 to-transparent",
+              lineClassName
+            )}
             animate={{ x: ["100%", "-100%"] }}
             transition={{
               duration: 2.5,

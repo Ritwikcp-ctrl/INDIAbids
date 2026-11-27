@@ -4,15 +4,18 @@ import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { playThemeToggleSound } from "@/lib/sound";
 
 const emptySubscribe = () => () => {};
 
 export function ThemeToggle({
   className,
   compact = false,
+  monochrome = false,
 }: {
   className?: string;
   compact?: boolean;
+  monochrome?: boolean;
 }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -37,29 +40,43 @@ export function ThemeToggle({
 
   const isDark = (resolvedTheme ?? theme) === "dark";
 
+  const handleToggle = () => {
+    const nextTheme = isDark ? "light" : "dark";
+    playThemeToggleSound(nextTheme);
+    setTheme(nextTheme);
+  };
+
   return (
     <Button
       type="button"
       variant="outline"
       size="sm"
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={handleToggle}
       className={`${
         compact
           ? "h-7 px-2 rounded-full text-[11px]"
           : "h-8 px-2.5 rounded-lg text-[11px]"
-      } border-border bg-secondary/80 hover:bg-secondary text-foreground transition-all flex items-center gap-1.5 shadow-sm cursor-pointer ${
+      } border-border bg-secondary/80 hover:bg-secondary text-foreground transition-all flex items-center gap-1.5 shadow-sm cursor-pointer active:scale-[0.96] ${
         className || ""
       }`}
     >
       {isDark ? (
         <>
-          <Sun className="h-3.5 w-3.5 text-amber-400" />
+          <Sun
+            className={`h-3.5 w-3.5 ${
+              monochrome ? "text-white" : "text-amber-400"
+            }`}
+          />
           {!compact && <span className="font-medium hidden sm:inline">Light</span>}
         </>
       ) : (
         <>
-          <Moon className="h-3.5 w-3.5 text-[#FF4D1F]" />
+          <Moon
+            className={`h-3.5 w-3.5 ${
+              monochrome ? "text-black" : "text-[#FF4D1F]"
+            }`}
+          />
           {!compact && <span className="font-medium hidden sm:inline">Dark</span>}
         </>
       )}
