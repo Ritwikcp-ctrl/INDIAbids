@@ -129,18 +129,13 @@ export function SkillsSection() {
   return (
     <section
       id="skills"
-      className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
+      className="py-10 sm:py-12 px-5 sm:px-7"
     >
       <Reveal>
-        <div className="mb-6 flex items-baseline justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-              04 / Stack
-            </p>
-            <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
-              Skills &amp; Technologies
-            </h2>
-          </div>
+        <div className="mb-5 flex items-baseline justify-between gap-4">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+            Skills &amp; Technologies
+          </h2>
 
           <div className="flex items-center gap-3 text-[11px] font-mono">
             {(storedSkills !== null || storedOs !== null) && (
@@ -227,7 +222,7 @@ export function SkillsSection() {
               return (
                 <div
                   key={`${skill.id}-${skill.name}`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-200/80 px-3 py-1.5 text-xs font-medium text-neutral-800 transition-colors hover:border-neutral-400 dark:border-neutral-800/80 dark:text-neutral-200 dark:hover:border-neutral-600"
+                  className="inline-flex items-center gap-2 rounded-lg bg-neutral-100/80 px-3 py-1.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-200/70 dark:bg-neutral-900/70 dark:text-neutral-200 dark:hover:bg-neutral-800"
                 >
                   <Icon className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                   <span>{skill.name}</span>

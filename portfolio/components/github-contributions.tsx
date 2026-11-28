@@ -131,7 +131,7 @@ export function GitHubContributionGraph({
   data?.monthLabels.forEach((m) => monthByWeek.set(m.weekIndex, m.label));
 
   return (
-    <div className="rounded-xl border border-neutral-200/80 p-4 sm:p-5 space-y-4 dark:border-neutral-800/80">
+    <div className="rounded-xl bg-neutral-100/60 p-4 sm:p-5 space-y-4 dark:bg-neutral-900/45">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center gap-2">

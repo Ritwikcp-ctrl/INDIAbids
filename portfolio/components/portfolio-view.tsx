@@ -78,13 +78,13 @@ const DEFAULT_PROFILE_STATE: CustomProfileState = {
 };
 
 const INDEX_SECTIONS = [
-  { id: "profile", num: "00", label: "Profile" },
-  { id: "experience", num: "01", label: "Experience" },
-  { id: "projects", num: "02", label: "Projects" },
-  { id: "highlights", num: "03", label: "Proof & Activity" },
-  { id: "skills", num: "04", label: "Skills" },
-  { id: "blogs", num: "05", label: "Blogs" },
-  { id: "connect", num: "06", label: "Connect" },
+  { id: "profile", label: "Profile" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "highlights", label: "Proof & Activity" },
+  { id: "skills", label: "Skills" },
+  { id: "blogs", label: "Blogs" },
+  { id: "connect", label: "Connect" },
 ];
 
 const emptySubscribe = () => () => {};
@@ -168,6 +168,34 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/likes")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { count?: number } | null) => {
+        if (!active || !data || typeof data.count !== "number") return;
+        const current = parseStoredJson<{ liked: boolean; count: number }>(
+          localStorage.getItem(LIKES_KEY) ?? DEFAULT_LIKES_JSON,
+          { liked: false, count: 0 }
+        );
+        const mergedCount = Math.max(
+          data.count,
+          current.count,
+          current.liked ? 1 : 0
+        );
+        if (mergedCount !== current.count) {
+          writeLocalValue(
+            LIKES_KEY,
+            JSON.stringify({ liked: current.liked, count: mergedCount })
+          );
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -316,26 +344,39 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             <PulseHeart
               count={likeState.count}
               liked={likeState.liked}
-              onChange={(nextLiked, nextCount) =>
+              onChange={(nextLiked, nextCount) => {
                 writeLocalValue(
                   LIKES_KEY,
                   JSON.stringify({ liked: nextLiked, count: nextCount })
-                )
-              }
+                );
+                fetch("/api/likes", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ delta: nextLiked ? 1 : -1 }),
+                })
+                  .then((res) => (res.ok ? res.json() : null))
+                  .then((data: { count?: number } | null) => {
+                    if (data && typeof data.count === "number") {
+                      writeLocalValue(
+                        LIKES_KEY,
+                        JSON.stringify({
+                          liked: nextLiked,
+                          count: Math.max(nextLiked ? 1 : 0, data.count),
+                        })
+                      );
+                    }
+                  })
+                  .catch(() => {});
+              }}
               showCount
               icon="heart"
               idleOutline
               size={18}
-              corner={22}
+              corner={999}
               likedColor="#ff4d6d"
               idleColor={isDark ? "#a1a1aa" : "#52525b"}
               pillColor={isDark ? "#18181b" : "#f4f4f5"}
               textColor={isDark ? "#fafafa" : "#09090b"}
-              duration={560}
-              dotSize={0.3}
-              overshoot={1.7}
-              beat={3}
-              rollDuration={350}
             />
             <ThemeToggle />
           </div>
@@ -343,16 +384,16 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
       </header>
 
       <div className="mx-auto flex max-w-[1040px] justify-center gap-8 px-3 sm:px-5">
-        <main className="w-full max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80">
+        <main className="w-full max-w-[780px]">
           <section
             id="profile"
-            className="border-b border-neutral-200/80 dark:border-neutral-800/80"
+            className="pb-6"
           >
             <div
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-32 sm:h-36 w-full overflow-hidden border-b border-neutral-200/80 bg-neutral-100 outline-none dark:border-neutral-800/80 dark:bg-neutral-900/50"
+              className="group relative h-32 sm:h-36 w-full overflow-hidden rounded-b-2xl bg-neutral-100 outline-none dark:bg-neutral-900/50"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -741,18 +782,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="experience"
-            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
+            className="px-5 sm:px-7 py-10 sm:py-12"
           >
             <Reveal>
-              <div className="mb-6 flex items-baseline justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                    01 / Experience
-                  </p>
-                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
-                    Experience
-                  </h2>
-                </div>
+              <div className="mb-5 flex items-baseline justify-between gap-4">
+                <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                  Experience
+                </h2>
                 <Link
                   href="/experience"
                   className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
@@ -767,18 +803,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="projects"
-            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
+            className="px-5 sm:px-7 py-10 sm:py-12"
           >
             <Reveal>
-              <div className="mb-6 flex items-baseline justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                    02 / Projects
-                  </p>
-                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
-                    Projects
-                  </h2>
-                </div>
+              <div className="mb-5 flex items-baseline justify-between gap-4">
+                <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                  Projects
+                </h2>
                 <Link
                   href="/projects"
                   className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
@@ -791,25 +822,20 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             <ProjectsShowcase
               defaultUsername={PORTFOLIO_PROFILE.githubUsername}
               basePath=""
-              maxMain={2}
+              maxMain={3}
               showGithubMore={false}
             />
           </section>
 
           <section
             id="highlights"
-            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80 space-y-6"
+            className="px-5 sm:px-7 py-10 sm:py-12 space-y-5"
           >
             <Reveal>
               <div className="flex items-baseline justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                    03 / Highlights
-                  </p>
-                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
-                    Proof &amp; Activity
-                  </h2>
-                </div>
+                <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                  Proof &amp; Activity
+                </h2>
                 <Link
                   href="/highlights"
                   className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
@@ -834,18 +860,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="blogs"
-            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
+            className="px-5 sm:px-7 py-10 sm:py-12"
           >
             <Reveal>
-              <div className="mb-6 flex items-baseline justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                    05 / Blogs
-                  </p>
-                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
-                    Blogs
-                  </h2>
-                </div>
+              <div className="mb-5 flex items-baseline justify-between gap-4">
+                <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                  Blogs
+                </h2>
                 <Link
                   href="/blog"
                   className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
@@ -860,13 +881,10 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="connect"
-            className="px-5 sm:px-7 py-12 sm:py-14 space-y-12"
+            className="px-5 sm:px-7 py-10 sm:py-12 space-y-12"
           >
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
               <div className="md:col-span-5 space-y-3">
-                <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                  06 / Connect
-                </p>
                 <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
                   Get in touch
                 </h2>
@@ -883,21 +901,21 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                 </div>
               </div>
 
-              <div className="md:col-span-7 rounded-xl border border-neutral-200/80 p-4 sm:p-5 space-y-3 dark:border-neutral-800/80">
+              <div className="md:col-span-7 rounded-xl bg-neutral-100/60 p-4 sm:p-5 space-y-3 dark:bg-neutral-900/45">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <input
                     type="email"
                     value={senderEmail}
                     onChange={(e) => setSenderEmail(e.target.value)}
                     placeholder="Your email"
-                    className="h-9 w-full rounded-lg border border-neutral-200/80 bg-transparent px-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
+                    className="h-9 w-full rounded-lg bg-[#FAFAFA] px-3 text-xs outline-none transition-colors focus:ring-1 focus:ring-neutral-400 dark:bg-[#0A0A0A] dark:focus:ring-neutral-600"
                   />
                   <input
                     type="text"
                     value={mailSubject}
                     onChange={(e) => setMailSubject(e.target.value)}
                     placeholder="Subject"
-                    className="h-9 w-full rounded-lg border border-neutral-200/80 bg-transparent px-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
+                    className="h-9 w-full rounded-lg bg-[#FAFAFA] px-3 text-xs outline-none transition-colors focus:ring-1 focus:ring-neutral-400 dark:bg-[#0A0A0A] dark:focus:ring-neutral-600"
                   />
                 </div>
 
@@ -906,7 +924,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                   value={mailMessage}
                   onChange={(e) => setMailMessage(e.target.value)}
                   placeholder={`Message to ${profile.name}…`}
-                  className="w-full rounded-lg border border-neutral-200/80 bg-transparent p-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
+                  className="w-full rounded-lg bg-[#FAFAFA] p-3 text-xs outline-none transition-colors focus:ring-1 focus:ring-neutral-400 dark:bg-[#0A0A0A] dark:focus:ring-neutral-600"
                 />
 
                 <div className="flex items-center justify-between gap-4 pt-1">
@@ -1031,7 +1049,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         </main>
 
         <aside className="hidden lg:block w-40 shrink-0 pt-10">
-          <div className="sticky top-18 space-y-2.5 border-l border-neutral-200/80 pl-4 dark:border-neutral-800/80">
+          <div className="sticky top-18 space-y-2.5 pl-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.12em] text-neutral-400 dark:text-neutral-500">
               Index
             </p>

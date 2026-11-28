@@ -63,7 +63,7 @@ export default async function TejasBlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80 min-h-[calc(100vh-3rem)]">
+      <main className="mx-auto max-w-[780px] min-h-[calc(100vh-3rem)]">
         <article className="px-5 sm:px-7 py-10 sm:py-12 space-y-8">
           <header className="space-y-3 border-b border-neutral-200/80 pb-7 dark:border-neutral-800/80">
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">

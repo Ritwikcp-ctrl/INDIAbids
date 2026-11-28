@@ -139,7 +139,7 @@ export const PROJECT_ITEMS: ProjectItem[] = [
     title: "INDIAbids",
     tagline: "Deterministic Paid Leaderboard for Indian Businesses",
     featured: true,
-    status: "Production Ready",
+    status: "Live",
     year: "2026",
     description:
       "A two-tier (National & 36 State/UT) paid ranking platform where lifetime cumulative INR spend determines leaderboard rank—with zero subscriptions and instant Razorpay settlement.",
@@ -160,6 +160,30 @@ export const PROJECT_ITEMS: ProjectItem[] = [
     ],
     liveHref: "/",
     repoHref: "https://github.com/Ritwikcp-ctrl/INDIAbids",
+  },
+  {
+    id: "crosspnp",
+    title: "CrossPnP",
+    tagline: "Agriculture Startup & Supply Coordination Platform",
+    featured: true,
+    status: "Building",
+    year: "2026",
+    description:
+      "Building CrossPnP — technology infrastructure and coordination workflows for farming ecosystems and agricultural commerce.",
+    architecture: [],
+    stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "AI"],
+  },
+  {
+    id: "sanskrit",
+    title: "Sanskrit",
+    tagline: "A New Programming Language",
+    featured: true,
+    status: "Not Started",
+    year: "2026",
+    description:
+      "Designing a deterministic programming language inspired by formal Sanskrit grammar and structured expression rules.",
+    architecture: [],
+    stack: ["Compilers", "Systems", "PL Design"],
   },
 ];
 

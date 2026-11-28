@@ -130,7 +130,7 @@ export function ProofGallery({ compact = false }: ProofGalleryProps) {
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-200 px-4 py-7 text-xs text-neutral-500 transition-colors hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-neutral-200"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-neutral-100/60 px-4 py-7 text-xs text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:bg-neutral-900/45 dark:text-neutral-400 dark:hover:bg-neutral-900/75 dark:hover:text-neutral-200"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>

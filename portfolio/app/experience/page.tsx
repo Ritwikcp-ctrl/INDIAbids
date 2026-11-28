@@ -29,14 +29,11 @@ export default function ExperiencePage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80 min-h-[calc(100vh-3rem)]">
-        <section className="border-b border-neutral-200/80 px-5 sm:px-7 py-10 sm:py-12 dark:border-neutral-800/80">
+      <main className="mx-auto max-w-[780px] min-h-[calc(100vh-3rem)]">
+        <section className="px-5 sm:px-7 pt-10 pb-4">
           <Reveal>
             <div>
-              <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                01 / Experience
-              </p>
-              <h1 className="mt-1 text-2xl sm:text-[28px] font-semibold tracking-[-0.02em]">
+              <h1 className="text-2xl sm:text-[28px] font-semibold tracking-[-0.02em]">
                 Experience
               </h1>
               <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-neutral-500 dark:text-neutral-400">
@@ -46,7 +43,7 @@ export default function ExperiencePage() {
           </Reveal>
         </section>
 
-        <section className="px-5 sm:px-7 py-10 sm:py-12">
+        <section className="px-5 sm:px-7 pb-12">
           <EditableExperienceList />
         </section>
       </main>

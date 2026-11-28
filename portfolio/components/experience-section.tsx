@@ -207,9 +207,9 @@ export function EditableExperienceList({ maxItems }: ExperienceListProps) {
         </form>
       )}
 
-      <div className="divide-y divide-neutral-200/80 border-y border-neutral-200/80 dark:divide-neutral-800/80 dark:border-neutral-800/80">
+      <div className="space-y-3">
         {visible.map((exp) => (
-          <div key={exp.id} className="group py-5 space-y-2.5">
+          <div key={exp.id} className="group rounded-xl bg-neutral-100/60 p-4 sm:p-5 transition-colors hover:bg-neutral-100 dark:bg-neutral-900/45 dark:hover:bg-neutral-900/75 space-y-2.5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <div>
                 <h3 className="text-[15px] sm:text-base font-medium tracking-tight text-neutral-950 dark:text-neutral-50">

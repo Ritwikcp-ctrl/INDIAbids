@@ -21,6 +21,30 @@ import {
 
 const CUSTOM_PROJECTS_KEY = "tejas_custom_live_projects";
 
+function getStatusBadge(status: string) {
+  const s = status.trim().toLowerCase();
+  if (s === "live" || s === "production ready") {
+    return {
+      label: "Live",
+      dotClass: "bg-emerald-500",
+      pillClass:
+        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    };
+  }
+  if (s === "building" || s === "in progress") {
+    return {
+      label: "Building",
+      dotClass: "bg-red-500",
+      pillClass: "bg-red-500/10 text-red-600 dark:text-red-400",
+    };
+  }
+  return {
+    label: status || "Not Started",
+    dotClass: "bg-neutral-400 dark:bg-neutral-500",
+    pillClass: "bg-neutral-500/10 text-neutral-500 dark:text-neutral-400",
+  };
+}
+
 interface ProjectsShowcaseProps {
   defaultUsername: string;
   basePath?: string;
@@ -102,10 +126,10 @@ export function ProjectsShowcase({
     const item: ProjectItem = {
       id: editingId ?? `${baseSlug}-${combinedLive.length + 1}`,
       title: cleanTitle,
-      tagline: tagline.trim() || "Live Web Build",
+      tagline: tagline.trim() || "Project",
       status: status.trim() || "Live",
       year: existing?.year ?? String(new Date().getFullYear()),
-      description: description.trim() || "Production live deployment.",
+      description: description.trim() || "Building and shipping.",
       architecture: existing?.architecture ?? [],
       stack: stack.length > 0 ? stack : ["TypeScript", "Next.js"],
       liveHref: liveHref.trim() || undefined,
@@ -134,11 +158,11 @@ export function ProjectsShowcase({
         {formOpen && (
           <form
             onSubmit={handleSave}
-            className="rounded-xl border border-neutral-200 bg-white p-4 sm:p-5 space-y-3 dark:border-neutral-800 dark:bg-neutral-950"
+            className="rounded-xl bg-neutral-100/60 p-4 sm:p-5 space-y-3 dark:bg-neutral-900/50"
           >
             <div className="flex items-center justify-between">
               <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                {editingId ? "Edit Project" : "Add Live Project"}
+                {editingId ? "Edit Project" : "Add Project"}
               </p>
               <button
                 type="button"
@@ -157,43 +181,45 @@ export function ProjectsShowcase({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Project title *"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
               />
-              <input
-                type="url"
-                required
-                value={liveHref}
-                onChange={(e) => setLiveHref(e.target.value)}
-                placeholder="Live URL *"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
-              />
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                aria-label="Project status"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
+              >
+                <option value="Live">Live (Green)</option>
+                <option value="Building">Building (Red)</option>
+                <option value="Not Started">Not Started (Gray)</option>
+              </select>
               <input
                 type="text"
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
-                placeholder="One-line pitch"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+                placeholder="Tagline"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
+              />
+              <input
+                type="url"
+                value={liveHref}
+                onChange={(e) => setLiveHref(e.target.value)}
+                placeholder="Live URL (optional)"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
               />
               <input
                 type="url"
                 value={repoHref}
                 onChange={(e) => setRepoHref(e.target.value)}
                 placeholder="GitHub URL (optional)"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
               />
               <input
                 type="text"
                 value={stackInput}
                 onChange={(e) => setStackInput(e.target.value)}
                 placeholder="Tech stack (comma separated)"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
-              />
-              <input
-                type="text"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                placeholder="Status (e.g. Live)"
-                className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+                className="h-9 w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
               />
             </div>
 
@@ -202,7 +228,7 @@ export function ProjectsShowcase({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What it does..."
-              className="w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+              className="w-full rounded-lg border border-neutral-200/80 bg-[#FAFAFA] p-3 text-xs outline-none focus:border-neutral-400 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-neutral-600"
             />
 
             <div className="flex justify-end gap-2">
@@ -223,28 +249,30 @@ export function ProjectsShowcase({
           </form>
         )}
 
-        <div className="divide-y divide-neutral-200/80 border-y border-neutral-200/80 dark:divide-neutral-800/80 dark:border-neutral-800/80">
+        <div className="space-y-3">
           {visibleLive.map((project) => {
-            const hasCaseStudy = PROJECT_ITEMS.some(
-              (item) => item.id === project.id
-            );
+            const hasCaseStudy =
+              project.architecture && project.architecture.length > 0;
+            const badge = getStatusBadge(project.status);
 
             return (
-              <div key={project.id} className="group py-5 space-y-2.5">
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-[15px] sm:text-base font-medium tracking-tight text-neutral-950 dark:text-neutral-50">
-                        {project.title}
-                      </h3>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        {project.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {project.tagline}
-                    </p>
+              <div
+                key={project.id}
+                className="group rounded-xl bg-neutral-100/60 p-4 sm:p-5 transition-colors hover:bg-neutral-100 dark:bg-neutral-900/45 dark:hover:bg-neutral-900/75 space-y-2"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <h3 className="text-[15px] sm:text-base font-medium tracking-tight text-neutral-950 dark:text-neutral-50">
+                      {project.title}
+                    </h3>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${badge.pillClass}`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${badge.dotClass}`}
+                      />
+                      <span>{badge.label}</span>
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-3 text-xs">
@@ -261,7 +289,7 @@ export function ProjectsShowcase({
                             ? "noopener noreferrer"
                             : undefined
                         }
-                        className="inline-flex items-center gap-1 font-medium text-neutral-950 hover:underline underline-offset-4 dark:text-white"
+                        className="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline underline-offset-4 dark:text-neutral-100"
                       >
                         <span>Live</span>
                         <ExternalLink className="h-3 w-3" />
@@ -350,7 +378,7 @@ export function ProjectsShowcase({
               className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
             >
               <Plus className="h-3 w-3" />
-              <span>Add live project</span>
+              <span>Add project</span>
             </button>
           </div>
         )}
