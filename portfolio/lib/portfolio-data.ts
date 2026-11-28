@@ -158,6 +158,10 @@ export const EXPERIENCE_ITEMS: ExperienceItem[] = [
   },
 ];
 
+/**
+ * Add permanent flagship / live projects directly to PROJECT_ITEMS with `featured: true`
+ * and a `liveHref` URL, or add them dynamically from the Portfolio UI (+ Add Live Project).
+ */
 export const PROJECT_ITEMS: ProjectItem[] = [
   {
     id: "indiabids",
@@ -184,7 +188,7 @@ export const PROJECT_ITEMS: ProjectItem[] = [
       "Docker",
     ],
     liveHref: INDIABIDS_URL,
-    repoHref: "https://github.com",
+    repoHref: "https://github.com/Ritwikcp-ctrl/INDIAbids",
   },
   {
     id: "branched-nav",

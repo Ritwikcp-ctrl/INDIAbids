@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Reveal } from "@/components/ui/reveal";
-import { GitHubPinnedProjects } from "@/components/portfolio/github-pinned-projects";
+import { ProjectsShowcase } from "@/components/portfolio/projects-showcase";
 import { PORTFOLIO_PROFILE } from "@/lib/portfolio-data";
 
 export default function ProjectsPage() {
@@ -22,7 +22,7 @@ export default function ProjectsPage() {
 
           <div className="flex items-center gap-2.5">
             <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              02 / GitHub Pinned Projects
+              02 / All Projects
             </span>
             <ThemeToggle compact monochrome />
           </div>
@@ -35,17 +35,17 @@ export default function ProjectsPage() {
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  02 / Projects
+                  02 / Projects Archive
                 </p>
                 <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
-                  GitHub Pinned Repositories
+                  Live Products &amp; GitHub Projects
                 </h1>
                 <p className="mt-2 max-w-xl text-sm text-neutral-600 dark:text-neutral-400">
-                  Synced directly from the pinned repositories on{" "}
+                  Main shipped live products with direct links alongside all pinned repositories from{" "}
                   <span className="font-mono text-neutral-900 dark:text-neutral-100">
                     github.com/{PORTFOLIO_PROFILE.githubUsername}
                   </span>
-                  .
+                  . Use <strong>+ Add Live Project</strong> anytime to append more live launches.
                 </p>
               </div>
               <a
@@ -62,7 +62,7 @@ export default function ProjectsPage() {
         </section>
 
         <section className="px-5 sm:px-8 py-12 sm:py-14">
-          <GitHubPinnedProjects
+          <ProjectsShowcase
             defaultUsername={PORTFOLIO_PROFILE.githubUsername}
             basePath="/tejas"
           />

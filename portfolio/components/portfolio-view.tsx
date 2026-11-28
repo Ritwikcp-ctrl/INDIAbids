@@ -32,7 +32,7 @@ import SlingButton from "@/components/sling-button";
 import SocialFlipButton, { type SocialItem } from "@/components/social-flip-button";
 import { Reveal } from "@/components/reveal";
 import { GitHubContributionGraph } from "@/components/github-contributions";
-import { GitHubPinnedProjects } from "@/components/github-pinned-projects";
+import { ProjectsShowcase } from "@/components/projects-showcase";
 import { SkillsSection } from "@/components/skills-section";
 import { BlogFeedCard } from "@/components/blog-index-client";
 import type { BlogPostMeta } from "@/lib/blog";
@@ -577,7 +577,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     02 / Projects
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    GitHub Pinned Projects
+                    Projects &amp; Open Source
                   </h2>
                 </div>
                 <CreepyButton
@@ -589,10 +589,11 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <GitHubPinnedProjects
+            <ProjectsShowcase
               defaultUsername={PORTFOLIO_PROFILE.githubUsername}
               basePath=""
-              maxItems={2}
+              maxMain={2}
+              maxGithub={2}
             />
           </section>
 
