@@ -2,29 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 
-export type PostType = "article" | "gist";
-
-export interface CodePreview {
-  language: string;
-  filename?: string;
-  code: string;
-}
-
 export interface BlogPostFrontmatter {
   title: string;
   date: string; // YYYY-MM-DD
   summary: string;
-  type: PostType;
   tags: string[];
   relatedProject?: string;
-  gistUrl?: string;
   published: boolean;
 }
 
 export interface BlogPostMeta extends BlogPostFrontmatter {
   slug: string;
   readingTime: string;
-  previewCode?: CodePreview;
 }
 
 export interface BlogPostFull extends BlogPostMeta {
@@ -44,22 +33,23 @@ function computeReadingTime(markdownBody: string): string {
   return `${mins} min read`;
 }
 
-function extractFirstCodeBlock(markdownBody: string): CodePreview | undefined {
-  const match = markdownBody.match(/```([^\n]*)\n([\s\S]*?)```/);
-  if (!match) return undefined;
-  const metaLine = match[1].trim();
-  const langMatch = metaLine.match(/^([a-zA-Z0-9_-]+)/);
-  const titleMatch = metaLine.match(/title=["']([^"']+)["']/);
-  const language = langMatch ? langMatch[1] : "text";
-  const lines = match[2].trimEnd().split("\n").slice(0, 6);
-  return {
-    language,
-    filename: titleMatch ? titleMatch[1] : undefined,
-    code: lines.join("\n"),
-  };
+function slugToTitle(slug: string): string {
+  return slug
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function parseDateIso(rawDate: unknown): string {
+function inferSummary(markdownBody: string): string {
+  const cleaned = markdownBody
+    .replace(/```[\s\S]*?```/g, "")
+    .split(/\n\s*\n/)
+    .map((block) => block.replace(/^#+\s+/, "").trim())
+    .find((block) => block.length > 0 && !block.startsWith("import "));
+  if (!cleaned) return "Daily engineering note.";
+  return cleaned.length > 180 ? `${cleaned.slice(0, 177)}...` : cleaned;
+}
+
+function parseDateIso(rawDate: unknown, fallbackIso: string): string {
   if (rawDate instanceof Date && !Number.isNaN(rawDate.getTime())) {
     return rawDate.toISOString().slice(0, 10);
   }
@@ -67,29 +57,28 @@ function parseDateIso(rawDate: unknown): string {
   if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
     return str.slice(0, 10);
   }
-  return "1970-01-01";
+  return fallbackIso;
 }
 
 function normalizeFrontmatter(
   data: Record<string, unknown>,
-  slug: string
+  slug: string,
+  content: string,
+  mtimeIso: string
 ): BlogPostFrontmatter {
-  const rawType = String(data.type ?? "article").toLowerCase();
-  const type: PostType = rawType === "gist" ? "gist" : "article";
   const tags = Array.isArray(data.tags)
     ? data.tags.map((t) => String(t).trim()).filter(Boolean)
     : [];
+  const headingMatch = content.match(/^#\s+(.+)$/m);
 
   return {
-    title: String(data.title ?? slug),
-    date: parseDateIso(data.date),
-    summary: String(data.summary ?? ""),
-    type,
+    title: String(data.title ?? (headingMatch ? headingMatch[1].trim() : slugToTitle(slug))),
+    date: parseDateIso(data.date, mtimeIso),
+    summary: String(data.summary ?? "").trim() || inferSummary(content),
     tags,
     relatedProject: data.relatedProject
       ? String(data.relatedProject).trim()
       : undefined,
-    gistUrl: data.gistUrl ? String(data.gistUrl).trim() : undefined,
     published: data.published !== false,
   };
 }
@@ -111,11 +100,15 @@ function readAllRawPosts(): BlogPostFull[] {
 
     const slug = entry.name.replace(/\.(mdx?|MDX?)$/, "");
     const fullPath = path.join(BLOG_DIR, entry.name);
+    const stat = fs.statSync(fullPath);
+    const mtimeIso = stat.mtime.toISOString().slice(0, 10);
     const raw = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(raw);
     const frontmatter = normalizeFrontmatter(
       data as Record<string, unknown>,
-      slug
+      slug,
+      content,
+      mtimeIso
     );
 
     if (!isPostVisible(frontmatter)) continue;
@@ -124,7 +117,6 @@ function readAllRawPosts(): BlogPostFull[] {
       slug,
       ...frontmatter,
       readingTime: computeReadingTime(content),
-      previewCode: extractFirstCodeBlock(content),
       content,
     });
   }

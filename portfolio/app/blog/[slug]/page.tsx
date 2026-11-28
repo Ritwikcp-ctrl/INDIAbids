@@ -1,14 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  BookOpen,
-  Code2,
-  ExternalLink,
-  FolderGit2,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, FileText, FolderGit2 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MdxContent } from "@/components/mdx-content";
 import { getAllPublishedPosts, getPostBySlug } from "@/lib/blog";
@@ -31,7 +24,7 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) {
     return {
-      title: `Post Not Found · ${PORTFOLIO_PROFILE.handle}`,
+      title: `Note Not Found · ${PORTFOLIO_PROFILE.handle}`,
     };
   }
   return {
@@ -48,7 +41,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const relatedProject = post.relatedProject
     ? PROJECT_ITEMS.find((p) => p.id === post.relatedProject)
     : undefined;
-  const isGist = post.type === "gist";
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-950 dark:bg-[#0a0a0a] dark:text-neutral-50 transition-colors">
@@ -59,12 +51,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back to Blogs &amp; Gists</span>
+            <span>Back to Notes</span>
           </Link>
 
           <div className="flex items-center gap-2.5">
             <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              {isGist ? "Gist" : "Article"} · {post.date}
+              Note · {post.date}
             </span>
             <ThemeToggle />
           </div>
@@ -73,40 +65,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <main className="mx-auto max-w-[940px] border-x border-neutral-200 dark:border-neutral-800 min-h-[calc(100vh-3rem)]">
         <article className="px-5 sm:px-8 py-12 sm:py-14 space-y-8">
-          {/* Post Header */}
           <header className="space-y-4 border-b border-neutral-200 pb-8 dark:border-neutral-800">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                    isGist
-                      ? "border-neutral-900 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
-                      : "border-neutral-300 bg-neutral-100 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
-                  }`}
-                >
-                  {isGist ? (
-                    <Code2 className="h-3 w-3" />
-                  ) : (
-                    <BookOpen className="h-3 w-3" />
-                  )}
-                  <span>{isGist ? "Code Gist" : "Article"}</span>
-                </span>
-                <span>{post.date}</span>
-                <span>·</span>
-                <span>{post.readingTime}</span>
-              </div>
-
-              {post.gistUrl && (
-                <a
-                  href={post.gistUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 px-3 py-1 text-[11px] font-mono font-medium hover:border-neutral-950 dark:border-neutral-700 dark:hover:border-white"
-                >
-                  <span>External GitHub Gist</span>
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
+            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+              <FileText className="h-3.5 w-3.5" />
+              <span>{post.date}</span>
+              <span>·</span>
+              <span>{post.readingTime}</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
@@ -131,10 +95,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             )}
           </header>
 
-          {/* Rendered MDX Body */}
-          <MdxContent source={post.content} gistUrl={post.gistUrl} />
+          <MdxContent source={post.content} />
 
-          {/* Two-Way Link: Related Case Study Preview Card */}
           {relatedProject && (
             <section className="pt-8 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
               <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">

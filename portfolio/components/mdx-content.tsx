@@ -2,11 +2,9 @@ import { Children, isValidElement, type HTMLAttributes, type ReactNode } from "r
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
 import { CodeBlock } from "@/components/code-block";
-import { GitHubGist } from "@/components/github-gist";
 
 interface MdxContentProps {
   source: string;
-  gistUrl?: string;
 }
 
 function getNodeText(node: ReactNode): string {
@@ -18,7 +16,7 @@ function getNodeText(node: ReactNode): string {
   return "";
 }
 
-export function MdxContent({ source, gistUrl }: MdxContentProps) {
+export function MdxContent({ source }: MdxContentProps) {
   return (
     <div className="space-y-4 text-sm sm:text-[15.5px] leading-relaxed text-neutral-700 dark:text-neutral-300">
       <MDXRemote
@@ -38,7 +36,6 @@ export function MdxContent({ source, gistUrl }: MdxContentProps) {
           },
         }}
         components={{
-          GitHubGist,
           CodeBlock,
           h1: (props) => (
             <h1
@@ -120,7 +117,7 @@ export function MdxContent({ source, gistUrl }: MdxContentProps) {
             }
 
             return (
-              <CodeBlock filename={filename} language={language} gistUrl={gistUrl}>
+              <CodeBlock filename={filename} language={language}>
                 {preElement}
               </CodeBlock>
             );
@@ -128,7 +125,7 @@ export function MdxContent({ source, gistUrl }: MdxContentProps) {
           pre: (
             props: HTMLAttributes<HTMLPreElement> & { "data-language"?: string }
           ) => (
-            <CodeBlock language={props["data-language"]} gistUrl={gistUrl}>
+            <CodeBlock language={props["data-language"]}>
               <pre {...props} />
             </CodeBlock>
           ),

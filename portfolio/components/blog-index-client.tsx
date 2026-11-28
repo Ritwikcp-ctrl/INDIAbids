@@ -5,16 +5,14 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
-  BookOpen,
-  Code2,
-  ExternalLink,
+  FileText,
   FolderGit2,
   Search,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Reveal } from "@/components/reveal";
 import { PORTFOLIO_PROFILE, PROJECT_ITEMS } from "@/lib/portfolio-data";
-import type { BlogPostMeta, PostType } from "@/lib/blog";
+import type { BlogPostMeta } from "@/lib/blog";
 
 interface BlogIndexClientProps {
   posts: BlogPostMeta[];
@@ -31,7 +29,6 @@ export function BlogFeedCard({
   const project = post.relatedProject
     ? PROJECT_ITEMS.find((p) => p.id === post.relatedProject)
     : undefined;
-  const isGist = post.type === "gist";
 
   return (
     <Link
@@ -40,21 +37,7 @@ export function BlogFeedCard({
     >
       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
         <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-              isGist
-                ? "border-neutral-900 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
-                : "border-neutral-300 bg-neutral-100 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
-            }`}
-          >
-            {isGist ? (
-              <Code2 className="h-3 w-3" />
-            ) : (
-              <BookOpen className="h-3 w-3" />
-            )}
-            <span>{isGist ? "Gist" : "Article"}</span>
-          </span>
-
+          <FileText className="h-3.5 w-3.5" />
           <span>{post.date}</span>
           <span>·</span>
           <span>{post.readingTime}</span>
@@ -68,7 +51,7 @@ export function BlogFeedCard({
         </div>
 
         <span className="inline-flex items-center gap-1 font-semibold text-neutral-500 group-hover:text-neutral-950 dark:text-neutral-400 dark:group-hover:text-white">
-          <span>{isGist ? "Inspect Gist" : "Read"}</span>
+          <span>Read Note</span>
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </span>
       </div>
@@ -81,21 +64,6 @@ export function BlogFeedCard({
           {post.summary}
         </p>
       </div>
-
-      {isGist && post.previewCode && (
-        <div className="mt-4 overflow-hidden rounded-xl border border-neutral-200 bg-[#fafafa] dark:border-neutral-800 dark:bg-[#0d0d0d]">
-          <div className="flex items-center justify-between border-b border-neutral-200 bg-neutral-100/80 px-3 py-1.5 text-[10.5px] font-mono text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-400">
-            <span>{post.previewCode.filename || `snippet.${post.previewCode.language}`}</span>
-            <span className="flex items-center gap-1.5 uppercase">
-              <span>{post.previewCode.language}</span>
-              {post.gistUrl && <ExternalLink className="h-2.5 w-2.5" />}
-            </span>
-          </div>
-          <pre className="overflow-x-auto px-3.5 py-2.5 font-mono text-[11.5px] leading-relaxed text-neutral-800 dark:text-neutral-200">
-            <code>{post.previewCode.code}</code>
-          </pre>
-        </div>
-      )}
 
       {post.tags.length > 0 && (
         <div className="mt-3.5 flex flex-wrap gap-1.5">
@@ -117,7 +85,6 @@ export function BlogIndexClient({
   posts,
   basePath = "",
 }: BlogIndexClientProps) {
-  const [typeFilter, setTypeFilter] = useState<"all" | PostType>("all");
   const [selectedTag, setSelectedTag] = useState<string>("All");
   const [query, setQuery] = useState("");
 
@@ -127,26 +94,18 @@ export function BlogIndexClient({
     return ["All", ...Array.from(set)];
   }, [posts]);
 
-  const counts = useMemo(() => {
-    const articles = posts.filter((p) => p.type === "article").length;
-    const gists = posts.filter((p) => p.type === "gist").length;
-    return { all: posts.length, articles, gists };
-  }, [posts]);
-
   const filteredPosts = useMemo(() => {
     const q = query.trim().toLowerCase();
     return posts.filter((post) => {
-      if (typeFilter !== "all" && post.type !== typeFilter) return false;
       if (selectedTag !== "All" && !post.tags.includes(selectedTag)) return false;
       if (!q) return true;
       return (
         post.title.toLowerCase().includes(q) ||
         post.summary.toLowerCase().includes(q) ||
-        post.tags.some((t) => t.toLowerCase().includes(q)) ||
-        (post.previewCode?.code.toLowerCase().includes(q) ?? false)
+        post.tags.some((t) => t.toLowerCase().includes(q))
       );
     });
-  }, [posts, typeFilter, selectedTag, query]);
+  }, [posts, selectedTag, query]);
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-950 dark:bg-[#0a0a0a] dark:text-neutral-50 transition-colors">
@@ -162,7 +121,7 @@ export function BlogIndexClient({
 
           <div className="flex items-center gap-2.5">
             <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              05 / Blogs &amp; Gists
+              05 / Daily Notes
             </span>
             <ThemeToggle />
           </div>
@@ -175,80 +134,52 @@ export function BlogIndexClient({
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  05 / Engineering Blog &amp; Gist Stream
+                  05 / Daily Blog Notes
                 </p>
                 <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
-                  Articles, Dev Logs &amp; Code Gists
+                  Notes &amp; Engineering Journal
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
-                  Deep-dive MDX essays linked directly to production case studies alongside standalone copy-ready Gist snippets. Drop <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.mdx</code> / <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.md</code> files inside <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">content/blog/</code> to publish automatically on schedule.
+                  Public engineering logs and daily Markdown notes. Save any <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.md</code> or <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.mdx</code> file in <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">content/blog/</code> — drafts with <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">published: false</code> or future dates stay hidden until ready.
                 </p>
               </div>
               <span className="rounded-full border border-neutral-300 px-3 py-1 text-[11px] font-mono text-neutral-600 dark:border-neutral-700 dark:text-neutral-300">
-                {filteredPosts.length} visible
+                {filteredPosts.length} {filteredPosts.length === 1 ? "note" : "notes"}
               </span>
             </div>
           </Reveal>
 
-          {/* Type Filter Tabs + Search Input */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="inline-flex rounded-full border border-neutral-300 bg-white p-1 dark:border-neutral-700 dark:bg-neutral-950 w-fit">
-              {(
-                [
-                  { id: "all", label: `All (${counts.all})` },
-                  { id: "article", label: `Articles (${counts.articles})` },
-                  { id: "gist", label: `Gists (${counts.gists})` },
-                ] as const
-              ).map((tab) => {
-                const active = typeFilter === tab.id;
+            <div className="flex flex-wrap gap-1.5">
+              {allTags.map((tag) => {
+                const active = selectedTag === tag;
                 return (
                   <button
-                    key={tab.id}
+                    key={tag}
                     type="button"
-                    onClick={() => setTypeFilter(tab.id)}
-                    className={`cursor-pointer rounded-full px-3.5 py-1 text-[11px] font-mono font-semibold transition-colors ${
+                    onClick={() => setSelectedTag(tag)}
+                    className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[10.5px] font-mono transition-colors ${
                       active
-                        ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                        : "text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                        ? "border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
+                        : "border-neutral-300 bg-white text-neutral-600 hover:border-neutral-500 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-white"
                     }`}
                   >
-                    {tab.label}
+                    {tag === "All" ? "All Notes" : `#${tag}`}
                   </button>
                 );
               })}
             </div>
 
-            <div className="relative w-full sm:w-64">
+            <div className="relative w-full sm:w-60">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search posts, tags, code..."
+                placeholder="Search notes..."
                 className="w-full rounded-full border border-neutral-300 bg-white pl-8 pr-3 py-1.5 text-xs text-neutral-950 placeholder:text-neutral-400 focus:border-neutral-950 focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-white"
               />
             </div>
-          </div>
-
-          {/* Tag Filter Pills */}
-          <div className="flex flex-wrap gap-1.5">
-            {allTags.map((tag) => {
-              const active = selectedTag === tag;
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setSelectedTag(tag)}
-                  className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[10.5px] font-mono transition-colors ${
-                    active
-                      ? "border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
-                      : "border-neutral-300 bg-white text-neutral-600 hover:border-neutral-500 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-white"
-                  }`}
-                >
-                  {tag === "All" ? "All Tags" : `#${tag}`}
-                </button>
-              );
-            })}
           </div>
         </section>
 
@@ -256,7 +187,7 @@ export function BlogIndexClient({
           {filteredPosts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-neutral-300 p-8 text-center dark:border-neutral-800">
               <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                No articles or code gists match your active filters.
+                No notes match your search.
               </p>
             </div>
           ) : (

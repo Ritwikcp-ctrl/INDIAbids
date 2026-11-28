@@ -86,6 +86,8 @@ export const PORTFOLIO_PROFILE = {
   bannerImage: "", // Optional: set "/banner.jpg" or paste directly in the UI
   avatarImage: "", // Optional: set "/avatar.jpg" or paste directly in the UI
   githubUsername: "Ritwikcp-ctrl",
+  quote: "Karma decides the long game — build honestly, ship cleanly, keep learning.",
+  quoteAuthor: "Tejas",
   socials: {
     github: "https://github.com/Ritwikcp-ctrl",
     twitter: "https://x.com",

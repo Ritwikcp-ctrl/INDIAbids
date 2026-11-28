@@ -15,11 +15,10 @@ import {
   Camera,
   Check,
   Copy,
-  FolderGit2,
-  ImagePlus,
   Link2,
   Mail,
   MapPin,
+  Pencil,
   RotateCcw,
   Sparkles,
   Terminal,
@@ -31,9 +30,9 @@ import { CreepyButton } from "@/components/creepy-button";
 import PulseHeart from "@/components/pulse-heart";
 import SlingButton from "@/components/sling-button";
 import SocialFlipButton, { type SocialItem } from "@/components/social-flip-button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/dialog";
 import { Reveal } from "@/components/reveal";
 import { GitHubContributionGraph } from "@/components/github-contributions";
+import { GitHubPinnedProjects } from "@/components/github-pinned-projects";
 import { SkillsSection } from "@/components/skills-section";
 import { BlogFeedCard } from "@/components/blog-index-client";
 import type { BlogPostMeta } from "@/lib/blog";
@@ -41,8 +40,6 @@ import {
   EXPERIENCE_ITEMS,
   HIGHLIGHTS,
   PORTFOLIO_PROFILE,
-  PROJECT_ITEMS,
-  type ProjectItem,
 } from "@/lib/portfolio-data";
 
 interface PortfolioViewProps {
@@ -111,11 +108,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const isDark = !mounted || resolvedTheme === "dark";
 
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-  const [blogFilter, setBlogFilter] = useState<"all" | "article" | "gist">("all");
   const [activeSection, setActiveSection] = useState("profile");
   const [pasteTarget, setPasteTarget] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
+  const [editingQuote, setEditingQuote] = useState(false);
+  const [draftQuote, setDraftQuote] = useState("");
+  const [draftAuthor, setDraftAuthor] = useState("");
 
   const [senderEmail, setSenderEmail] = useState("");
   const [mailSubject, setMailSubject] = useState("");
@@ -124,6 +122,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
   const bannerSrc = useStoredImage("tejas_portfolio_banner", PORTFOLIO_PROFILE.bannerImage);
   const avatarSrc = useStoredImage("tejas_portfolio_avatar", PORTFOLIO_PROFILE.avatarImage);
+  const quoteText = useStoredImage("tejas_portfolio_quote", PORTFOLIO_PROFILE.quote);
+  const quoteAuthor = useStoredImage("tejas_portfolio_quote_author", PORTFOLIO_PROFILE.quoteAuthor);
 
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -270,7 +270,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-56 sm:h-64 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
+              className="group relative h-36 sm:h-40 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -282,23 +282,23 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               ) : (
                 <div
                   lang="hi"
-                  className="flex h-full w-full flex-col items-center justify-center gap-3.5 px-6 pb-7 sm:pb-5 text-center"
+                  className="flex h-full w-full flex-col items-center justify-center gap-1.5 px-4 pb-4 sm:pb-2 text-center"
                   style={{
                     backgroundImage:
                       "radial-gradient(circle at 1px 1px, rgba(120,120,120,0.22) 1px, transparent 0)",
                     backgroundSize: "16px 16px",
                   }}
                 >
-                  <p className="text-base sm:text-lg md:text-[21px] font-semibold leading-loose text-neutral-900 dark:text-neutral-100">
+                  <p className="text-xs sm:text-[15px] font-semibold leading-snug sm:leading-relaxed text-neutral-900 dark:text-neutral-100">
                     श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।
                     <br />
                     बरनउँ रघुबर बिमल जसु, जो दायकु फल चारि॥
                   </p>
                   <span
                     aria-hidden="true"
-                    className="h-px w-20 bg-neutral-300 dark:bg-neutral-700"
+                    className="h-px w-14 bg-neutral-300 dark:bg-neutral-700"
                   />
-                  <p className="text-base sm:text-lg md:text-[21px] font-semibold leading-loose text-neutral-800 dark:text-neutral-200">
+                  <p className="text-xs sm:text-[15px] font-semibold leading-snug sm:leading-relaxed text-neutral-800 dark:text-neutral-200">
                     बुद्धिहीन तनु जानिके, सुमिरौं पवन-कुमार।
                     <br />
                     बल बुद्धि बिद्या देहु मोहिं, हरहु कलेस बिकार॥
@@ -469,12 +469,6 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       Production Builds
                     </span>
                   </span>
-                  <span>
-                    <strong className="font-bold">23</strong>{" "}
-                    <span className="text-neutral-500 dark:text-neutral-400">
-                      Sectors Shipped
-                    </span>
-                  </span>
                   <span className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-300">
                     <span className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
                     Available for builds
@@ -583,7 +577,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     02 / Projects
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Selected Builds
+                    GitHub Pinned Projects
                   </h2>
                 </div>
                 <CreepyButton
@@ -595,18 +589,10 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {PROJECT_ITEMS.slice(0, 2).map((project, idx) => (
-                <Reveal key={project.id} delay={idx * 0.05}>
-                  <ProjectCard
-                    project={project}
-                    pasteTarget={pasteTarget}
-                    onSelectPasteTarget={setPasteTarget}
-                    onInspect={() => setSelectedProject(project)}
-                  />
-                </Reveal>
-              ))}
-            </div>
+            <GitHubPinnedProjects
+              defaultUsername={PORTFOLIO_PROFILE.githubUsername}
+              basePath=""
+            />
           </section>
 
           <section
@@ -654,16 +640,16 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
           >
             <Reveal>
-              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                    05 / Blogs &amp; Gists
+                    05 / Blogs
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Engineering Notes &amp; Code Snippets
+                    Daily Notes &amp; Engineering Journal
                   </h2>
                   <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
-                    MDX write-ups tied to production case studies alongside GitHub Gist-style code snippets.
+                    Markdown notes saved in <code className="font-mono">content/blog/</code> for public reading anytime.
                   </p>
                 </div>
                 <CreepyButton
@@ -675,56 +661,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="inline-flex rounded-full border border-neutral-300 bg-white p-1 dark:border-neutral-800 dark:bg-neutral-950">
-                {(
-                  [
-                    { id: "all", label: `All (${posts.length})` },
-                    {
-                      id: "article",
-                      label: `Articles (${posts.filter((p) => p.type === "article").length})`,
-                    },
-                    {
-                      id: "gist",
-                      label: `Gists (${posts.filter((p) => p.type === "gist").length})`,
-                    },
-                  ] as const
-                ).map((tab) => {
-                  const active = blogFilter === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setBlogFilter(tab.id)}
-                      className={`cursor-pointer rounded-full px-3 py-1 text-[11px] font-mono font-semibold transition-colors ${
-                        active
-                          ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                          : "text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <Link
-                href="/blog"
-                className="text-xs font-mono text-neutral-500 hover:text-neutral-950 hover:underline underline-offset-4 dark:text-neutral-400 dark:hover:text-white"
-              >
-                Browse full archive →
-              </Link>
-            </div>
-
             <div className="space-y-4">
-              {posts
-                .filter((p) => blogFilter === "all" || p.type === blogFilter)
-                .slice(0, 3)
-                .map((post, idx) => (
-                  <Reveal key={post.slug} delay={idx * 0.04}>
-                    <BlogFeedCard post={post} basePath="" />
-                  </Reveal>
-                ))}
+              {posts.slice(0, 3).map((post, idx) => (
+                <Reveal key={post.slug} delay={idx * 0.04}>
+                  <BlogFeedCard post={post} basePath="" />
+                </Reveal>
+              ))}
             </div>
           </section>
 
@@ -829,9 +771,83 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-neutral-200 pt-6 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+            {/* Spacious Bottom Quote Space */}
+            <div className="border-t border-neutral-200 pt-14 pb-12 sm:pt-20 sm:pb-16 dark:border-neutral-800">
+              <div className="rounded-2xl border border-dashed border-neutral-300 bg-white/60 px-6 py-10 sm:px-10 sm:py-14 dark:border-neutral-800 dark:bg-neutral-950/60">
+                {editingQuote ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      saveLocalImage("tejas_portfolio_quote", draftQuote.trim() || null);
+                      saveLocalImage("tejas_portfolio_quote_author", draftAuthor.trim() || null);
+                      setEditingQuote(false);
+                    }}
+                    className="space-y-4 max-w-2xl"
+                  >
+                    <p className="text-[10.5px] font-mono uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                      Edit Personal Quote
+                    </p>
+                    <textarea
+                      rows={3}
+                      value={draftQuote}
+                      onChange={(e) => setDraftQuote(e.target.value)}
+                      placeholder="Write a quote..."
+                      className="w-full rounded-xl border border-neutral-300 bg-[#FAFAFA] p-3.5 text-sm sm:text-base outline-none focus:border-neutral-950 dark:border-neutral-700 dark:bg-[#0A0A0A] dark:focus:border-white"
+                    />
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <input
+                        type="text"
+                        value={draftAuthor}
+                        onChange={(e) => setDraftAuthor(e.target.value)}
+                        placeholder="Attribution (e.g. Tejas)"
+                        className="h-9 w-56 rounded-xl border border-neutral-300 bg-[#FAFAFA] px-3 text-xs font-mono outline-none focus:border-neutral-950 dark:border-neutral-700 dark:bg-[#0A0A0A] dark:focus:border-white"
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingQuote(false)}
+                          className="cursor-pointer rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-medium dark:border-neutral-700"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="cursor-pointer rounded-full bg-neutral-950 px-4 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                        >
+                          Save Quote
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="flex flex-col justify-between gap-6">
+                    <blockquote className="max-w-2xl text-lg sm:text-2xl font-medium tracking-tight leading-relaxed text-neutral-900 dark:text-neutral-100">
+                      &ldquo;{quoteText}&rdquo;
+                    </blockquote>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                        — {quoteAuthor}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDraftQuote(quoteText);
+                          setDraftAuthor(quoteAuthor);
+                          setEditingQuote(true);
+                        }}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono text-neutral-600 transition-colors hover:border-neutral-900 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        <span>Write Quote</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 border-t border-neutral-200 pt-6 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
               <span>&copy; {new Date().getFullYear()} {PORTFOLIO_PROFILE.handle}</span>
-              <span>Monochrome Blueprint · Next.js &amp; Motion</span>
             </div>
           </section>
         </main>
@@ -871,206 +887,6 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             </nav>
           </div>
         </aside>
-      </div>
-
-      <Dialog open={Boolean(selectedProject)} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-lg rounded-2xl border-neutral-200 bg-white p-6 text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white">
-          {selectedProject && (
-            <>
-              <DialogHeader className="space-y-1">
-                <span className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                  {selectedProject.year} · {selectedProject.status}
-                </span>
-                <DialogTitle className="text-xl font-bold">
-                  {selectedProject.title}
-                </DialogTitle>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  {selectedProject.tagline}
-                </p>
-              </DialogHeader>
-
-              <p className="mt-4 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                {selectedProject.description}
-              </p>
-
-              <div className="mt-4 space-y-2 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <p className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  Key Architecture Notes
-                </p>
-                <ul className="space-y-2">
-                  {selectedProject.architecture.map((pt) => (
-                    <li key={pt} className="flex items-start gap-2 text-xs text-neutral-600 dark:text-neutral-400">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-950 dark:bg-white" />
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedProject.stack.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-[10px] font-mono text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link
-                    href={`/projects/${selectedProject.id}`}
-                    onClick={() => setSelectedProject(null)}
-                    className="inline-flex items-center gap-1 rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-semibold hover:border-neutral-950 dark:border-neutral-700 dark:hover:border-white"
-                  >
-                    Case Study &amp; Logs <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
-                  {selectedProject.liveHref && (
-                    <a
-                      href={selectedProject.liveHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-full bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-                    >
-                      Open Live <ArrowUpRight className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-function ProjectCard({
-  project,
-  pasteTarget,
-  onSelectPasteTarget,
-  onInspect,
-}: {
-  project: ProjectItem;
-  pasteTarget: string | null;
-  onSelectPasteTarget: (key: string) => void;
-  onInspect: () => void;
-}) {
-  const storageKey = `tejas_portfolio_project_${project.id}`;
-  const imgSrc = useStoredImage(storageKey, project.image ?? "");
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  return (
-    <div className="h-full rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-colors hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-600">
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) readImageFile(file, (url) => saveLocalImage(storageKey, url));
-        }}
-      />
-
-      <div
-        tabIndex={0}
-        onClick={() => onSelectPasteTarget(storageKey)}
-        onFocus={() => onSelectPasteTarget(storageKey)}
-        className="group relative h-40 w-full border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/60"
-      >
-        {imgSrc ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={imgSrc}
-            alt={`${project.title} preview`}
-            className="h-full w-full object-cover grayscale"
-          />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-4 text-center">
-            <ImagePlus className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
-            <span className="text-[10.5px] font-mono text-neutral-500 dark:text-neutral-400">
-              {pasteTarget === storageKey
-                ? "Press Ctrl+V / Cmd+V to paste screenshot, or Upload"
-                : "Project Screenshot Slot — Click & press Ctrl+V or Upload"}
-            </span>
-          </div>
-        )}
-
-        <div className="absolute right-2.5 bottom-2.5 flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              fileRef.current?.click();
-            }}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-neutral-900 backdrop-blur-md dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
-          >
-            <Camera className="h-3 w-3" />
-            <span>{imgSrc ? "Replace" : "Upload"}</span>
-          </button>
-          {imgSrc && (
-            <button
-              type="button"
-              aria-label="Reset screenshot"
-              onClick={(e) => {
-                e.stopPropagation();
-                saveLocalImage(storageKey, null);
-              }}
-              className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white/90 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
-            >
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={onInspect}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onInspect();
-          }
-        }}
-        className="group cursor-pointer p-5 space-y-3"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <FolderGit2 className="h-3.5 w-3.5" />
-            <span className="text-[10.5px] font-mono text-neutral-500 dark:text-neutral-400">
-              {project.year} · {project.status}
-            </span>
-          </div>
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-500 group-hover:text-neutral-950 dark:text-neutral-400 dark:group-hover:text-white">
-            Inspect <ArrowUpRight className="h-3 w-3" />
-          </span>
-        </div>
-
-        <div>
-          <h3 className="text-base font-bold">{project.title}</h3>
-          <p className="text-xs text-neutral-600 dark:text-neutral-400">
-            {project.tagline}
-          </p>
-        </div>
-
-        <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-          {project.description}
-        </p>
-
-        <div className="flex flex-wrap gap-1 pt-1">
-          {project.stack.map((tech) => (
-            <span
-              key={tech}
-              className="rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   );
