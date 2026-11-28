@@ -74,7 +74,7 @@ export const PORTFOLIO_PROFILE = {
   joined: "Building since 2024",
   websiteLabel: "indiabids.in",
   websiteHref: "/",
-  email: "hello@indiabids.in",
+  email: "su30rai213@gmail.com",
   availability: "Open to full-stack & AI-native engineering roles",
   headline: "Building Startup · CrossPnP agriculture startup.",
   bio: "Building Startup.",
@@ -92,7 +92,7 @@ export const PORTFOLIO_PROFILE = {
     github: "https://github.com/Ritwikcp-ctrl",
     twitter: "https://x.com",
     linkedin: "https://linkedin.com",
-    email: "mailto:hello@indiabids.in",
+    email: "mailto:su30rai213@gmail.com",
   },
 };
 

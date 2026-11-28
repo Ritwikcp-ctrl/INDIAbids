@@ -134,11 +134,6 @@ export function PortfolioView({
   const [draftQuote, setDraftQuote] = useState("");
   const [draftAuthor, setDraftAuthor] = useState("");
 
-  const aboutText = useLocalValue("tejas_about_me", "");
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const [editingAbout, setEditingAbout] = useState(false);
-  const [aboutDraft, setAboutDraft] = useState("");
-
   const [senderEmail, setSenderEmail] = useState("");
   const [mailSubject, setMailSubject] = useState("");
   const [mailMessage, setMailMessage] = useState("");
@@ -358,32 +353,13 @@ export function PortfolioView({
                   <span className="hidden sm:inline">INDIAbids</span>
                 </Link>
               )}
-              <button
-                type="button"
-                onClick={() => {
-                  if (!aboutOpen) {
-                    setAboutOpen(true);
-                    if (!aboutText) {
-                      setAboutDraft("");
-                      setEditingAbout(true);
-                    }
-                    document
-                      .getElementById("profile")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  } else {
-                    setAboutOpen(false);
-                    setEditingAbout(false);
-                  }
-                }}
-                className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium tracking-tight transition-colors ${
-                  aboutOpen
-                    ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                    : "text-neutral-800 hover:bg-neutral-200/70 dark:text-neutral-200 dark:hover:bg-neutral-800/70"
-                }`}
+              <Link
+                href={`${basePath}/about`}
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium tracking-tight text-neutral-800 transition-colors hover:bg-neutral-200/70 dark:text-neutral-200 dark:hover:bg-neutral-800/70"
               >
                 <User className="h-3.5 w-3.5" />
                 <span>About Me</span>
-              </button>
+              </Link>
             </div>
 
             <div className="flex items-center gap-2">
@@ -816,98 +792,6 @@ export function PortfolioView({
                       {profile.availability}
                     </span>
                   </div>
-
-                  {aboutOpen && (
-                    <div className="mt-4 rounded-xl bg-neutral-100/70 p-4 sm:p-5 space-y-3 dark:bg-neutral-900/50">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-medium tracking-tight text-neutral-950 dark:text-neutral-50">
-                          About Me
-                        </p>
-                        <div className="flex items-center gap-2 text-[11px] font-mono">
-                          {!editingAbout && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAboutDraft(aboutText);
-                                setEditingAbout(true);
-                              }}
-                              className="inline-flex cursor-pointer items-center gap-1 text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
-                            >
-                              <Pencil className="h-3 w-3" />
-                              <span>Edit</span>
-                            </button>
-                          )}
-                          {aboutText && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                writeLocalValue("tejas_about_me", null);
-                                setAboutDraft("");
-                                setEditingAbout(false);
-                              }}
-                              className="inline-flex cursor-pointer items-center gap-1 text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
-                            >
-                              <RotateCcw className="h-3 w-3" />
-                              <span>Clear</span>
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            aria-label="Close About Me"
-                            onClick={() => {
-                              setAboutOpen(false);
-                              setEditingAbout(false);
-                            }}
-                            className="cursor-pointer p-0.5 text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {editingAbout ? (
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            writeLocalValue(
-                              "tejas_about_me",
-                              aboutDraft.trim() || null
-                            );
-                            setEditingAbout(false);
-                          }}
-                          className="space-y-2.5"
-                        >
-                          <textarea
-                            rows={4}
-                            value={aboutDraft}
-                            onChange={(e) => setAboutDraft(e.target.value)}
-                            placeholder="Write about yourself — your story, what drives you, what you're exploring..."
-                            className="w-full rounded-lg bg-[#FAFAFA] p-3 text-[13.5px] leading-relaxed outline-none focus:ring-1 focus:ring-neutral-400 dark:bg-[#0A0A0A] dark:focus:ring-neutral-600"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setEditingAbout(false)}
-                              className="cursor-pointer rounded-lg border border-neutral-200 px-3 py-1 text-xs dark:border-neutral-800"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="submit"
-                              className="cursor-pointer rounded-lg bg-neutral-950 px-3.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </form>
-                      ) : (
-                        <p className="whitespace-pre-wrap text-[13.5px] sm:text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                          {aboutText ||
-                            "Nothing written yet. Click Edit to write about yourself."}
-                        </p>
-                      )}
-                    </div>
-                  )}
                 </div>
               )}
             </div>
