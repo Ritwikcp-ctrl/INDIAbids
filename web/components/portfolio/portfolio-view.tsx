@@ -15,6 +15,7 @@ import {
   MapPin,
   Pencil,
   RotateCcw,
+  User,
   X,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -132,6 +133,11 @@ export function PortfolioView({
   const [editingQuote, setEditingQuote] = useState(false);
   const [draftQuote, setDraftQuote] = useState("");
   const [draftAuthor, setDraftAuthor] = useState("");
+
+  const aboutText = useLocalValue("tejas_about_me", "");
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [editingAbout, setEditingAbout] = useState(false);
+  const [aboutDraft, setAboutDraft] = useState("");
 
   const [senderEmail, setSenderEmail] = useState("");
   const [mailSubject, setMailSubject] = useState("");
@@ -339,71 +345,69 @@ export function PortfolioView({
         }}
       />
 
-      <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-[#FAFAFA]/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-[#0A0A0A]/90">
-        <div className="mx-auto flex h-12 max-w-[1040px] items-center justify-between gap-3 px-4">
-          <div className="flex items-center gap-3">
-            {showBackToIndiabids && (
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
-              >
-                <ArrowLeft className="h-3 w-3" />
-                <span className="hidden sm:inline">INDIAbids</span>
-              </Link>
-            )}
-            <a
-              href="#profile"
-              className="text-sm font-medium tracking-tight text-neutral-950 dark:text-neutral-50"
-            >
-              {profile.name}
-            </a>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            <PulseHeart
-              count={likeState.count}
-              liked={likeState.liked}
-              onChange={(nextLiked, nextCount) => {
-                writeLocalValue(
-                  LIKES_KEY,
-                  JSON.stringify({ liked: nextLiked, count: nextCount })
-                );
-                fetch("/api/likes", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ delta: nextLiked ? 1 : -1 }),
-                })
-                  .then((res) => (res.ok ? res.json() : null))
-                  .then((data: { count?: number } | null) => {
-                    if (data && typeof data.count === "number") {
-                      writeLocalValue(
-                        LIKES_KEY,
-                        JSON.stringify({
-                          liked: nextLiked,
-                          count: Math.max(nextLiked ? 1 : 0, data.count),
-                        })
-                      );
-                    }
-                  })
-                  .catch(() => {});
-              }}
-              showCount
-              icon="heart"
-              idleOutline
-              size={18}
-              corner={999}
-              likedColor="#ff4d6d"
-              idleColor={isDark ? "#a1a1aa" : "#52525b"}
-              pillColor={isDark ? "#18181b" : "#f4f4f5"}
-              textColor={isDark ? "#fafafa" : "#09090b"}
-            />
-            <ThemeToggle compact monochrome />
-          </div>
-        </div>
-      </header>
-
       <div className="mx-auto flex max-w-[1040px] justify-center gap-8 px-3 sm:px-5">
         <main className="w-full max-w-[780px]">
+          <header className="sticky top-0 z-40 flex h-11 items-center justify-between gap-3 bg-[#FAFAFA]/90 px-4 sm:px-5 backdrop-blur-md dark:bg-[#0A0A0A]/90">
+            <div className="flex items-center gap-3">
+              {showBackToIndiabids && (
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                  <span className="hidden sm:inline">INDIAbids</span>
+                </Link>
+              )}
+              <a
+                href="#profile"
+                className="text-sm font-medium tracking-tight text-neutral-950 dark:text-neutral-50"
+              >
+                {profile.name}
+              </a>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <PulseHeart
+                count={likeState.count}
+                liked={likeState.liked}
+                onChange={(nextLiked, nextCount) => {
+                  writeLocalValue(
+                    LIKES_KEY,
+                    JSON.stringify({ liked: nextLiked, count: nextCount })
+                  );
+                  fetch("/api/likes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ delta: nextLiked ? 1 : -1 }),
+                  })
+                    .then((res) => (res.ok ? res.json() : null))
+                    .then((data: { count?: number } | null) => {
+                      if (data && typeof data.count === "number") {
+                        writeLocalValue(
+                          LIKES_KEY,
+                          JSON.stringify({
+                            liked: nextLiked,
+                            count: Math.max(nextLiked ? 1 : 0, data.count),
+                          })
+                        );
+                      }
+                    })
+                    .catch(() => {});
+                }}
+                showCount
+                icon="heart"
+                idleOutline
+                size={18}
+                corner={999}
+                likedColor="#ff4d6d"
+                idleColor={isDark ? "#a1a1aa" : "#52525b"}
+                pillColor={isDark ? "#18181b" : "#f4f4f5"}
+                textColor={isDark ? "#fafafa" : "#09090b"}
+              />
+              <ThemeToggle compact monochrome />
+            </div>
+          </header>
+
           <section
             id="profile"
             className="pb-6"
@@ -412,7 +416,7 @@ export function PortfolioView({
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-32 sm:h-36 w-full overflow-hidden rounded-b-2xl bg-neutral-100 outline-none dark:bg-neutral-900/50"
+              className="group relative h-32 sm:h-36 w-full overflow-hidden rounded-2xl bg-neutral-100 outline-none dark:bg-neutral-900/50"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -534,6 +538,30 @@ export function PortfolioView({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 pt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!aboutOpen) {
+                        setAboutOpen(true);
+                        if (!aboutText) {
+                          setAboutDraft("");
+                          setEditingAbout(true);
+                        }
+                      } else {
+                        setAboutOpen(false);
+                        setEditingAbout(false);
+                      }
+                    }}
+                    className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
+                      aboutOpen
+                        ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
+                        : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                    }`}
+                  >
+                    <User className="h-3.5 w-3.5" />
+                    <span>About Me</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={openProfileEditor}
@@ -792,6 +820,98 @@ export function PortfolioView({
                       {profile.availability}
                     </span>
                   </div>
+
+                  {aboutOpen && (
+                    <div className="mt-4 rounded-xl bg-neutral-100/70 p-4 sm:p-5 space-y-3 dark:bg-neutral-900/50">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-medium tracking-tight text-neutral-950 dark:text-neutral-50">
+                          About Me
+                        </p>
+                        <div className="flex items-center gap-2 text-[11px] font-mono">
+                          {!editingAbout && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAboutDraft(aboutText);
+                                setEditingAbout(true);
+                              }}
+                              className="inline-flex cursor-pointer items-center gap-1 text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                            >
+                              <Pencil className="h-3 w-3" />
+                              <span>Edit</span>
+                            </button>
+                          )}
+                          {aboutText && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                writeLocalValue("tejas_about_me", null);
+                                setAboutDraft("");
+                                setEditingAbout(false);
+                              }}
+                              className="inline-flex cursor-pointer items-center gap-1 text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
+                            >
+                              <RotateCcw className="h-3 w-3" />
+                              <span>Clear</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            aria-label="Close About Me"
+                            onClick={() => {
+                              setAboutOpen(false);
+                              setEditingAbout(false);
+                            }}
+                            className="cursor-pointer p-0.5 text-neutral-400 hover:text-neutral-950 dark:hover:text-white"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {editingAbout ? (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            writeLocalValue(
+                              "tejas_about_me",
+                              aboutDraft.trim() || null
+                            );
+                            setEditingAbout(false);
+                          }}
+                          className="space-y-2.5"
+                        >
+                          <textarea
+                            rows={4}
+                            value={aboutDraft}
+                            onChange={(e) => setAboutDraft(e.target.value)}
+                            placeholder="Write about yourself — your story, what drives you, what you're exploring..."
+                            className="w-full rounded-lg bg-[#FAFAFA] p-3 text-[13.5px] leading-relaxed outline-none focus:ring-1 focus:ring-neutral-400 dark:bg-[#0A0A0A] dark:focus:ring-neutral-600"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setEditingAbout(false)}
+                              className="cursor-pointer rounded-lg border border-neutral-200 px-3 py-1 text-xs dark:border-neutral-800"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              className="cursor-pointer rounded-lg bg-neutral-950 px-3.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <p className="whitespace-pre-wrap text-[13.5px] sm:text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                          {aboutText ||
+                            "Nothing written yet. Click Edit to write about yourself."}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
