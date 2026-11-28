@@ -157,7 +157,7 @@ export function BlogIndexClient({
             className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back to {PORTFOLIO_PROFILE.username}</span>
+            <span>Back to {PORTFOLIO_PROFILE.name}</span>
           </Link>
 
           <div className="flex items-center gap-2.5">

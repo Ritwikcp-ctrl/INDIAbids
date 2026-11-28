@@ -12,7 +12,6 @@ import { useTheme } from "next-themes";
 import {
   ArrowLeft,
   ArrowUpRight,
-  BadgeCheck,
   Calendar,
   Camera,
   Check,
@@ -441,20 +440,30 @@ export function PortfolioView({
 
               <div className="mt-4 space-y-3.5">
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                      {PORTFOLIO_PROFILE.name}
-                    </h1>
-                    <BadgeCheck className="h-5 w-5 text-neutral-950 dark:text-white" />
-                  </div>
-                  <p className="text-xs sm:text-sm font-mono text-neutral-500 dark:text-neutral-400">
-                    {PORTFOLIO_PROFILE.username} · {PORTFOLIO_PROFILE.role}
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    {PORTFOLIO_PROFILE.name}
+                  </h1>
+                  <p className="mt-0.5 text-xs sm:text-sm font-mono text-neutral-500 dark:text-neutral-400">
+                    {PORTFOLIO_PROFILE.role}
                   </p>
                 </div>
 
-                <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
-                  {PORTFOLIO_PROFILE.bio}
-                </p>
+                <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
+                  <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                    {PORTFOLIO_PROFILE.bio}
+                  </p>
+                  <ul className="space-y-1.5">
+                    {PORTFOLIO_PROFILE.bioPoints.map((point) => (
+                      <li key={point} className="flex items-start gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-500"
+                        />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400">
                   <span className="inline-flex items-center gap-1.5">

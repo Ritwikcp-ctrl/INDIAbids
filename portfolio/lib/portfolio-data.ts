@@ -72,15 +72,20 @@ export const PORTFOLIO_PROFILE = {
   name: "Tejas",
   username: "@tejas_dev",
   handle: "Tejas | Developer",
-  role: "Full-Stack Engineer & Product Builder",
+  role: "Engineer / Gamer",
   location: "India",
   joined: "Building since 2024",
   websiteLabel: "indiabids.in",
   websiteHref: INDIABIDS_URL,
   email: "hello@indiabids.in",
   availability: "Open to full-stack & AI-native engineering roles",
-  headline: "Building deterministic systems, sharp interfaces & shipped products.",
-  bio: "Actions speak louder than words — I architect full-stack TypeScript applications from ACID database transactions and payment pipelines to interactive motion-driven UIs.",
+  headline: "Building Startup · CrossPnP agriculture startup.",
+  bio: "Building Startup.",
+  bioPoints: [
+    "Building CrossPnP — an agriculture startup.",
+    "AI, open source, and research papers excite me.",
+    "I always believe in KARMA.",
+  ],
   bannerImage: "", // Optional: set "/banner.jpg" or paste directly in the UI
   avatarImage: "", // Optional: set "/avatar.jpg" or paste directly in the UI
   githubUsername: "Ritwikcp-ctrl",
