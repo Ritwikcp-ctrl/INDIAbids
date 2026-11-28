@@ -358,12 +358,32 @@ export function PortfolioView({
                   <span className="hidden sm:inline">INDIAbids</span>
                 </Link>
               )}
-              <a
-                href="#profile"
-                className="text-sm font-medium tracking-tight text-neutral-950 dark:text-neutral-50"
+              <button
+                type="button"
+                onClick={() => {
+                  if (!aboutOpen) {
+                    setAboutOpen(true);
+                    if (!aboutText) {
+                      setAboutDraft("");
+                      setEditingAbout(true);
+                    }
+                    document
+                      .getElementById("profile")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    setAboutOpen(false);
+                    setEditingAbout(false);
+                  }
+                }}
+                className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium tracking-tight transition-colors ${
+                  aboutOpen
+                    ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
+                    : "text-neutral-800 hover:bg-neutral-200/70 dark:text-neutral-200 dark:hover:bg-neutral-800/70"
+                }`}
               >
-                {profile.name}
-              </a>
+                <User className="h-3.5 w-3.5" />
+                <span>About Me</span>
+              </button>
             </div>
 
             <div className="flex items-center gap-2">
@@ -538,30 +558,6 @@ export function PortfolioView({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 pt-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!aboutOpen) {
-                        setAboutOpen(true);
-                        if (!aboutText) {
-                          setAboutDraft("");
-                          setEditingAbout(true);
-                        }
-                      } else {
-                        setAboutOpen(false);
-                        setEditingAbout(false);
-                      }
-                    }}
-                    className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
-                      aboutOpen
-                        ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                        : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                    }`}
-                  >
-                    <User className="h-3.5 w-3.5" />
-                    <span>About Me</span>
-                  </button>
-
                   <button
                     type="button"
                     onClick={openProfileEditor}

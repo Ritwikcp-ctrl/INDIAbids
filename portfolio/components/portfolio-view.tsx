@@ -340,12 +340,32 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
       <div className="mx-auto flex max-w-[1040px] justify-center gap-8 px-3 sm:px-5">
         <main className="w-full max-w-[780px]">
           <header className="sticky top-0 z-40 flex h-11 items-center justify-between gap-3 bg-[#FAFAFA]/90 px-4 sm:px-5 backdrop-blur-md dark:bg-[#0A0A0A]/90">
-            <a
-              href="#profile"
-              className="text-sm font-medium tracking-tight text-neutral-950 dark:text-neutral-50"
+            <button
+              type="button"
+              onClick={() => {
+                if (!aboutOpen) {
+                  setAboutOpen(true);
+                  if (!aboutText) {
+                    setAboutDraft("");
+                    setEditingAbout(true);
+                  }
+                  document
+                    .getElementById("profile")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                } else {
+                  setAboutOpen(false);
+                  setEditingAbout(false);
+                }
+              }}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium tracking-tight transition-colors ${
+                aboutOpen
+                  ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
+                  : "text-neutral-800 hover:bg-neutral-200/70 dark:text-neutral-200 dark:hover:bg-neutral-800/70"
+              }`}
             >
-              {profile.name}
-            </a>
+              <User className="h-3.5 w-3.5" />
+              <span>About Me</span>
+            </button>
 
             <div className="flex items-center gap-2">
               <PulseHeart
@@ -519,30 +539,6 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 pt-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!aboutOpen) {
-                        setAboutOpen(true);
-                        if (!aboutText) {
-                          setAboutDraft("");
-                          setEditingAbout(true);
-                        }
-                      } else {
-                        setAboutOpen(false);
-                        setEditingAbout(false);
-                      }
-                    }}
-                    className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
-                      aboutOpen
-                        ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                        : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                    }`}
-                  >
-                    <User className="h-3.5 w-3.5" />
-                    <span>About Me</span>
-                  </button>
-
                   <button
                     type="button"
                     onClick={openProfileEditor}
