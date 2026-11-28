@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
   ArrowUpRight,
@@ -19,7 +18,6 @@ import {
 } from "lucide-react";
 import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { CreepyButton } from "@/components/creepy-button";
 import PulseHeart from "@/components/pulse-heart";
 import SlingButton from "@/components/sling-button";
 import SocialFlipButton, { type SocialItem } from "@/components/social-flip-button";
@@ -92,7 +90,6 @@ const INDEX_SECTIONS = [
 const emptySubscribe = () => () => {};
 
 export function PortfolioView({ posts = [] }: PortfolioViewProps) {
-  const router = useRouter();
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
     emptySubscribe,
@@ -105,14 +102,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const [activeSection, setActiveSection] = useState("profile");
   const [pasteTarget, setPasteTarget] = useState<string | null>(null);
 
-  // Persistent Like counter
   const likesRaw = useLocalValue(LIKES_KEY, DEFAULT_LIKES_JSON);
   const likeState = parseStoredJson<{ liked: boolean; count: number }>(
     likesRaw,
     { liked: false, count: 0 }
   );
 
-  // Persistent Profile / Socials
   const profileRaw = useLocalValue(PROFILE_KEY, "");
   const storedProfile = profileRaw
     ? parseStoredJson<Partial<CustomProfileState>>(profileRaw, {})
@@ -126,7 +121,6 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const [profileDraft, setProfileDraft] = useState<CustomProfileState>(profile);
   const [bioPointsText, setBioPointsText] = useState("");
 
-  // Persistent Bottom Quote
   const [editingQuote, setEditingQuote] = useState(false);
   const [draftQuote, setDraftQuote] = useState("");
   const [draftAuthor, setDraftAuthor] = useState("");
@@ -309,19 +303,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         }}
       />
 
-      <header className="sticky top-0 z-40 border-b border-neutral-200 bg-[#FAFAFA]/85 backdrop-blur-xl dark:border-neutral-800 dark:bg-[#0A0A0A]/85">
-        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4">
-          <a href="#profile" className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-950 text-[11px] font-black text-white dark:bg-white dark:text-neutral-950">
-              {profile.name.slice(0, 1).toUpperCase()}
-            </span>
-            <span className="text-xs sm:text-sm font-bold tracking-tight">
-              {profile.name}
-              <span className="font-normal text-neutral-500 dark:text-neutral-400">
-                {" "}
-                | Developer
-              </span>
-            </span>
+      <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-[#FAFAFA]/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-[#0A0A0A]/90">
+        <div className="mx-auto flex h-12 max-w-[1040px] items-center justify-between gap-3 px-4">
+          <a
+            href="#profile"
+            className="text-sm font-medium tracking-tight text-neutral-950 dark:text-neutral-50"
+          >
+            {profile.name}
           </a>
 
           <div className="flex items-center gap-2.5">
@@ -337,8 +325,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               showCount
               icon="heart"
               idleOutline
-              size={20}
-              corner={24}
+              size={18}
+              corner={22}
               likedColor="#ff4d6d"
               idleColor={isDark ? "#a1a1aa" : "#52525b"}
               pillColor={isDark ? "#18181b" : "#f4f4f5"}
@@ -354,17 +342,17 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-[1200px] justify-center gap-8 px-3 sm:px-5">
-        <main className="w-full max-w-[940px] border-x border-neutral-200 dark:border-neutral-800">
+      <div className="mx-auto flex max-w-[1040px] justify-center gap-8 px-3 sm:px-5">
+        <main className="w-full max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80">
           <section
             id="profile"
-            className="border-b border-neutral-200 dark:border-neutral-800"
+            className="border-b border-neutral-200/80 dark:border-neutral-800/80"
           >
             <div
               tabIndex={0}
               onClick={() => setPasteTarget("tejas_portfolio_banner")}
               onFocus={() => setPasteTarget("tejas_portfolio_banner")}
-              className="group relative h-36 sm:h-40 w-full overflow-hidden border-b border-neutral-200 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900/70"
+              className="group relative h-32 sm:h-36 w-full overflow-hidden border-b border-neutral-200/80 bg-neutral-100 outline-none dark:border-neutral-800/80 dark:bg-neutral-900/50"
             >
               {bannerSrc ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -376,23 +364,23 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               ) : (
                 <div
                   lang="hi"
-                  className="flex h-full w-full flex-col items-center justify-center gap-1.5 px-4 pb-4 sm:pb-2 text-center"
+                  className="flex h-full w-full flex-col items-center justify-center gap-1.5 px-4 pb-3 sm:pb-1 text-center"
                   style={{
                     backgroundImage:
-                      "radial-gradient(circle at 1px 1px, rgba(120,120,120,0.22) 1px, transparent 0)",
+                      "radial-gradient(circle at 1px 1px, rgba(120,120,120,0.18) 1px, transparent 0)",
                     backgroundSize: "16px 16px",
                   }}
                 >
-                  <p className="text-xs sm:text-[15px] font-semibold leading-snug sm:leading-relaxed text-neutral-900 dark:text-neutral-100">
+                  <p className="text-xs sm:text-[14.5px] font-medium leading-snug sm:leading-relaxed text-neutral-900 dark:text-neutral-100">
                     श्रीगुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।
                     <br />
                     बरनउँ रघुबर बिमल जसु, जो दायकु फल चारि॥
                   </p>
                   <span
                     aria-hidden="true"
-                    className="h-px w-14 bg-neutral-300 dark:bg-neutral-700"
+                    className="h-px w-12 bg-neutral-300 dark:bg-neutral-700"
                   />
-                  <p className="text-xs sm:text-[15px] font-semibold leading-snug sm:leading-relaxed text-neutral-800 dark:text-neutral-200">
+                  <p className="text-xs sm:text-[14.5px] font-medium leading-snug sm:leading-relaxed text-neutral-700 dark:text-neutral-300">
                     बुद्धिहीन तनु जानिके, सुमिरौं पवन-कुमार।
                     <br />
                     बल बुद्धि बिद्या देहु मोहिं, हरहु कलेस बिकार॥
@@ -407,7 +395,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     e.stopPropagation();
                     bannerInputRef.current?.click();
                   }}
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 bg-white/90 px-3 py-1 text-[10.5px] font-semibold text-neutral-900 backdrop-blur-md transition-colors hover:bg-white dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-neutral-200 bg-white/90 px-2.5 py-1 text-[10.5px] font-medium text-neutral-900 backdrop-blur-md dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
                 >
                   <Camera className="h-3 w-3" />
                   <span>{bannerSrc ? "Change Banner" : "Upload Banner"}</span>
@@ -420,7 +408,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       e.stopPropagation();
                       writeLocalValue("tejas_portfolio_banner", null);
                     }}
-                    className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white/90 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
+                    className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white/90 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
                   >
                     <RotateCcw className="h-3 w-3" />
                   </button>
@@ -428,15 +416,15 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </div>
 
-            <div className="px-5 sm:px-8 pb-8">
+            <div className="px-5 sm:px-7 pb-8">
               <div className="flex items-end justify-between gap-3">
-                <div className="relative -mt-12 sm:-mt-14">
+                <div className="relative -mt-10 sm:-mt-12">
                   <div
                     tabIndex={0}
                     onClick={() => setPasteTarget("tejas_portfolio_avatar")}
                     onFocus={() => setPasteTarget("tejas_portfolio_avatar")}
                     title="Click and press Ctrl+V or click camera to upload photo"
-                    className="group relative flex h-24 w-24 sm:h-28 sm:w-28 cursor-pointer items-center justify-center overflow-hidden rounded-full border-4 border-[#FAFAFA] bg-neutral-200 dark:border-[#0A0A0A] dark:bg-neutral-900"
+                    className="group relative flex h-20 w-20 sm:h-24 sm:w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full border-4 border-[#FAFAFA] bg-neutral-200 dark:border-[#0A0A0A] dark:bg-neutral-900"
                   >
                     {avatarSrc ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
@@ -447,7 +435,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       />
                     ) : (
                       <div className="flex flex-col items-center gap-0.5 text-center">
-                        <span className="text-xl font-black tracking-tight">
+                        <span className="text-lg font-semibold tracking-tight">
                           {profile.name.slice(0, 1).toUpperCase()}
                         </span>
                         <span className="text-[9px] font-mono text-neutral-500 dark:text-neutral-400">
@@ -465,7 +453,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         e.stopPropagation();
                         avatarInputRef.current?.click();
                       }}
-                      className="absolute inset-0 flex items-center justify-center bg-black/55 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      className="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <Camera className="h-4 w-4" />
                     </button>
@@ -478,7 +466,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       onClick={() =>
                         writeLocalValue("tejas_portfolio_avatar", null)
                       }
-                      className="absolute -right-1 bottom-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-900 shadow-sm dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
+                      className="absolute -right-1 bottom-0 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-sm dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -489,7 +477,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                   <button
                     type="button"
                     onClick={openProfileEditor}
-                    className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 text-[11px] font-mono text-neutral-700 transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300 dark:hover:border-white"
+                    className="inline-flex h-8 cursor-pointer items-center gap-1 rounded-lg border border-neutral-200 px-2.5 text-[11px] font-mono text-neutral-500 transition-colors hover:border-neutral-400 hover:text-neutral-950 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-white"
                   >
                     <Pencil className="h-3 w-3" />
                     <span>Edit</span>
@@ -498,7 +486,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                   <button
                     type="button"
                     onClick={copyEmail}
-                    className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3.5 text-xs font-semibold text-neutral-900 transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:border-white"
+                    className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-200 px-3 text-xs font-medium text-neutral-800 transition-colors hover:border-neutral-400 dark:border-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
                   >
                     {copiedEmail ? (
                       <>
@@ -512,11 +500,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       </>
                     )}
                   </button>
+
                   <a
                     href={profile.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-8 items-center gap-1 rounded-full bg-neutral-950 px-4 text-xs font-semibold text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-neutral-950"
+                    className="inline-flex h-8 items-center gap-1 rounded-lg bg-neutral-950 px-3.5 text-xs font-medium text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-neutral-950"
                   >
                     <span>Follow</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -527,11 +516,11 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               {editingProfile ? (
                 <form
                   onSubmit={saveProfileEdit}
-                  className="mt-5 rounded-2xl border border-neutral-300 bg-white p-5 space-y-3 dark:border-neutral-700 dark:bg-neutral-950"
+                  className="mt-5 rounded-xl border border-neutral-200 bg-white p-4 sm:p-5 space-y-3 dark:border-neutral-800 dark:bg-neutral-950"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-mono uppercase tracking-wider text-neutral-500">
-                      Edit Profile &amp; Links
+                    <p className="text-[11px] font-mono text-neutral-500">
+                      Edit Profile
                     </p>
                     <div className="flex items-center gap-2">
                       {storedProfile && (
@@ -551,12 +540,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         onClick={() => setEditingProfile(false)}
                         className="cursor-pointer p-1 text-neutral-500"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <input
                       type="text"
                       value={profileDraft.name}
@@ -564,7 +553,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         setProfileDraft({ ...profileDraft, name: e.target.value })
                       }
                       placeholder="Display Name"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -572,8 +561,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       onChange={(e) =>
                         setProfileDraft({ ...profileDraft, role: e.target.value })
                       }
-                      placeholder="Role (e.g. Engineer / Gamer)"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      placeholder="Role"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -582,7 +571,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         setProfileDraft({ ...profileDraft, bio: e.target.value })
                       }
                       placeholder="Bio Lead"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -593,8 +582,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                           availability: e.target.value,
                         })
                       }
-                      placeholder="Status (e.g. Available for builds)"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      placeholder="Status"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -606,7 +595,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         })
                       }
                       placeholder="Location"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -617,8 +606,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                           joined: e.target.value,
                         })
                       }
-                      placeholder="Joined badge"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      placeholder="Joined"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -630,7 +619,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         })
                       }
                       placeholder="Website label"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="text"
@@ -642,7 +631,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         })
                       }
                       placeholder="Website URL"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="email"
@@ -654,7 +643,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         })
                       }
                       placeholder="Contact Email"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                     <input
                       type="url"
@@ -666,7 +655,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                         })
                       }
                       placeholder="GitHub URL"
-                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                      className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                     />
                   </div>
 
@@ -675,46 +664,46 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     value={bioPointsText}
                     onChange={(e) => setBioPointsText(e.target.value)}
                     placeholder="Bio bullets (one per line)"
-                    className="w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    className="w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
                   />
 
                   <div className="flex justify-end gap-2">
                     <button
                       type="button"
                       onClick={() => setEditingProfile(false)}
-                      className="cursor-pointer rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs dark:border-neutral-700"
+                      className="cursor-pointer rounded-lg border border-neutral-200 px-3 py-1.5 text-xs dark:border-neutral-800"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="cursor-pointer rounded-full bg-neutral-950 px-4 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                      className="cursor-pointer rounded-lg bg-neutral-950 px-3.5 py-1.5 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
                     >
-                      Save Profile
+                      Save
                     </button>
                   </div>
                 </form>
               ) : (
-                <div className="mt-4 space-y-3.5">
+                <div className="mt-4 space-y-3">
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    <h1 className="text-xl sm:text-2xl font-semibold tracking-[-0.02em]">
                       {profile.name}
                     </h1>
-                    <p className="mt-0.5 text-xs sm:text-sm font-mono text-neutral-500 dark:text-neutral-400">
+                    <p className="mt-0.5 text-xs font-mono text-neutral-500 dark:text-neutral-400">
                       {profile.role}
                     </p>
                   </div>
 
-                  <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
+                  <div className="space-y-1.5 text-[13.5px] sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-2xl">
                     <p className="font-medium text-neutral-900 dark:text-neutral-100">
                       {profile.bio}
                     </p>
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-1">
                       {profile.bioPoints.map((point) => (
                         <li key={point} className="flex items-start gap-2">
                           <span
                             aria-hidden="true"
-                            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-500"
+                            className="mt-2 h-1 w-1 shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-500"
                           />
                           <span>{point}</span>
                         </li>
@@ -722,7 +711,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     </ul>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400">
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-neutral-500 dark:text-neutral-400">
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin className="h-3.5 w-3.5" />
                       {profile.location}
@@ -731,7 +720,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       href={profile.websiteHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 font-medium text-neutral-900 hover:underline dark:text-white"
+                      className="inline-flex items-center gap-1.5 font-medium text-neutral-800 hover:underline dark:text-neutral-200"
                     >
                       <Link2 className="h-3.5 w-3.5" />
                       {profile.websiteLabel}
@@ -740,11 +729,8 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       <Calendar className="h-3.5 w-3.5" />
                       {profile.joined}
                     </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-5 pt-1 text-xs">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-300">
-                      <span className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[11px]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                       {profile.availability}
                     </span>
                   </div>
@@ -755,24 +741,24 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="experience"
-            className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
+            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
           >
             <Reveal>
-              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-6 flex items-baseline justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                     01 / Experience
                   </p>
-                  <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Engineering &amp; Startup Journey
+                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                    Experience
                   </h2>
                 </div>
-                <CreepyButton
-                  type="button"
-                  onClick={() => router.push("/experience")}
+                <Link
+                  href="/experience"
+                  className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
                 >
                   View All →
-                </CreepyButton>
+                </Link>
               </div>
             </Reveal>
 
@@ -781,24 +767,24 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="projects"
-            className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
+            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
           >
             <Reveal>
-              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-6 flex items-baseline justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                     02 / Projects
                   </p>
-                  <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Main Live Projects
+                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                    Projects
                   </h2>
                 </div>
-                <CreepyButton
-                  type="button"
-                  onClick={() => router.push("/projects")}
+                <Link
+                  href="/projects"
+                  className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
                 >
                   View All →
-                </CreepyButton>
+                </Link>
               </div>
             </Reveal>
 
@@ -812,24 +798,24 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="highlights"
-            className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800 space-y-8"
+            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80 space-y-6"
           >
             <Reveal>
-              <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="flex items-baseline justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                    03 / Proof &amp; Activity
+                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
+                    03 / Highlights
                   </p>
-                  <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Proof Gallery &amp; GitHub Activity
+                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                    Proof &amp; Activity
                   </h2>
                 </div>
-                <CreepyButton
-                  type="button"
-                  onClick={() => router.push("/highlights")}
+                <Link
+                  href="/highlights"
+                  className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
                 >
                   View All →
-                </CreepyButton>
+                </Link>
               </div>
             </Reveal>
 
@@ -848,27 +834,24 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="blogs"
-            className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800"
+            className="border-b border-neutral-200/80 px-5 sm:px-7 py-12 sm:py-14 dark:border-neutral-800/80"
           >
             <Reveal>
-              <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-6 flex items-baseline justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                  <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                     05 / Blogs
                   </p>
-                  <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Daily Notes &amp; Engineering Journal
+                  <h2 className="mt-0.5 text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                    Blogs
                   </h2>
-                  <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
-                    Markdown notes saved in <code className="font-mono">content/blog/</code> or quick browser notes.
-                  </p>
                 </div>
-                <CreepyButton
-                  type="button"
-                  onClick={() => router.push("/blog")}
+                <Link
+                  href="/blog"
+                  className="text-xs font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
                 >
                   View All →
-                </CreepyButton>
+                </Link>
               </div>
             </Reveal>
 
@@ -877,19 +860,19 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
 
           <section
             id="connect"
-            className="px-5 sm:px-8 py-14 sm:py-16 space-y-10"
+            className="px-5 sm:px-7 py-12 sm:py-14 space-y-12"
           >
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
               <div className="md:col-span-5 space-y-3">
-                <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                   06 / Connect
                 </p>
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-                  Send an Email
+                <h2 className="text-lg sm:text-xl font-semibold tracking-[-0.02em]">
+                  Get in touch
                 </h2>
-                <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  Pull and release the sling button (or click/press Enter) to send a message directly to{" "}
-                  <span className="font-mono text-neutral-950 dark:text-white">
+                <p className="text-[13.5px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                  Reach out directly at{" "}
+                  <span className="font-mono text-neutral-900 dark:text-neutral-100">
                     {profile.email}
                   </span>
                   .
@@ -900,52 +883,37 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                 </div>
               </div>
 
-              <div className="md:col-span-7 rounded-2xl border border-neutral-200 bg-white p-5 space-y-4 dark:border-neutral-800 dark:bg-neutral-950">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="mb-1 block text-[10.5px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                      Your Email
-                    </label>
-                    <input
-                      type="email"
-                      value={senderEmail}
-                      onChange={(e) => setSenderEmail(e.target.value)}
-                      placeholder="you@domain.com"
-                      className="h-9 w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none transition-colors focus:border-neutral-900 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-[10.5px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      value={mailSubject}
-                      onChange={(e) => setMailSubject(e.target.value)}
-                      placeholder="Project / Collaboration"
-                      className="h-9 w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none transition-colors focus:border-neutral-900 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-[10.5px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                    Message
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={mailMessage}
-                    onChange={(e) => setMailMessage(e.target.value)}
-                    placeholder={`Write your message to ${profile.name}…`}
-                    className="w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none transition-colors focus:border-neutral-900 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+              <div className="md:col-span-7 rounded-xl border border-neutral-200/80 p-4 sm:p-5 space-y-3 dark:border-neutral-800/80">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <input
+                    type="email"
+                    value={senderEmail}
+                    onChange={(e) => setSenderEmail(e.target.value)}
+                    placeholder="Your email"
+                    className="h-9 w-full rounded-lg border border-neutral-200/80 bg-transparent px-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
+                  />
+                  <input
+                    type="text"
+                    value={mailSubject}
+                    onChange={(e) => setMailSubject(e.target.value)}
+                    placeholder="Subject"
+                    className="h-9 w-full rounded-lg border border-neutral-200/80 bg-transparent px-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
                   />
                 </div>
 
+                <textarea
+                  rows={3}
+                  value={mailMessage}
+                  onChange={(e) => setMailMessage(e.target.value)}
+                  placeholder={`Message to ${profile.name}…`}
+                  className="w-full rounded-lg border border-neutral-200/80 bg-transparent p-3 text-xs outline-none transition-colors focus:border-neutral-400 dark:border-neutral-800/80 dark:focus:border-neutral-600"
+                />
+
                 <div className="flex items-center justify-between gap-4 pt-1">
-                  <div className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+                  <div className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                     {mailSentNotice ? (
-                      <span className="inline-flex items-center gap-1 text-neutral-950 dark:text-white font-semibold">
-                        <Check className="h-3.5 w-3.5" /> Mail composer opened!
+                      <span className="inline-flex items-center gap-1 text-neutral-900 dark:text-white font-medium">
+                        <Check className="h-3.5 w-3.5" /> Opened mail client
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5">
@@ -962,10 +930,10 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     accentColor={isDark ? "#f5f5f5" : "#0a0a0a"}
                     wellColor={isDark ? "#27272a" : "#e4e4e7"}
                     bandColor={isDark ? "#52525b" : "#a1a1aa"}
-                    size={50}
+                    size={46}
                     strokeWidth={3}
-                    armAt={44}
-                    maxPull={140}
+                    armAt={40}
+                    maxPull={130}
                     launchSpeed={2600}
                     recoil={0.2}
                     flight={110}
@@ -979,88 +947,82 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </div>
 
-            {/* Spacious Bottom Quote Space */}
-            <div className="border-t border-neutral-200 pt-14 pb-12 sm:pt-20 sm:pb-16 dark:border-neutral-800">
-              <div className="rounded-2xl border border-dashed border-neutral-300 bg-white/60 px-6 py-10 sm:px-10 sm:py-14 dark:border-neutral-800 dark:bg-neutral-950/60">
-                {editingQuote ? (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      writeLocalValue(
-                        "tejas_portfolio_quote",
-                        draftQuote.trim() || null
-                      );
-                      writeLocalValue(
-                        "tejas_portfolio_quote_author",
-                        draftAuthor.trim() || null
-                      );
-                      setEditingQuote(false);
-                    }}
-                    className="space-y-4 max-w-2xl"
-                  >
-                    <p className="text-[10.5px] font-mono uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
-                      Edit Personal Quote
-                    </p>
-                    <textarea
-                      rows={3}
-                      value={draftQuote}
-                      onChange={(e) => setDraftQuote(e.target.value)}
-                      placeholder="Write a quote..."
-                      className="w-full rounded-xl border border-neutral-300 bg-[#FAFAFA] p-3.5 text-sm sm:text-base outline-none focus:border-neutral-950 dark:border-neutral-700 dark:bg-[#0A0A0A] dark:focus:border-white"
+            <div className="group border-t border-neutral-200/80 pt-12 pb-8 sm:pt-16 sm:pb-12 dark:border-neutral-800/80">
+              {editingQuote ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    writeLocalValue(
+                      "tejas_portfolio_quote",
+                      draftQuote.trim() || null
+                    );
+                    writeLocalValue(
+                      "tejas_portfolio_quote_author",
+                      draftAuthor.trim() || null
+                    );
+                    setEditingQuote(false);
+                  }}
+                  className="space-y-3 max-w-xl"
+                >
+                  <textarea
+                    rows={3}
+                    value={draftQuote}
+                    onChange={(e) => setDraftQuote(e.target.value)}
+                    placeholder="Write a quote..."
+                    className="w-full rounded-lg border border-neutral-200 bg-transparent p-3 text-sm outline-none focus:border-neutral-950 dark:border-neutral-800 dark:focus:border-white"
+                  />
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <input
+                      type="text"
+                      value={draftAuthor}
+                      onChange={(e) => setDraftAuthor(e.target.value)}
+                      placeholder="Author"
+                      className="h-8 w-48 rounded-lg border border-neutral-200 bg-transparent px-3 text-xs font-mono outline-none focus:border-neutral-950 dark:border-neutral-800 dark:focus:border-white"
                     />
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <input
-                        type="text"
-                        value={draftAuthor}
-                        onChange={(e) => setDraftAuthor(e.target.value)}
-                        placeholder="Attribution (e.g. Tejas)"
-                        className="h-9 w-56 rounded-xl border border-neutral-300 bg-[#FAFAFA] px-3 text-xs font-mono outline-none focus:border-neutral-950 dark:border-neutral-700 dark:bg-[#0A0A0A] dark:focus:border-white"
-                      />
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setEditingQuote(false)}
-                          className="cursor-pointer rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs font-medium dark:border-neutral-700"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="cursor-pointer rounded-full bg-neutral-950 px-4 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-                        >
-                          Save Quote
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="flex flex-col justify-between gap-6">
-                    <blockquote className="max-w-2xl text-lg sm:text-2xl font-medium tracking-tight leading-relaxed text-neutral-900 dark:text-neutral-100">
-                      &ldquo;{quoteText}&rdquo;
-                    </blockquote>
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
-                        — {quoteAuthor}
-                      </p>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setDraftQuote(quoteText);
-                          setDraftAuthor(quoteAuthor);
-                          setEditingQuote(true);
-                        }}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono text-neutral-600 transition-colors hover:border-neutral-900 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
+                        onClick={() => setEditingQuote(false)}
+                        className="cursor-pointer rounded-lg border border-neutral-200 px-3 py-1 text-xs dark:border-neutral-800"
                       >
-                        <Pencil className="h-3 w-3" />
-                        <span>Write Quote</span>
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="cursor-pointer rounded-lg bg-neutral-950 px-3.5 py-1 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
+                      >
+                        Save
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
+                </form>
+              ) : (
+                <div className="space-y-4">
+                  <blockquote className="max-w-2xl text-base sm:text-xl font-normal tracking-tight leading-relaxed text-neutral-800 dark:text-neutral-200">
+                    &ldquo;{quoteText}&rdquo;
+                  </blockquote>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-mono text-neutral-400 dark:text-neutral-500">
+                      — {quoteAuthor}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDraftQuote(quoteText);
+                        setDraftAuthor(quoteAuthor);
+                        setEditingQuote(true);
+                      }}
+                      className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-mono text-neutral-400 opacity-60 transition-opacity hover:text-neutral-950 group-hover:opacity-100 dark:hover:text-white"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      <span>Edit quote</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-between gap-2 border-t border-neutral-200 pt-6 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+            <div className="flex items-center justify-between gap-2 border-t border-neutral-200/80 pt-6 text-xs text-neutral-400 dark:border-neutral-800/80 dark:text-neutral-500">
               <span>
                 &copy; {new Date().getFullYear()} {PORTFOLIO_PROFILE.handle}
               </span>
@@ -1068,12 +1030,12 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
           </section>
         </main>
 
-        <aside className="hidden lg:block w-44 shrink-0 pt-12">
-          <div className="sticky top-20 space-y-3 border-l border-neutral-200 pl-4 dark:border-neutral-800">
-            <p className="text-[10px] font-mono uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+        <aside className="hidden lg:block w-40 shrink-0 pt-10">
+          <div className="sticky top-18 space-y-2.5 border-l border-neutral-200/80 pl-4 dark:border-neutral-800/80">
+            <p className="text-[10px] font-mono uppercase tracking-[0.12em] text-neutral-400 dark:text-neutral-500">
               Index
             </p>
-            <nav aria-label="Section index" className="flex flex-col gap-2">
+            <nav aria-label="Section index" className="flex flex-col gap-1.5">
               {INDEX_SECTIONS.map((sec) => {
                 const isActive = activeSection === sec.id;
                 return (
@@ -1082,20 +1044,17 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     href={`#${sec.id}`}
                     className={`group flex items-center gap-2 py-0.5 text-xs transition-colors ${
                       isActive
-                        ? "font-bold text-neutral-950 dark:text-white"
-                        : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
+                        ? "font-medium text-neutral-950 dark:text-white"
+                        : "text-neutral-400 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-200"
                     }`}
                   >
                     <span
                       className={`h-px transition-all ${
                         isActive
-                          ? "w-4 bg-neutral-950 dark:bg-white"
-                          : "w-2 bg-neutral-300 group-hover:w-3 dark:bg-neutral-700"
+                          ? "w-3.5 bg-neutral-950 dark:bg-white"
+                          : "w-1.5 bg-neutral-300 group-hover:w-2.5 dark:bg-neutral-700"
                       }`}
                     />
-                    <span className="font-mono text-[10px] opacity-60">
-                      {sec.num}
-                    </span>
                     <span>{sec.label}</span>
                   </a>
                 );

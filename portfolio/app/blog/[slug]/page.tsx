@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowUpRight, FileText, FolderGit2 } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, FolderGit2 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MdxContent } from "@/components/mdx-content";
 import { getAllPublishedPosts, getPostBySlug } from "@/lib/blog";
@@ -44,40 +44,39 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-950 dark:bg-[#0a0a0a] dark:text-neutral-50 transition-colors">
-      <header className="sticky top-0 z-40 border-b border-neutral-200 bg-[#fafafa]/90 backdrop-blur-md dark:border-neutral-800 dark:bg-[#0a0a0a]/90">
-        <div className="mx-auto flex h-12 max-w-[940px] items-center justify-between px-5 sm:px-8">
+      <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-[#fafafa]/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-[#0a0a0a]/90">
+        <div className="mx-auto flex h-12 max-w-[780px] items-center justify-between px-5 sm:px-7">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to Notes</span>
           </Link>
 
           <div className="flex items-center gap-2.5">
-            <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              Note · {post.date}
+            <span className="hidden sm:inline text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
+              {post.date}
             </span>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[940px] border-x border-neutral-200 dark:border-neutral-800 min-h-[calc(100vh-3rem)]">
-        <article className="px-5 sm:px-8 py-12 sm:py-14 space-y-8">
-          <header className="space-y-4 border-b border-neutral-200 pb-8 dark:border-neutral-800">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              <FileText className="h-3.5 w-3.5" />
+      <main className="mx-auto max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80 min-h-[calc(100vh-3rem)]">
+        <article className="px-5 sm:px-7 py-10 sm:py-12 space-y-8">
+          <header className="space-y-3 border-b border-neutral-200/80 pb-7 dark:border-neutral-800/80">
+            <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
               <span>{post.date}</span>
               <span>·</span>
               <span>{post.readingTime}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-[28px] font-semibold tracking-[-0.02em] leading-tight">
               {post.title}
             </h1>
 
-            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            <p className="text-[14px] sm:text-[15px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
               {post.summary}
             </p>
 

@@ -5,8 +5,6 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
-  FileText,
-  FolderGit2,
   Pencil,
   Plus,
   Search,
@@ -15,7 +13,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Reveal } from "@/components/reveal";
-import { PORTFOLIO_PROFILE, PROJECT_ITEMS } from "@/lib/portfolio-data";
+import { PORTFOLIO_PROFILE } from "@/lib/portfolio-data";
 import {
   parseStoredJson,
   useLocalValue,
@@ -133,40 +131,21 @@ export function EditableNotesFeed({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-          {mergedNotes.length} published {mergedNotes.length === 1 ? "note" : "notes"}
-        </span>
-        {!formOpen && (
-          <button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setFormOpen(true);
-            }}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono font-medium text-neutral-800 hover:border-neutral-950 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:border-white"
-          >
-            <Plus className="h-3 w-3" />
-            <span>Write Note</span>
-          </button>
-        )}
-      </div>
-
       {formOpen && (
         <form
           onSubmit={handleSave}
-          className="rounded-2xl border border-neutral-300 bg-white p-5 space-y-3 dark:border-neutral-700 dark:bg-neutral-950"
+          className="rounded-xl border border-neutral-200 bg-white p-4 sm:p-5 space-y-3 dark:border-neutral-800 dark:bg-neutral-950"
         >
           <div className="flex items-center justify-between">
-            <p className="text-xs font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-              {editingSlug ? "Edit Note" : "Write Daily Note"}
+            <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+              {editingSlug ? "Edit Note" : "New Note"}
             </p>
             <button
               type="button"
               onClick={resetForm}
               className="cursor-pointer p-1 text-neutral-500 hover:text-neutral-950 dark:hover:text-white"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </div>
 
@@ -175,24 +154,24 @@ export function EditableNotesFeed({
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Note title..."
-            className="h-9 w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+            placeholder="Title"
+            className="h-9 w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <input
               type="text"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              placeholder="Short summary (optional)"
-              className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+              placeholder="One-line summary (optional)"
+              className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
             />
             <input
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="Tags (comma separated: AI, CrossPnP)"
-              className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+              placeholder="Tags (comma separated)"
+              className="h-9 rounded-lg border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
             />
           </div>
 
@@ -201,112 +180,102 @@ export function EditableNotesFeed({
             required
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Write your note content..."
-            className="w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
+            placeholder="Write your note..."
+            className="w-full rounded-lg border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none focus:border-neutral-950 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
           />
 
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-[10.5px] font-mono text-neutral-500 dark:text-neutral-400">
-              Saved in browser. For permanent public pages, save `.md` inside <code>content/blog/</code>.
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={resetForm}
-                className="cursor-pointer rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-medium dark:border-neutral-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="cursor-pointer rounded-full bg-neutral-950 px-4 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
-              >
-                Save Note
-              </button>
-            </div>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="cursor-pointer rounded-lg border border-neutral-200 px-3 py-1.5 text-xs dark:border-neutral-800"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="cursor-pointer rounded-lg bg-neutral-950 px-3.5 py-1.5 text-xs font-medium text-white dark:bg-white dark:text-neutral-950"
+            >
+              Save Note
+            </button>
           </div>
         </form>
       )}
 
       {readingNote && (
-        <div className="rounded-2xl border border-neutral-900 bg-white p-6 space-y-3 dark:border-white dark:bg-neutral-950">
+        <div className="rounded-xl border border-neutral-300 bg-white p-5 space-y-3 dark:border-neutral-700 dark:bg-neutral-950">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
                 {readingNote.date} · {readingNote.readingTime}
               </p>
-              <h3 className="mt-1 text-lg font-bold">{readingNote.title}</h3>
+              <h3 className="mt-1 text-base sm:text-lg font-semibold tracking-tight">
+                {readingNote.title}
+              </h3>
             </div>
             <button
               type="button"
               onClick={() => setReadingNote(null)}
-              className="cursor-pointer rounded-full p-1 text-neutral-500 hover:text-neutral-950 dark:hover:text-white"
+              className="cursor-pointer rounded p-1 text-neutral-500 hover:text-neutral-950 dark:hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="whitespace-pre-wrap text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
+          <div className="whitespace-pre-wrap text-[13.5px] sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
             {readingNote.body}
           </div>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="divide-y divide-neutral-200/80 border-y border-neutral-200/80 dark:divide-neutral-800/80 dark:border-neutral-800/80">
         {visibleNotes.map((post) =>
           "isCustom" in post && post.isCustom ? (
             <div
               key={post.slug}
-              className="group rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-white"
+              className="group relative py-4 sm:py-5 transition-colors"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-3.5 w-3.5" />
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
+                <button
+                  type="button"
+                  onClick={() => setReadingNote(post)}
+                  className="cursor-pointer text-left text-[15px] sm:text-base font-medium tracking-tight text-neutral-950 group-hover:underline underline-offset-4 dark:text-neutral-50"
+                >
+                  {post.title}
+                </button>
+
+                <div className="flex shrink-0 items-center gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                   <span>{post.date}</span>
                   <span>·</span>
                   <span>{post.readingTime}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => openEdit(post)}
-                    aria-label={`Edit ${post.title}`}
-                    className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-500 hover:border-neutral-950 hover:text-neutral-950 dark:border-neutral-800 dark:hover:border-white dark:hover:text-white"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(post.slug)}
-                    aria-label={`Delete ${post.title}`}
-                    className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-500 hover:border-red-500 hover:text-red-500 dark:border-neutral-800"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
+                  <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(post)}
+                      aria-label={`Edit ${post.title}`}
+                      className="cursor-pointer p-0.5 text-neutral-500 hover:text-neutral-950 dark:hover:text-white"
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(post.slug)}
+                      aria-label={`Delete ${post.title}`}
+                      className="cursor-pointer p-0.5 text-neutral-500 hover:text-red-500"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setReadingNote(post)}
-                className="mt-3 block w-full cursor-pointer text-left space-y-1.5"
-              >
-                <h3 className="text-base sm:text-lg font-bold tracking-tight group-hover:underline underline-offset-4">
-                  {post.title}
-                </h3>
-                <p className="text-xs sm:text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                  {post.summary}
-                </p>
-              </button>
+              <p className="mt-1 text-[13px] sm:text-[13.5px] leading-relaxed text-neutral-500 dark:text-neutral-400 line-clamp-2">
+                {post.summary}
+              </p>
 
               {post.tags.length > 0 && (
-                <div className="mt-3.5 flex flex-wrap gap-1.5">
+                <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
                   {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-[10.5px] font-mono text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-                    >
-                      #{tag}
-                    </span>
+                    <span key={tag}>#{tag}</span>
                   ))}
                 </div>
               )}
@@ -316,6 +285,22 @@ export function EditableNotesFeed({
           )
         )}
       </div>
+
+      {!formOpen && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => {
+              resetForm();
+              setFormOpen(true);
+            }}
+            className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+          >
+            <Plus className="h-3 w-3" />
+            <span>Write note</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -327,54 +312,32 @@ export function BlogFeedCard({
   post: BlogPostMeta;
   basePath?: string;
 }) {
-  const project = post.relatedProject
-    ? PROJECT_ITEMS.find((p) => p.id === post.relatedProject)
-    : undefined;
-
   return (
     <Link
       href={`${basePath}/blog/${post.slug}`}
-      className="group block rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 text-left transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-white"
+      className="group block py-4 sm:py-5 text-left transition-colors"
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-        <div className="flex flex-wrap items-center gap-2">
-          <FileText className="h-3.5 w-3.5" />
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
+        <h3 className="text-[15px] sm:text-base font-medium tracking-tight text-neutral-950 group-hover:underline underline-offset-4 dark:text-neutral-50">
+          {post.title}
+        </h3>
+
+        <div className="flex shrink-0 items-center gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
           <span>{post.date}</span>
           <span>·</span>
           <span>{post.readingTime}</span>
-
-          {project && (
-            <span className="inline-flex items-center gap-1 rounded border border-neutral-200 bg-[#fafafa] px-2 py-0.5 text-[10px] text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300">
-              <FolderGit2 className="h-3 w-3" />
-              <span>{project.title}</span>
-            </span>
-          )}
+          <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
         </div>
-
-        <span className="inline-flex items-center gap-1 font-semibold text-neutral-500 group-hover:text-neutral-950 dark:text-neutral-400 dark:group-hover:text-white">
-          <span>Read Note</span>
-          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </span>
       </div>
 
-      <div className="mt-3 space-y-1.5">
-        <h2 className="text-base sm:text-lg font-bold tracking-tight group-hover:underline underline-offset-4">
-          {post.title}
-        </h2>
-        <p className="text-xs sm:text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-          {post.summary}
-        </p>
-      </div>
+      <p className="mt-1 text-[13px] sm:text-[13.5px] leading-relaxed text-neutral-500 dark:text-neutral-400 line-clamp-2">
+        {post.summary}
+      </p>
 
       {post.tags.length > 0 && (
-        <div className="mt-3.5 flex flex-wrap gap-1.5">
+        <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
           {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-[10.5px] font-mono text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-            >
-              #{tag}
-            </span>
+            <span key={tag}>#{tag}</span>
           ))}
         </div>
       )}
@@ -415,40 +378,38 @@ export function BlogIndexClient({
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-950 dark:bg-[#0a0a0a] dark:text-neutral-50 transition-colors">
-      <header className="sticky top-0 z-40 border-b border-neutral-200 bg-[#fafafa]/90 backdrop-blur-md dark:border-neutral-800 dark:bg-[#0a0a0a]/90">
-        <div className="mx-auto flex h-12 max-w-[940px] items-center justify-between px-5 sm:px-8">
+      <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-[#fafafa]/90 backdrop-blur-md dark:border-neutral-800/80 dark:bg-[#0a0a0a]/90">
+        <div className="mx-auto flex h-12 max-w-[780px] items-center justify-between px-5 sm:px-7">
           <Link
             href={basePath || "/"}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to {PORTFOLIO_PROFILE.name}</span>
           </Link>
 
           <div className="flex items-center gap-2.5">
-            <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              05 / Daily Notes
+            <span className="hidden sm:inline text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
+              Blogs
             </span>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[940px] border-x border-neutral-200 dark:border-neutral-800 min-h-[calc(100vh-3rem)]">
-        <section className="border-b border-neutral-200 px-5 sm:px-8 py-12 sm:py-14 dark:border-neutral-800 space-y-6">
+      <main className="mx-auto max-w-[780px] border-x border-neutral-200/80 dark:border-neutral-800/80 min-h-[calc(100vh-3rem)]">
+        <section className="border-b border-neutral-200/80 px-5 sm:px-7 py-10 sm:py-12 dark:border-neutral-800/80 space-y-5">
           <Reveal>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  05 / Daily Blog Notes
-                </p>
-                <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
-                  Notes &amp; Engineering Journal
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
-                  Public engineering logs and daily Markdown notes. Save any <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.md</code> or <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">.mdx</code> file in <code className="rounded bg-neutral-200/70 px-1.5 py-0.5 text-[11px] font-mono dark:bg-neutral-800">content/blog/</code> — or write quick notes right here.
-                </p>
-              </div>
+            <div>
+              <p className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
+                05 / Blogs
+              </p>
+              <h1 className="mt-1 text-2xl sm:text-[28px] font-semibold tracking-[-0.02em]">
+                Writing &amp; Notes
+              </h1>
+              <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+                Engineering logs, learnings, and daily notes.
+              </p>
             </div>
           </Reveal>
 
@@ -461,32 +422,32 @@ export function BlogIndexClient({
                     key={tag}
                     type="button"
                     onClick={() => setSelectedTag(tag)}
-                    className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[10.5px] font-mono transition-colors ${
+                    className={`cursor-pointer rounded-md px-2 py-0.5 text-[11px] font-mono transition-colors ${
                       active
-                        ? "border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
-                        : "border-neutral-300 bg-white text-neutral-600 hover:border-neutral-500 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-white"
+                        ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
+                        : "text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
                     }`}
                   >
-                    {tag === "All" ? "All Notes" : `#${tag}`}
+                    {tag === "All" ? "All" : `#${tag}`}
                   </button>
                 );
               })}
             </div>
 
-            <div className="relative w-full sm:w-60">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+            <div className="relative w-full sm:w-52">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-neutral-400" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search notes..."
-                className="w-full rounded-full border border-neutral-300 bg-white pl-8 pr-3 py-1.5 text-xs text-neutral-950 placeholder:text-neutral-400 focus:border-neutral-950 focus:outline-none dark:border-neutral-700 dark:bg-neutral-950 dark:text-white dark:focus:border-white"
+                placeholder="Search..."
+                className="w-full rounded-lg border border-neutral-200 bg-transparent pl-7 pr-2.5 py-1 text-xs text-neutral-950 placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none dark:border-neutral-800 dark:text-white dark:focus:border-neutral-600"
               />
             </div>
           </div>
         </section>
 
-        <section className="px-5 sm:px-8 py-12 sm:py-14">
+        <section className="px-5 sm:px-7 py-10 sm:py-12">
           <EditableNotesFeed initialPosts={filteredPosts} basePath={basePath} />
         </section>
       </main>

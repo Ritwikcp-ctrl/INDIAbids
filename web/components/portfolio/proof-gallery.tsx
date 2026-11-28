@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Plus, Trash2, Upload } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import {
   compressAndReadImage,
   parseStoredJson,
@@ -69,7 +69,7 @@ export function ProofGallery({ compact = false }: ProofGalleryProps) {
 
   const saveCaption = (id: string) => {
     const next = shots.map((s) =>
-      s.id === id ? { ...s, caption: captionDraft.trim() || "Screenshot" } : s
+      s.id === id ? { ...s, caption: captionDraft.trim() || "Proof" } : s
     );
     writeLocalValue(PROOF_KEY, JSON.stringify(next));
     setEditingCaptionId(null);
@@ -91,7 +91,7 @@ export function ProofGallery({ compact = false }: ProofGalleryProps) {
                 {
                   id: `shot-paste-${shots.length + 1}`,
                   src: dataUrl,
-                  caption: "Screenshot",
+                  caption: "Proof",
                 },
               ];
               writeLocalValue(PROOF_KEY, JSON.stringify(next));
@@ -112,7 +112,7 @@ export function ProofGallery({ compact = false }: ProofGalleryProps) {
       onFocus={() => setIsPastingFocus(true)}
       onBlur={() => setIsPastingFocus(false)}
       onPaste={handlePaste}
-      className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4 outline-none dark:border-neutral-800 dark:bg-neutral-950"
+      className="space-y-3 outline-none"
     >
       <input
         ref={fileRef}
@@ -126,109 +126,96 @@ export function ProofGallery({ compact = false }: ProofGalleryProps) {
         }}
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <p className="text-xs font-bold">Proof Gallery &amp; Screenshots</p>
-          <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-            {shots.length > 0
-              ? `${shots.length} uploaded ${
-                  shots.length === 1 ? "screenshot" : "screenshots"
-                } · hover to pause`
-              : isPastingFocus
-                ? "Press Ctrl+V to paste image, or upload multiple screenshots"
-                : "Upload multiple screenshots (moves left to right like testimonials)"}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono font-medium text-neutral-800 transition-colors hover:border-neutral-950 hover:text-neutral-950 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:border-white dark:hover:text-white"
-        >
-          <Plus className="h-3 w-3" />
-          <span>Upload Photos</span>
-        </button>
-      </div>
-
       {shots.length === 0 ? (
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-300 bg-[#fafafa] px-4 py-8 text-center transition-colors hover:border-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-neutral-600"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-200 px-4 py-7 text-xs text-neutral-500 transition-colors hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:text-neutral-200"
         >
-          <ImagePlus className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-          <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-            Click to select multiple screenshots or press Ctrl+V to paste
-          </span>
-          <span className="inline-flex items-center gap-1 text-[10.5px] font-mono text-neutral-400">
-            <Upload className="h-3 w-3" /> Persists in your browser across page refreshes
+          <Plus className="h-3.5 w-3.5" />
+          <span>
+            {isPastingFocus
+              ? "Press Ctrl+V to paste or click to upload screenshots"
+              : "Upload screenshots or proof of work"}
           </span>
         </button>
       ) : (
-        <div className="marquee-group relative overflow-hidden rounded-xl border border-neutral-100 bg-[#fafafa] py-3 dark:border-neutral-900 dark:bg-[#0d0d0d]">
-          <div
-            className="animate-marquee-right flex w-max gap-4 px-2"
-            style={{
-              animationDuration: `${Math.max(18, shots.length * 8)}s`,
-            }}
-          >
-            {trackShots.map((shot, idx) => (
-              <div
-                key={`${shot.id}-${idx}`}
-                className={`group/card relative shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950 ${
-                  compact ? "w-64 sm:w-72" : "w-72 sm:w-80"
-                }`}
-              >
-                <div className="relative h-40 w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={shot.src}
-                    alt={shot.caption || "Proof screenshot"}
-                    className="h-full w-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Remove screenshot"
-                    onClick={() => handleRemove(shot.id)}
-                    className="absolute right-2 top-2 inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white/90 text-neutral-900 opacity-0 transition-opacity group-hover/card:opacity-100 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-
-                <div className="border-t border-neutral-200 px-3 py-2 dark:border-neutral-800">
-                  {editingCaptionId === `${shot.id}-${idx}` ? (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        saveCaption(shot.id);
-                      }}
-                      className="flex items-center gap-1.5"
-                    >
-                      <input
-                        type="text"
-                        autoFocus
-                        value={captionDraft}
-                        onChange={(e) => setCaptionDraft(e.target.value)}
-                        onBlur={() => saveCaption(shot.id)}
-                        className="w-full rounded border border-neutral-300 bg-[#fafafa] px-2 py-0.5 text-[11px] font-mono outline-none dark:border-neutral-700 dark:bg-neutral-900"
-                      />
-                    </form>
-                  ) : (
+        <div className="space-y-2.5">
+          <div className="marquee-group relative overflow-hidden py-1 [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+            <div
+              className="animate-marquee-right flex w-max gap-3.5"
+              style={{
+                animationDuration: `${Math.max(20, shots.length * 8)}s`,
+              }}
+            >
+              {trackShots.map((shot, idx) => (
+                <div
+                  key={`${shot.id}-${idx}`}
+                  className={`group/card relative shrink-0 overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-neutral-800/80 dark:bg-neutral-950 ${
+                    compact ? "w-60 sm:w-68" : "w-68 sm:w-76"
+                  }`}
+                >
+                  <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={shot.src}
+                      alt={shot.caption || "Proof screenshot"}
+                      className="h-full w-full object-cover"
+                    />
                     <button
                       type="button"
-                      onClick={() => {
-                        setCaptionDraft(shot.caption);
-                        setEditingCaptionId(`${shot.id}-${idx}`);
-                      }}
-                      className="w-full truncate text-left text-[11px] font-mono text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                      aria-label="Remove screenshot"
+                      onClick={() => handleRemove(shot.id)}
+                      className="absolute right-2 top-2 inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-200 bg-white/90 text-neutral-800 opacity-0 transition-opacity group-hover/card:opacity-100 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-neutral-200"
                     >
-                      {shot.caption || "Click to add caption"}
+                      <Trash2 className="h-3 w-3" />
                     </button>
-                  )}
+                  </div>
+
+                  <div className="border-t border-neutral-200/70 px-3 py-2 dark:border-neutral-800/70">
+                    {editingCaptionId === `${shot.id}-${idx}` ? (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          saveCaption(shot.id);
+                        }}
+                      >
+                        <input
+                          type="text"
+                          autoFocus
+                          value={captionDraft}
+                          onChange={(e) => setCaptionDraft(e.target.value)}
+                          onBlur={() => saveCaption(shot.id)}
+                          className="w-full rounded border border-neutral-300 bg-transparent px-1.5 py-0.5 text-[11px] outline-none dark:border-neutral-700"
+                        />
+                      </form>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCaptionDraft(shot.caption);
+                          setEditingCaptionId(`${shot.id}-${idx}`);
+                        }}
+                        className="w-full truncate text-left text-[11.5px] font-medium text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-neutral-100"
+                      >
+                        {shot.caption || "Add caption"}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-mono text-neutral-500 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+            >
+              <Plus className="h-3 w-3" />
+              <span>Add screenshots</span>
+            </button>
           </div>
         </div>
       )}

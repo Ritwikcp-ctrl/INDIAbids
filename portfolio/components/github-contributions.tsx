@@ -131,13 +131,13 @@ export function GitHubContributionGraph({
   data?.monthLabels.forEach((m) => monthByWeek.set(m.weekIndex, m.label));
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4 dark:border-neutral-800 dark:bg-neutral-950">
+    <div className="rounded-xl border border-neutral-200/80 p-4 sm:p-5 space-y-4 dark:border-neutral-800/80">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center gap-2">
-            <FaGithub className="h-4 w-4 text-neutral-950 dark:text-white" />
-            <p className="text-xs sm:text-sm font-bold tracking-tight">
-              GitHub Contributions
+            <FaGithub className="h-3.5 w-3.5 text-neutral-700 dark:text-neutral-300" />
+            <p className="text-xs font-medium tracking-tight text-neutral-900 dark:text-neutral-100">
+              GitHub Activity
             </p>
           </div>
 

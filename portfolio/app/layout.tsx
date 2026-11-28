@@ -3,9 +3,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Tejas | Developer — Full-Stack Engineer & Product Builder",
+  title: "Tejas | Developer",
   description:
-    "Developer portfolio of Tejas — building deterministic payment systems, full-stack web apps, and motion-driven React interfaces.",
+    "Engineer / Gamer building CrossPnP, AI systems, open source tools, and full-stack products.",
 };
 
 export default function RootLayout({
