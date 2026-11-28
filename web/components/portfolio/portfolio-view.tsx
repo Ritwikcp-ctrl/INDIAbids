@@ -640,18 +640,28 @@ export function PortfolioView({
             className="border-b border-neutral-200 px-5 sm:px-8 py-14 sm:py-16 dark:border-neutral-800 space-y-8"
           >
             <Reveal>
-              <div>
-                <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  03 / Proof &amp; Activity
-                </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                  Engineering Highlights
-                </h2>
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                    03 / Proof &amp; Activity
+                  </p>
+                  <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
+                    Engineering Highlights
+                  </h2>
+                </div>
+                <CreepyButton
+                  type="button"
+                  onClick={() => router.push(`${basePath}/highlights`)}
+                  className="rounded-full min-w-[6.4em] bg-neutral-800 border-neutral-300 dark:border-neutral-700"
+                  coverClassName="rounded-full bg-neutral-950 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-neutral-950 px-3.5 py-1.5 text-[11px] font-semibold min-w-[6.4em]"
+                >
+                  View All →
+                </CreepyButton>
               </div>
             </Reveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {HIGHLIGHTS.map((item, idx) => (
+              {HIGHLIGHTS.slice(0, 2).map((item, idx) => (
                 <Reveal key={item.title} delay={idx * 0.04}>
                   <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5 space-y-2 dark:border-neutral-800 dark:bg-neutral-950">
                     <span className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-neutral-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider dark:border-neutral-800 dark:bg-neutral-900">
