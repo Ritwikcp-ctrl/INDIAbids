@@ -592,6 +592,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             <GitHubPinnedProjects
               defaultUsername={PORTFOLIO_PROFILE.githubUsername}
               basePath=""
+              maxItems={2}
             />
           </section>
 
@@ -662,7 +663,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             </Reveal>
 
             <div className="space-y-4">
-              {posts.slice(0, 3).map((post, idx) => (
+              {posts.slice(0, 2).map((post, idx) => (
                 <Reveal key={post.slug} delay={idx * 0.04}>
                   <BlogFeedCard post={post} basePath="" />
                 </Reveal>

@@ -29,11 +29,13 @@ function subscribeStoredUsername(cb: () => void) {
 interface GitHubPinnedProjectsProps {
   defaultUsername: string;
   basePath?: string;
+  maxItems?: number;
 }
 
 export function GitHubPinnedProjects({
   defaultUsername,
   basePath = "",
+  maxItems,
 }: GitHubPinnedProjectsProps) {
   const activeUsername = useSyncExternalStore(
     subscribeStoredUsername,
@@ -74,6 +76,7 @@ export function GitHubPinnedProjects({
   }, [activeUsername, refreshTick]);
 
   const repos = data?.repos ?? [];
+  const visibleRepos = maxItems ? repos.slice(0, maxItems) : repos;
 
   return (
     <div className="space-y-4">
@@ -93,7 +96,9 @@ export function GitHubPinnedProjects({
           </span>
           {data && (
             <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] dark:border-neutral-800">
-              {repos.length} pinned {repos.length === 1 ? "repo" : "repos"}
+              {maxItems && repos.length > maxItems
+                ? `Showing ${visibleRepos.length} of ${repos.length} pinned`
+                : `${repos.length} pinned ${repos.length === 1 ? "repo" : "repos"}`}
             </span>
           )}
         </div>
@@ -111,7 +116,7 @@ export function GitHubPinnedProjects({
 
       {loading && repos.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: maxItems ?? 4 }).map((_, i) => (
             <div
               key={i}
               className="h-36 animate-pulse rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950"
@@ -120,7 +125,7 @@ export function GitHubPinnedProjects({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {repos.map((repo) => {
+          {visibleRepos.map((repo) => {
             const matchedCaseStudy = PROJECT_ITEMS.find(
               (item) =>
                 item.id.toLowerCase() === repo.name.toLowerCase() ||
