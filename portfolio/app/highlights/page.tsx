@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Reveal } from "@/components/reveal";
-import { HIGHLIGHTS, PORTFOLIO_PROFILE } from "@/lib/portfolio-data";
+import { ProofGallery } from "@/components/proof-gallery";
+import { GitHubContributionGraph } from "@/components/github-contributions";
+import { PORTFOLIO_PROFILE } from "@/lib/portfolio-data";
 
 export default function HighlightsPage() {
   return (
@@ -21,7 +23,7 @@ export default function HighlightsPage() {
 
           <div className="flex items-center gap-2.5">
             <span className="hidden sm:inline text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
-              03 / Engineering Highlights
+              03 / Proof &amp; Activity
             </span>
             <ThemeToggle />
           </div>
@@ -31,41 +33,25 @@ export default function HighlightsPage() {
       <main className="mx-auto max-w-[940px] border-x border-neutral-200 dark:border-neutral-800 min-h-[calc(100vh-3rem)]">
         <section className="border-b border-neutral-200 px-5 sm:px-8 py-12 sm:py-14 dark:border-neutral-800">
           <Reveal>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                  03 / Proof &amp; Activity
-                </p>
-                <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
-                  All Engineering Highlights
-                </h1>
-                <p className="mt-2 max-w-xl text-sm text-neutral-600 dark:text-neutral-400">
-                  System design breakthroughs, payment reconciliation pipelines, security audits, and milestones.
-                </p>
-              </div>
-              <span className="rounded-full border border-neutral-300 px-3 py-1 text-[11px] font-mono text-neutral-600 dark:border-neutral-700 dark:text-neutral-300">
-                {HIGHLIGHTS.length} {HIGHLIGHTS.length === 1 ? "highlight" : "highlights"}
-              </span>
+            <div>
+              <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
+                03 / Proof &amp; Activity
+              </p>
+              <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
+                Screenshots, Proof &amp; Activity
+              </h1>
+              <p className="mt-2 max-w-xl text-sm text-neutral-600 dark:text-neutral-400">
+                Upload multiple screenshots or proof images below — displayed in a left-to-right moving marquee strip.
+              </p>
             </div>
           </Reveal>
         </section>
 
-        <section className="px-5 sm:px-8 py-12 sm:py-14">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {HIGHLIGHTS.map((item, idx) => (
-              <Reveal key={item.title} delay={idx * 0.04}>
-                <div className="h-full rounded-2xl border border-neutral-200 bg-white p-6 space-y-2.5 dark:border-neutral-800 dark:bg-neutral-950">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-neutral-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider dark:border-neutral-800 dark:bg-neutral-900">
-                    <Sparkles className="h-3 w-3" /> {item.badge}
-                  </span>
-                  <h2 className="text-base font-bold">{item.title}</h2>
-                  <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    {item.detail}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+        <section className="px-5 sm:px-8 py-12 sm:py-14 space-y-8">
+          <ProofGallery />
+          <GitHubContributionGraph
+            defaultUsername={PORTFOLIO_PROFILE.githubUsername}
+          />
         </section>
       </main>
     </div>

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -20,8 +15,6 @@ import {
   MapPin,
   Pencil,
   RotateCcw,
-  Sparkles,
-  Terminal,
   X,
 } from "lucide-react";
 import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope } from "react-icons/fa";
@@ -31,71 +24,72 @@ import PulseHeart from "@/components/pulse-heart";
 import SlingButton from "@/components/sling-button";
 import SocialFlipButton, { type SocialItem } from "@/components/social-flip-button";
 import { Reveal } from "@/components/reveal";
+import { EditableExperienceList } from "@/components/experience-section";
 import { GitHubContributionGraph } from "@/components/github-contributions";
+import { ProofGallery } from "@/components/proof-gallery";
 import { ProjectsShowcase } from "@/components/projects-showcase";
 import { SkillsSection } from "@/components/skills-section";
-import { BlogFeedCard } from "@/components/blog-index-client";
+import { EditableNotesFeed } from "@/components/blog-index-client";
 import type { BlogPostMeta } from "@/lib/blog";
+import { PORTFOLIO_PROFILE } from "@/lib/portfolio-data";
 import {
-  EXPERIENCE_ITEMS,
-  HIGHLIGHTS,
-  PORTFOLIO_PROFILE,
-} from "@/lib/portfolio-data";
+  compressAndReadImage,
+  parseStoredJson,
+  useLocalValue,
+  writeLocalValue,
+} from "@/lib/portfolio-storage";
 
 interface PortfolioViewProps {
   posts?: BlogPostMeta[];
 }
 
+interface CustomProfileState {
+  name: string;
+  role: string;
+  bio: string;
+  bioPoints: string[];
+  location: string;
+  websiteLabel: string;
+  websiteHref: string;
+  joined: string;
+  availability: string;
+  email: string;
+  github: string;
+  twitter: string;
+  linkedin: string;
+}
+
+const PROFILE_KEY = "tejas_custom_profile";
+const LIKES_KEY = "tejas_portfolio_likes";
+const DEFAULT_LIKES_JSON = '{"liked":false,"count":0}';
+
+const DEFAULT_PROFILE_STATE: CustomProfileState = {
+  name: PORTFOLIO_PROFILE.name,
+  role: PORTFOLIO_PROFILE.role,
+  bio: PORTFOLIO_PROFILE.bio,
+  bioPoints: PORTFOLIO_PROFILE.bioPoints,
+  location: PORTFOLIO_PROFILE.location,
+  websiteLabel: PORTFOLIO_PROFILE.websiteLabel,
+  websiteHref: PORTFOLIO_PROFILE.websiteHref,
+  joined: PORTFOLIO_PROFILE.joined,
+  availability: "Available for builds",
+  email: PORTFOLIO_PROFILE.email,
+  github: PORTFOLIO_PROFILE.socials.github,
+  twitter: PORTFOLIO_PROFILE.socials.twitter,
+  linkedin: PORTFOLIO_PROFILE.socials.linkedin,
+};
+
 const INDEX_SECTIONS = [
   { id: "profile", num: "00", label: "Profile" },
   { id: "experience", num: "01", label: "Experience" },
   { id: "projects", num: "02", label: "Projects" },
-  { id: "highlights", num: "03", label: "Highlights" },
+  { id: "highlights", num: "03", label: "Proof & Activity" },
   { id: "skills", num: "04", label: "Skills" },
   { id: "blogs", num: "05", label: "Blogs" },
   { id: "connect", num: "06", label: "Connect" },
 ];
 
-const imageListeners = new Set<() => void>();
-
-function subscribeImages(cb: () => void) {
-  imageListeners.add(cb);
-  const onStorage = () => cb();
-  window.addEventListener("storage", onStorage);
-  return () => {
-    imageListeners.delete(cb);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-function saveLocalImage(key: string, dataUrl: string | null) {
-  if (typeof window === "undefined") return;
-  try {
-    if (dataUrl) localStorage.setItem(key, dataUrl);
-    else localStorage.removeItem(key);
-  } catch {
-    // Ignore quota errors
-  }
-  imageListeners.forEach((cb) => cb());
-}
-
-function useStoredImage(key: string, fallback = "") {
-  return useSyncExternalStore(
-    subscribeImages,
-    () => localStorage.getItem(key) ?? fallback,
-    () => fallback
-  );
-}
-
 const emptySubscribe = () => () => {};
-
-function readImageFile(file: File, onDone: (dataUrl: string) => void) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    if (typeof reader.result === "string") onDone(reader.result);
-  };
-  reader.readAsDataURL(file);
-}
 
 export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const router = useRouter();
@@ -110,7 +104,29 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [activeSection, setActiveSection] = useState("profile");
   const [pasteTarget, setPasteTarget] = useState<string | null>(null);
-  const [liked, setLiked] = useState(false);
+
+  // Persistent Like counter
+  const likesRaw = useLocalValue(LIKES_KEY, DEFAULT_LIKES_JSON);
+  const likeState = parseStoredJson<{ liked: boolean; count: number }>(
+    likesRaw,
+    { liked: false, count: 0 }
+  );
+
+  // Persistent Profile / Socials
+  const profileRaw = useLocalValue(PROFILE_KEY, "");
+  const storedProfile = profileRaw
+    ? parseStoredJson<Partial<CustomProfileState>>(profileRaw, {})
+    : null;
+  const profile: CustomProfileState = {
+    ...DEFAULT_PROFILE_STATE,
+    ...(storedProfile ?? {}),
+  };
+
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileDraft, setProfileDraft] = useState<CustomProfileState>(profile);
+  const [bioPointsText, setBioPointsText] = useState("");
+
+  // Persistent Bottom Quote
   const [editingQuote, setEditingQuote] = useState(false);
   const [draftQuote, setDraftQuote] = useState("");
   const [draftAuthor, setDraftAuthor] = useState("");
@@ -120,18 +136,30 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   const [mailMessage, setMailMessage] = useState("");
   const [mailSentNotice, setMailSentNotice] = useState(false);
 
-  const bannerSrc = useStoredImage("tejas_portfolio_banner", PORTFOLIO_PROFILE.bannerImage);
-  const avatarSrc = useStoredImage("tejas_portfolio_avatar", PORTFOLIO_PROFILE.avatarImage);
-  const quoteText = useStoredImage("tejas_portfolio_quote", PORTFOLIO_PROFILE.quote);
-  const quoteAuthor = useStoredImage("tejas_portfolio_quote_author", PORTFOLIO_PROFILE.quoteAuthor);
+  const bannerSrc = useLocalValue(
+    "tejas_portfolio_banner",
+    PORTFOLIO_PROFILE.bannerImage
+  );
+  const avatarSrc = useLocalValue(
+    "tejas_portfolio_avatar",
+    PORTFOLIO_PROFILE.avatarImage
+  );
+  const quoteText = useLocalValue(
+    "tejas_portfolio_quote",
+    PORTFOLIO_PROFILE.quote
+  );
+  const quoteAuthor = useLocalValue(
+    "tejas_portfolio_quote_author",
+    PORTFOLIO_PROFILE.quoteAuthor
+  );
 
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const elements = INDEX_SECTIONS.map((s) => document.getElementById(s.id)).filter(
-      (el): el is HTMLElement => Boolean(el)
-    );
+    const elements = INDEX_SECTIONS.map((s) =>
+      document.getElementById(s.id)
+    ).filter((el): el is HTMLElement => Boolean(el));
     if (elements.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -157,10 +185,18 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         if (item.type.startsWith("image/")) {
           const file = item.getAsFile();
           if (file) {
-            readImageFile(file, (dataUrl) => {
-              saveLocalImage(pasteTarget, dataUrl);
-              setPasteTarget(null);
-            });
+            const opts =
+              pasteTarget === "tejas_portfolio_avatar"
+                ? { maxWidth: 512, maxHeight: 512, quality: 0.85 }
+                : { maxWidth: 1400, maxHeight: 500, quality: 0.84 };
+            compressAndReadImage(
+              file,
+              (dataUrl) => {
+                writeLocalValue(pasteTarget, dataUrl);
+                setPasteTarget(null);
+              },
+              opts
+            );
             e.preventDefault();
             return;
           }
@@ -172,7 +208,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
   }, [pasteTarget]);
 
   const copyEmail = () => {
-    navigator.clipboard.writeText(PORTFOLIO_PROFILE.email);
+    navigator.clipboard.writeText(profile.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -183,7 +219,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
       senderEmail.trim() ? `From: ${senderEmail.trim()}` : "",
       mailMessage.trim() || "Hi Tejas, I'd love to connect about...",
     ].filter(Boolean);
-    const mailtoUrl = `mailto:${PORTFOLIO_PROFILE.email}?subject=${encodeURIComponent(
+    const mailtoUrl = `mailto:${profile.email}?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(bodyLines.join("\n\n"))}`;
     window.location.href = mailtoUrl;
@@ -191,11 +227,49 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
     setTimeout(() => setMailSentNotice(false), 3500);
   };
 
+  const openProfileEditor = () => {
+    setProfileDraft(profile);
+    setBioPointsText(profile.bioPoints.join("\n"));
+    setEditingProfile(true);
+  };
+
+  const saveProfileEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const points = bioPointsText
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const next: CustomProfileState = {
+      ...profileDraft,
+      name: profileDraft.name.trim() || DEFAULT_PROFILE_STATE.name,
+      role: profileDraft.role.trim() || DEFAULT_PROFILE_STATE.role,
+      bio: profileDraft.bio.trim() || DEFAULT_PROFILE_STATE.bio,
+      bioPoints: points.length > 0 ? points : DEFAULT_PROFILE_STATE.bioPoints,
+    };
+    writeLocalValue(PROFILE_KEY, JSON.stringify(next));
+    setEditingProfile(false);
+  };
+
   const socialItems: SocialItem[] = [
-    { letter: "G", icon: <FaGithub />, label: "GitHub", href: PORTFOLIO_PROFILE.socials.github },
-    { letter: "X", icon: <FaTwitter />, label: "X / Twitter", href: PORTFOLIO_PROFILE.socials.twitter },
-    { letter: "L", icon: <FaLinkedin />, label: "LinkedIn", href: PORTFOLIO_PROFILE.socials.linkedin },
-    { letter: "M", icon: <FaEnvelope />, label: "Email Tejas", href: PORTFOLIO_PROFILE.socials.email },
+    { letter: "G", icon: <FaGithub />, label: "GitHub", href: profile.github },
+    {
+      letter: "X",
+      icon: <FaTwitter />,
+      label: "X / Twitter",
+      href: profile.twitter,
+    },
+    {
+      letter: "L",
+      icon: <FaLinkedin />,
+      label: "LinkedIn",
+      href: profile.linkedin,
+    },
+    {
+      letter: "M",
+      icon: <FaEnvelope />,
+      label: `Email ${profile.name}`,
+      href: `mailto:${profile.email}`,
+    },
   ];
 
   return (
@@ -207,7 +281,14 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) readImageFile(file, (url) => saveLocalImage("tejas_portfolio_banner", url));
+          if (file) {
+            compressAndReadImage(
+              file,
+              (url) => writeLocalValue("tejas_portfolio_banner", url),
+              { maxWidth: 1400, maxHeight: 500, quality: 0.84 }
+            );
+          }
+          e.target.value = "";
         }}
       />
       <input
@@ -217,7 +298,14 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) readImageFile(file, (url) => saveLocalImage("tejas_portfolio_avatar", url));
+          if (file) {
+            compressAndReadImage(
+              file,
+              (url) => writeLocalValue("tejas_portfolio_avatar", url),
+              { maxWidth: 512, maxHeight: 512, quality: 0.85 }
+            );
+          }
+          e.target.value = "";
         }}
       />
 
@@ -225,21 +313,27 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4">
           <a href="#profile" className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-950 text-[11px] font-black text-white dark:bg-white dark:text-neutral-950">
-              T
+              {profile.name.slice(0, 1).toUpperCase()}
             </span>
             <span className="text-xs sm:text-sm font-bold tracking-tight">
-              {PORTFOLIO_PROFILE.name}
+              {profile.name}
               <span className="font-normal text-neutral-500 dark:text-neutral-400">
-                {" "}| Developer
+                {" "}
+                | Developer
               </span>
             </span>
           </a>
 
           <div className="flex items-center gap-2.5">
             <PulseHeart
-              count={0}
-              liked={liked}
-              onChange={(nextLiked) => setLiked(nextLiked)}
+              count={likeState.count}
+              liked={likeState.liked}
+              onChange={(nextLiked, nextCount) =>
+                writeLocalValue(
+                  LIKES_KEY,
+                  JSON.stringify({ liked: nextLiked, count: nextCount })
+                )
+              }
               showCount
               icon="heart"
               idleOutline
@@ -324,7 +418,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     aria-label="Reset banner"
                     onClick={(e) => {
                       e.stopPropagation();
-                      saveLocalImage("tejas_portfolio_banner", null);
+                      writeLocalValue("tejas_portfolio_banner", null);
                     }}
                     className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white/90 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950/90 dark:text-white"
                   >
@@ -353,9 +447,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                       />
                     ) : (
                       <div className="flex flex-col items-center gap-0.5 text-center">
-                        <span className="text-xl font-black tracking-tight">T</span>
+                        <span className="text-xl font-black tracking-tight">
+                          {profile.name.slice(0, 1).toUpperCase()}
+                        </span>
                         <span className="text-[9px] font-mono text-neutral-500 dark:text-neutral-400">
-                          {pasteTarget === "tejas_portfolio_avatar" ? "Ctrl+V" : "PHOTO"}
+                          {pasteTarget === "tejas_portfolio_avatar"
+                            ? "Ctrl+V"
+                            : "PHOTO"}
                         </span>
                       </div>
                     )}
@@ -377,7 +475,9 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     <button
                       type="button"
                       aria-label="Remove profile photo"
-                      onClick={() => saveLocalImage("tejas_portfolio_avatar", null)}
+                      onClick={() =>
+                        writeLocalValue("tejas_portfolio_avatar", null)
+                      }
                       className="absolute -right-1 bottom-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-900 shadow-sm dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
                     >
                       <X className="h-3 w-3" />
@@ -385,7 +485,16 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 pt-3">
+                <div className="flex flex-wrap items-center gap-2 pt-3">
+                  <button
+                    type="button"
+                    onClick={openProfileEditor}
+                    className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 text-[11px] font-mono text-neutral-700 transition-colors hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300 dark:hover:border-white"
+                  >
+                    <Pencil className="h-3 w-3" />
+                    <span>Edit</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={copyEmail}
@@ -404,7 +513,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     )}
                   </button>
                   <a
-                    href={PORTFOLIO_PROFILE.socials.twitter}
+                    href={profile.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex h-8 items-center gap-1 rounded-full bg-neutral-950 px-4 text-xs font-semibold text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-neutral-950"
@@ -415,66 +524,232 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                 </div>
               </div>
 
-              <div className="mt-4 space-y-3.5">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                    {PORTFOLIO_PROFILE.name}
-                  </h1>
-                  <p className="mt-0.5 text-xs sm:text-sm font-mono text-neutral-500 dark:text-neutral-400">
-                    {PORTFOLIO_PROFILE.role}
-                  </p>
-                </div>
+              {editingProfile ? (
+                <form
+                  onSubmit={saveProfileEdit}
+                  className="mt-5 rounded-2xl border border-neutral-300 bg-white p-5 space-y-3 dark:border-neutral-700 dark:bg-neutral-950"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-mono uppercase tracking-wider text-neutral-500">
+                      Edit Profile &amp; Links
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {storedProfile && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            writeLocalValue(PROFILE_KEY, null);
+                            setEditingProfile(false);
+                          }}
+                          className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-mono text-neutral-500 hover:text-neutral-950 dark:hover:text-white"
+                        >
+                          <RotateCcw className="h-3 w-3" /> Reset
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setEditingProfile(false)}
+                        className="cursor-pointer p-1 text-neutral-500"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
 
-                <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
-                  <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                    {PORTFOLIO_PROFILE.bio}
-                  </p>
-                  <ul className="space-y-1.5">
-                    {PORTFOLIO_PROFILE.bioPoints.map((point) => (
-                      <li key={point} className="flex items-start gap-2">
-                        <span
-                          aria-hidden="true"
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-500"
-                        />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={profileDraft.name}
+                      onChange={(e) =>
+                        setProfileDraft({ ...profileDraft, name: e.target.value })
+                      }
+                      placeholder="Display Name"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.role}
+                      onChange={(e) =>
+                        setProfileDraft({ ...profileDraft, role: e.target.value })
+                      }
+                      placeholder="Role (e.g. Engineer / Gamer)"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.bio}
+                      onChange={(e) =>
+                        setProfileDraft({ ...profileDraft, bio: e.target.value })
+                      }
+                      placeholder="Bio Lead"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.availability}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          availability: e.target.value,
+                        })
+                      }
+                      placeholder="Status (e.g. Available for builds)"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.location}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          location: e.target.value,
+                        })
+                      }
+                      placeholder="Location"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.joined}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          joined: e.target.value,
+                        })
+                      }
+                      placeholder="Joined badge"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.websiteLabel}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          websiteLabel: e.target.value,
+                        })
+                      }
+                      placeholder="Website label"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="text"
+                      value={profileDraft.websiteHref}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          websiteHref: e.target.value,
+                        })
+                      }
+                      placeholder="Website URL"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="email"
+                      value={profileDraft.email}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          email: e.target.value,
+                        })
+                      }
+                      placeholder="Contact Email"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                    <input
+                      type="url"
+                      value={profileDraft.github}
+                      onChange={(e) =>
+                        setProfileDraft({
+                          ...profileDraft,
+                          github: e.target.value,
+                        })
+                      }
+                      placeholder="GitHub URL"
+                      className="h-9 rounded-xl border border-neutral-200 bg-[#FAFAFA] px-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                    />
+                  </div>
 
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {PORTFOLIO_PROFILE.location}
-                  </span>
-                  <a
-                    href={PORTFOLIO_PROFILE.websiteHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 font-medium text-neutral-900 hover:underline dark:text-white"
-                  >
-                    <Link2 className="h-3.5 w-3.5" />
-                    {PORTFOLIO_PROFILE.websiteLabel}
-                  </a>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {PORTFOLIO_PROFILE.joined}
-                  </span>
-                </div>
+                  <textarea
+                    rows={3}
+                    value={bioPointsText}
+                    onChange={(e) => setBioPointsText(e.target.value)}
+                    placeholder="Bio bullets (one per line)"
+                    className="w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none dark:border-neutral-800 dark:bg-[#0A0A0A]"
+                  />
 
-                <div className="flex flex-wrap items-center gap-5 pt-1 text-xs">
-                  <span>
-                    <strong className="font-bold">3+</strong>{" "}
-                    <span className="text-neutral-500 dark:text-neutral-400">
-                      Production Builds
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditingProfile(false)}
+                      className="cursor-pointer rounded-full border border-neutral-300 px-3.5 py-1.5 text-xs dark:border-neutral-700"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-full bg-neutral-950 px-4 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
+                    >
+                      Save Profile
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="mt-4 space-y-3.5">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                      {profile.name}
+                    </h1>
+                    <p className="mt-0.5 text-xs sm:text-sm font-mono text-neutral-500 dark:text-neutral-400">
+                      {profile.role}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
+                    <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                      {profile.bio}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {profile.bioPoints.map((point) => (
+                        <li key={point} className="flex items-start gap-2">
+                          <span
+                            aria-hidden="true"
+                            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-400 dark:bg-neutral-500"
+                          />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {profile.location}
                     </span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-300">
-                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
-                    Available for builds
-                  </span>
+                    <a
+                      href={profile.websiteHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 font-medium text-neutral-900 hover:underline dark:text-white"
+                    >
+                      <Link2 className="h-3.5 w-3.5" />
+                      {profile.websiteLabel}
+                    </a>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {profile.joined}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-5 pt-1 text-xs">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-600 dark:text-neutral-300">
+                      <span className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
+                      {profile.availability}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </section>
 
@@ -489,7 +764,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     01 / Experience
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Engineering Timeline
+                    Engineering &amp; Startup Journey
                   </h2>
                 </div>
                 <CreepyButton
@@ -501,69 +776,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <div className="relative space-y-6 before:absolute before:top-2 before:bottom-2 before:left-[11px] before:w-px before:bg-neutral-200 dark:before:bg-neutral-800">
-              {EXPERIENCE_ITEMS.slice(0, 2).map((exp, idx) => (
-                <Reveal key={exp.id} delay={idx * 0.05}>
-                  <div className="relative pl-9">
-                    <span
-                      className={`absolute top-1.5 left-0 flex h-6 w-6 items-center justify-center rounded-full border bg-[#FAFAFA] dark:bg-[#0A0A0A] ${
-                        idx === 0
-                          ? "border-neutral-950 text-neutral-950 dark:border-white dark:text-white"
-                          : "border-neutral-300 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400"
-                      }`}
-                    >
-                      <Terminal className="h-3 w-3" />
-                    </span>
-
-                    <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 space-y-3.5 transition-colors hover:border-neutral-400 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-600">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-sm sm:text-base font-bold">{exp.role}</h3>
-                            <span className="rounded-full border border-neutral-300 bg-neutral-100 px-2.5 py-0.5 text-[10px] font-semibold dark:border-neutral-800 dark:bg-neutral-900">
-                              {exp.type}
-                            </span>
-                          </div>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                            {exp.company} · {exp.location}
-                          </p>
-                        </div>
-                        <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400 shrink-0">
-                          {exp.period}
-                        </span>
-                      </div>
-
-                      <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                        {exp.summary}
-                      </p>
-
-                      <ul className="space-y-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
-                        {exp.highlights.map((bullet) => (
-                          <li
-                            key={bullet}
-                            className="flex items-start gap-2 text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed"
-                          >
-                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-950 dark:bg-white" />
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {exp.stack.map((tech) => (
-                          <span
-                            key={tech}
-                            className="rounded border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-[10.5px] font-mono text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            <EditableExperienceList maxItems={2} />
           </section>
 
           <section
@@ -577,7 +790,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     02 / Projects
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Projects &amp; Open Source
+                    Main Live Projects
                   </h2>
                 </div>
                 <CreepyButton
@@ -593,7 +806,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               defaultUsername={PORTFOLIO_PROFILE.githubUsername}
               basePath=""
               maxMain={2}
-              maxGithub={2}
+              showGithubMore={false}
             />
           </section>
 
@@ -608,7 +821,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     03 / Proof &amp; Activity
                   </p>
                   <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
-                    Engineering Highlights
+                    Proof Gallery &amp; GitHub Activity
                   </h2>
                 </div>
                 <CreepyButton
@@ -620,21 +833,9 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {HIGHLIGHTS.slice(0, 2).map((item, idx) => (
-                <Reveal key={item.title} delay={idx * 0.04}>
-                  <div className="h-full rounded-2xl border border-neutral-200 bg-white p-5 space-y-2 dark:border-neutral-800 dark:bg-neutral-950">
-                    <span className="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-neutral-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider dark:border-neutral-800 dark:bg-neutral-900">
-                      <Sparkles className="h-3 w-3" /> {item.badge}
-                    </span>
-                    <h3 className="text-sm font-bold">{item.title}</h3>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                      {item.detail}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            <Reveal>
+              <ProofGallery compact />
+            </Reveal>
 
             <Reveal>
               <GitHubContributionGraph
@@ -659,7 +860,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     Daily Notes &amp; Engineering Journal
                   </h2>
                   <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
-                    Markdown notes saved in <code className="font-mono">content/blog/</code> for public reading anytime.
+                    Markdown notes saved in <code className="font-mono">content/blog/</code> or quick browser notes.
                   </p>
                 </div>
                 <CreepyButton
@@ -671,16 +872,13 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
               </div>
             </Reveal>
 
-            <div className="space-y-4">
-              {posts.slice(0, 2).map((post, idx) => (
-                <Reveal key={post.slug} delay={idx * 0.04}>
-                  <BlogFeedCard post={post} basePath="" />
-                </Reveal>
-              ))}
-            </div>
+            <EditableNotesFeed initialPosts={posts} basePath="" maxItems={2} />
           </section>
 
-          <section id="connect" className="px-5 sm:px-8 py-14 sm:py-16 space-y-10">
+          <section
+            id="connect"
+            className="px-5 sm:px-8 py-14 sm:py-16 space-y-10"
+          >
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
               <div className="md:col-span-5 space-y-3">
                 <p className="text-[11px] font-mono uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
@@ -692,7 +890,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                 <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                   Pull and release the sling button (or click/press Enter) to send a message directly to{" "}
                   <span className="font-mono text-neutral-950 dark:text-white">
-                    {PORTFOLIO_PROFILE.email}
+                    {profile.email}
                   </span>
                   .
                 </p>
@@ -738,7 +936,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     rows={3}
                     value={mailMessage}
                     onChange={(e) => setMailMessage(e.target.value)}
-                    placeholder="Write your message to Tejas…"
+                    placeholder={`Write your message to ${profile.name}…`}
                     className="w-full rounded-xl border border-neutral-200 bg-[#FAFAFA] p-3 text-xs outline-none transition-colors focus:border-neutral-900 dark:border-neutral-800 dark:bg-[#0A0A0A] dark:focus:border-white"
                   />
                 </div>
@@ -775,7 +973,7 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                     spread={60}
                     axis="any"
                     tapSends
-                    ariaLabel="Send email to Tejas"
+                    ariaLabel={`Send email to ${profile.name}`}
                   />
                 </div>
               </div>
@@ -788,8 +986,14 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
-                      saveLocalImage("tejas_portfolio_quote", draftQuote.trim() || null);
-                      saveLocalImage("tejas_portfolio_quote_author", draftAuthor.trim() || null);
+                      writeLocalValue(
+                        "tejas_portfolio_quote",
+                        draftQuote.trim() || null
+                      );
+                      writeLocalValue(
+                        "tejas_portfolio_quote_author",
+                        draftAuthor.trim() || null
+                      );
                       setEditingQuote(false);
                     }}
                     className="space-y-4 max-w-2xl"
@@ -857,7 +1061,9 @@ export function PortfolioView({ posts = [] }: PortfolioViewProps) {
             </div>
 
             <div className="flex items-center justify-between gap-2 border-t border-neutral-200 pt-6 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-              <span>&copy; {new Date().getFullYear()} {PORTFOLIO_PROFILE.handle}</span>
+              <span>
+                &copy; {new Date().getFullYear()} {PORTFOLIO_PROFILE.handle}
+              </span>
             </div>
           </section>
         </main>

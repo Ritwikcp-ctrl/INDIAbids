@@ -98,60 +98,34 @@ export const PORTFOLIO_PROFILE = {
 
 export const EXPERIENCE_ITEMS: ExperienceItem[] = [
   {
-    id: "indiabids",
-    role: "Creator & Lead Full-Stack Engineer",
-    company: "INDIAbids",
-    period: "2026 — Present",
-    location: "Remote · India",
-    type: "Flagship Product",
+    id: "crosspnp",
+    role: "Building Startup — CrossPnP",
+    company: "CrossPnP (Agriculture Startup)",
+    period: "Present",
+    location: "India",
+    type: "Founder & Builder",
     summary:
-      "Designed and engineered an end-to-end transparent paid leaderboard platform spanning 23 industry sectors and 36 Indian states & UTs.",
+      "Building CrossPnP, an agriculture-focused technology startup solving real-world coordination, commerce, and infrastructure problems for farming ecosystems.",
     highlights: [
-      "Architected PostgreSQL ACID payment reconciliation with row-level locks (FOR UPDATE) and pg_advisory_xact_lock serialization synced to Redis Sorted Sets for O(log N) rank reads.",
-      "Built dual-path Razorpay payment settlement (instant checkout signature verification + idempotent webhook handler) supporting anonymous manage keys and authenticated claiming.",
-      "Implemented JWT + rotating HttpOnly refresh token sessions, Google OAuth 2.0, multi-origin CSRF/CORS enforcement, and Next.js 16 App Router frontend with dark/light theming.",
+      "Architecting the core platform, workflows, and product roadmap from zero to one.",
+      "Applying AI, full-stack engineering, and open-source tools directly in the field.",
     ],
-    stack: [
-      "Next.js 16",
-      "TypeScript",
-      "Express 5",
-      "PostgreSQL",
-      "Prisma 7",
-      "Redis",
-      "Razorpay",
-      "Tailwind v4",
-    ],
-    link: "/",
+    stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "AI"],
   },
   {
-    id: "ui-systems",
-    role: "Creative Frontend & UI Systems Engineer",
-    company: "Independent / Open Source",
-    period: "2025 — 2026",
+    id: "fresher",
+    role: "Fresher",
+    company: "Open to Engineering & Startup Collaborations",
+    period: "2026",
     location: "India",
-    type: "UI Engineering",
+    type: "Early Career",
     summary:
-      "Crafted interactive, motion-engineered React component systems and marketing experiences with strict accessibility and zero layout-thrash animations.",
+      "Hands-on systems and full-stack builder with deep curiosity across AI, research papers, open source, and production software craftsmanship.",
     highlights: [
-      "Built composable branched SVG navigation menus, 3D character flip headings, interactive cursor-tracking CTA buttons, and dual-direction marquee sections.",
-      "Standardized CSS variable design tokens across dark Carbon and light Bone themes with Framer Motion spring physics and reduced-motion fallbacks.",
+      "Built and deployed production full-stack systems including INDIAbids end-to-end.",
+      "Actively experimenting with low-level systems programming on Linux, Web3, and applied AI.",
     ],
-    stack: ["React 19", "Framer Motion", "Tailwind CSS", "Radix UI", "Hugeicons"],
-  },
-  {
-    id: "editable-role",
-    role: "Software Engineering Intern / Freelance (Editable Slot)",
-    company: "Add Your Previous Role or Organization",
-    period: "2024 — 2025",
-    location: "India",
-    type: "Experience Slot",
-    summary:
-      "Template slot ready for your prior internship, freelance client engagement, or campus engineering leadership experience.",
-    highlights: [
-      "Replace this bullet in portfolio-data.ts with measurable latency, conversion, or reliability improvements you shipped.",
-      "Add links to shipped repositories, live demos, or case studies.",
-    ],
-    stack: ["Node.js", "PostgreSQL", "Docker", "GitHub Actions"],
+    stack: ["TypeScript", "Express", "PostgreSQL", "Redis", "Docker", "Linux"],
   },
 ];
 
@@ -187,62 +161,9 @@ export const PROJECT_ITEMS: ProjectItem[] = [
     liveHref: "/",
     repoHref: "https://github.com/Ritwikcp-ctrl/INDIAbids",
   },
-  {
-    id: "branched-nav",
-    title: "Interactive Motion UI Kit",
-    tagline: "Composable React Bits & Physics-Driven Controls",
-    status: "Open Source",
-    year: "2026",
-    description:
-      "A collection of tactile React UI primitives featuring SVG branch path animations, cursor-tracking eyes, 3D flip typography, and accessible keyboard navigation.",
-    architecture: [
-      "GPU-composited transforms (rotateX, rotateY, translate, strokeDashoffset) with zero layout-property animation.",
-      "Full dark/light token compatibility and prefers-reduced-motion compliance.",
-    ],
-    stack: ["React 19", "Framer Motion", "Tailwind v4", "TypeScript"],
-    liveHref: "/categories",
-  },
-  {
-    id: "slot-project",
-    title: "Project Slot #3 (Editable)",
-    tagline: "Add your next AI, SaaS, or systems build here",
-    status: "Template",
-    year: "2026",
-    description:
-      "Use this card in portfolio-data.ts to showcase another flagship project, CLI tool, or AI agent workflow with live preview links.",
-    architecture: [
-      "Swap title, description, stack tags, and GitHub/live URLs in a single TypeScript data file.",
-    ],
-    stack: ["Python", "Next.js", "AI Agents", "Cloudflare"],
-  },
 ];
 
-export const HIGHLIGHTS: HighlightItem[] = [
-  {
-    badge: "Architecture",
-    title: "ACID + O(log N) Ranking Engine",
-    detail:
-      "Combined Postgres advisory locks with Redis sorted sets for concurrent, double-spend-proof bid updates.",
-  },
-  {
-    badge: "Payments",
-    title: "Dual-Verified Razorpay Pipeline",
-    detail:
-      "Client checkout signature verification paired with atomic idempotent webhooks and amount/currency assertions.",
-  },
-  {
-    badge: "Security",
-    title: "Zero-PII Leak Audit & Auth",
-    detail:
-      "Implemented JWT + HttpOnly refresh rotation, Google OAuth 2.0, URL XSS guards, and strict ownership checks.",
-  },
-  {
-    badge: "Milestone Slot",
-    title: "Hackathon / OSS / Program Badge",
-    detail:
-      "Replace with your hackathon wins, GSoC / open-source selections, or certifications in portfolio-data.ts.",
-  },
-];
+export const HIGHLIGHTS: HighlightItem[] = [];
 
 export const SKILLS: SkillItem[] = [
   { id: "typescript", name: "TypeScript" },

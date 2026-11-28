@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -8,58 +8,26 @@ import {
   FolderGit2,
   Pencil,
   Plus,
+  RotateCcw,
   Trash2,
   X,
 } from "lucide-react";
 import { GitHubPinnedProjects } from "@/components/github-pinned-projects";
 import { PROJECT_ITEMS, type ProjectItem } from "@/lib/portfolio-data";
+import {
+  parseStoredJson,
+  useLocalValue,
+  writeLocalValue,
+} from "@/lib/portfolio-storage";
 
 const CUSTOM_PROJECTS_KEY = "tejas_custom_live_projects";
-const customListeners = new Set<() => void>();
-const EMPTY_PROJECTS_JSON = "[]";
-
-interface StoredProjectItem extends ProjectItem {
-  isCustom?: boolean;
-}
-
-function subscribeCustomProjects(cb: () => void) {
-  customListeners.add(cb);
-  const onStorage = () => cb();
-  window.addEventListener("storage", onStorage);
-  return () => {
-    customListeners.delete(cb);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-function saveCustomProjects(items: StoredProjectItem[]) {
-  if (typeof window === "undefined") return;
-  try {
-    if (items.length > 0) {
-      localStorage.setItem(CUSTOM_PROJECTS_KEY, JSON.stringify(items));
-    } else {
-      localStorage.removeItem(CUSTOM_PROJECTS_KEY);
-    }
-  } catch {
-    // Ignore storage quota errors
-  }
-  customListeners.forEach((cb) => cb());
-}
-
-function parseCustomProjects(raw: string): StoredProjectItem[] {
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
 
 interface ProjectsShowcaseProps {
   defaultUsername: string;
   basePath?: string;
   maxMain?: number;
   maxGithub?: number;
+  showGithubMore?: boolean;
   allowEdit?: boolean;
 }
 
@@ -68,21 +36,14 @@ export function ProjectsShowcase({
   basePath = "",
   maxMain,
   maxGithub,
+  showGithubMore = true,
   allowEdit = true,
 }: ProjectsShowcaseProps) {
-  const customRaw = useSyncExternalStore(
-    subscribeCustomProjects,
-    () => localStorage.getItem(CUSTOM_PROJECTS_KEY) ?? EMPTY_PROJECTS_JSON,
-    () => EMPTY_PROJECTS_JSON
-  );
-
-  const customProjects = parseCustomProjects(customRaw);
-
-  const featuredBuiltIn: StoredProjectItem[] = maxMain
-    ? PROJECT_ITEMS.filter((p) => p.featured || p.status === "Production Ready")
-    : PROJECT_ITEMS.filter((p) => p.status !== "Template");
-
-  const combinedLive: StoredProjectItem[] = [...customProjects, ...featuredBuiltIn];
+  const customRaw = useLocalValue(CUSTOM_PROJECTS_KEY, "");
+  const storedList = customRaw
+    ? parseStoredJson<ProjectItem[]>(customRaw, PROJECT_ITEMS)
+    : null;
+  const combinedLive = storedList ?? PROJECT_ITEMS;
   const visibleLive = maxMain ? combinedLive.slice(0, maxMain) : combinedLive;
 
   const [formOpen, setFormOpen] = useState(false);
@@ -107,7 +68,7 @@ export function ProjectsShowcase({
     setStatus("Live");
   };
 
-  const handleOpenEdit = (proj: StoredProjectItem) => {
+  const handleOpenEdit = (proj: ProjectItem) => {
     setEditingId(proj.id);
     setTitle(proj.title);
     setTagline(proj.tagline);
@@ -135,34 +96,38 @@ export function ProjectsShowcase({
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "") || "project";
 
-    const item: StoredProjectItem = {
-      id: editingId ?? `${baseSlug}-${customProjects.length + 1}`,
+    const existing = editingId
+      ? combinedLive.find((p) => p.id === editingId)
+      : undefined;
+
+    const item: ProjectItem = {
+      id: editingId ?? `${baseSlug}-${combinedLive.length + 1}`,
       title: cleanTitle,
       tagline: tagline.trim() || "Live Web Build",
       status: status.trim() || "Live",
-      year: String(new Date().getFullYear()),
+      year: existing?.year ?? String(new Date().getFullYear()),
       description:
         description.trim() || "Production live deployment.",
-      architecture: [],
+      architecture: existing?.architecture ?? [],
       stack: stack.length > 0 ? stack : ["TypeScript", "Next.js"],
       liveHref: liveHref.trim() || undefined,
       repoHref: repoHref.trim() || undefined,
       featured: true,
-      isCustom: true,
     };
 
-    if (editingId) {
-      saveCustomProjects(
-        customProjects.map((p) => (p.id === editingId ? item : p))
-      );
-    } else {
-      saveCustomProjects([item, ...customProjects]);
-    }
+    const nextList = editingId
+      ? combinedLive.map((p) => (p.id === editingId ? item : p))
+      : [item, ...combinedLive];
+
+    writeLocalValue(CUSTOM_PROJECTS_KEY, JSON.stringify(nextList));
     resetForm();
   };
 
   const handleDelete = (id: string) => {
-    saveCustomProjects(customProjects.filter((p) => p.id !== id));
+    writeLocalValue(
+      CUSTOM_PROJECTS_KEY,
+      JSON.stringify(combinedLive.filter((p) => p.id !== id))
+    );
   };
 
   return (
@@ -178,17 +143,29 @@ export function ProjectsShowcase({
           </div>
 
           {allowEdit && !formOpen && (
-            <button
-              type="button"
-              onClick={() => {
-                resetForm();
-                setFormOpen(true);
-              }}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono font-medium text-neutral-700 transition-colors hover:border-neutral-900 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300 dark:hover:border-white dark:hover:text-white"
-            >
-              <Plus className="h-3 w-3" />
-              <span>Add Live Project</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {storedList !== null && (
+                <button
+                  type="button"
+                  onClick={() => writeLocalValue(CUSTOM_PROJECTS_KEY, null)}
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 px-2.5 py-1 text-[10.5px] font-mono text-neutral-600 hover:border-neutral-950 hover:text-neutral-950 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  <span>Reset</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  resetForm();
+                  setFormOpen(true);
+                }}
+                className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[10.5px] font-mono font-medium text-neutral-700 transition-colors hover:border-neutral-900 hover:text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300 dark:hover:border-white dark:hover:text-white"
+              >
+                <Plus className="h-3 w-3" />
+                <span>Add Live Project</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -332,9 +309,9 @@ export function ProjectsShowcase({
 
         <div className="space-y-4">
           {visibleLive.map((project) => {
-            const hasCaseStudy =
-              !project.isCustom &&
-              PROJECT_ITEMS.some((item) => item.id === project.id);
+            const hasCaseStudy = PROJECT_ITEMS.some(
+              (item) => item.id === project.id
+            );
 
             return (
               <div
@@ -397,7 +374,7 @@ export function ProjectsShowcase({
                       </Link>
                     )}
 
-                    {project.isCustom && (
+                    {allowEdit && (
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
@@ -440,16 +417,17 @@ export function ProjectsShowcase({
         </div>
       </div>
 
-      {/* More Projects on GitHub */}
-      <div className="border-t border-dashed border-neutral-200 pt-6 dark:border-neutral-800">
-        <GitHubPinnedProjects
-          defaultUsername={defaultUsername}
-          basePath={basePath}
-          maxItems={maxGithub}
-          excludeNames={combinedLive.map((p) => p.title)}
-          headingLabel="More Projects on GitHub"
-        />
-      </div>
+      {showGithubMore && (
+        <div className="border-t border-dashed border-neutral-200 pt-6 dark:border-neutral-800">
+          <GitHubPinnedProjects
+            defaultUsername={defaultUsername}
+            basePath={basePath}
+            maxItems={maxGithub}
+            excludeNames={combinedLive.map((p) => p.title)}
+            headingLabel="More Projects on GitHub"
+          />
+        </div>
+      )}
     </div>
   );
 }

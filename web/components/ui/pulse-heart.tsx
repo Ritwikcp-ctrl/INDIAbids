@@ -76,7 +76,7 @@ export default function PulseHeart({
   const [inner, setInner] = useState(defaultLiked);
   const [delta, setDelta] = useState(0);
   const liked = controlled ? likedProp : inner;
-  const total = count + delta;
+  const total = controlled ? count : count + delta;
 
   const [shown, setShown] = useState({ liked, count: total });
   const [roll, setRoll] = useState<{
@@ -230,9 +230,13 @@ export default function PulseHeart({
     viaPointer.current = false;
     const nextLiked = !liked;
     const nextDelta = delta + (nextLiked ? 1 : -1);
-    const nextCount = count + nextDelta;
-    if (!controlled) setInner(nextLiked);
-    setDelta(nextDelta);
+    const nextCount = controlled
+      ? Math.max(0, count + (nextLiked ? 1 : -1))
+      : count + nextDelta;
+    if (!controlled) {
+      setInner(nextLiked);
+      setDelta(nextDelta);
+    }
     onChange?.(nextLiked, nextCount);
     if (pointer && !reducedMotion()) run(nextLiked, nextCount);
     else if (rootRef.current) rootRef.current.dataset.instant = '';
